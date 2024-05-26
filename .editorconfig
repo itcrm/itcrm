@@ -1,0 +1,12 @@
+root = true
+
+[*]
+insert_final_newline = true
+
+[*.{php,js,css,htm,html,tpl}]
+charset = utf-8
+indent_style = space
+indent_size = 4
+
+[js/*.js]
+indent_size = 2

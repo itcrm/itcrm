@@ -1,0 +1,6 @@
+Sākam sortēt: 22.06.2023 02:42:42
+Atpazīts faila datums: 2023-06-22 02:37:00
+Gribu sortēt: 23.06.22.02.37..scan..tests.jpg uz /var/webserver/share/rch/R_am/scan: Izdarīts!
+Veidoju rindu: Date:2023-06-22 02:37:00,AddDate:2023-06-22 02:42:42,Type:2402,Order:5355, Note:23.06.22.02.37..scan..tests.jpg
+
+Papildinformācija:

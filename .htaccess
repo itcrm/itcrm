@@ -1,0 +1,13 @@
+<Files ~ "\.(inc|conf|sql|tpl)$">
+  deny from all
+</Files>
+
+RewriteEngine on
+Options +FollowSymlinks
+RewriteRule ^.htaccess$ - [F]
+
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1&%{QUERY_STRING}
+
+php_flag magic_quotes_gpc Off

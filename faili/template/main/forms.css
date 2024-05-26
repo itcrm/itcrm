@@ -1,0 +1,319 @@
+.datatable {
+    /*width: 100%;*/
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.datatable tr {
+    vertical-align: top;
+    height: auto;
+}
+
+.datatable th {
+    background: #e0e0ff;
+    color: black;
+    border-bottom: 1px solid black;
+    text-align: center;
+    padding: 4px 3px 4px 3px;
+    border-right: 1px solid #d0d0f0;
+    font-size: 11px;
+}
+
+.datatable td {
+    padding: 3px;
+    border-right: 1px solid #f0f0ff;
+    color: black;
+    cursor: pointer;
+    font-size: 11px !important;
+}
+
+.datatable .editable td {
+    cursor: default;
+    background: #ffff88;
+}
+
+.datatable .stripe td {
+    background: #f0f0ff;
+}
+
+.datatable .hover td {
+    background: #edffca;
+}
+
+.datatable .hover td {
+    background: #ffe990;
+}
+
+.datatable td.last,
+.datatable th.last {
+    border-right: 0;
+}
+
+.datatable input,
+.datatable select,
+.datatable textarea {
+    font-size: 11px;
+    font-family: Verdana, Tahoma, Arial;
+    width: 60%;
+    border: 1px solid silver;
+    padding: 1px 2px 1px 2px;
+    margin-left: -2px;
+}
+
+.datatable textarea {
+    height: 80px;
+}
+
+.datatable input.checkbox {
+    background: transparent;
+    border: 0;
+}
+
+.datatable button {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+}
+
+.datatable .clickable {
+    cursor: pointer;
+    border: 1px solid silver;
+    background: white;
+}
+
+.datatable-info {
+    background: #ffff88;
+    border-top: 1px solid #ffcd0b;
+    margin-top: 3px;
+    padding: 3px;
+    color: #554503;
+}
+
+.datatable_add {
+    color: #447b1c;
+    font-weight: bold;
+    margin-top: 3px;
+    padding: 3px;
+    display: block;
+    width: 80px;
+    text-align: left;
+}
+
+.datatable_add:hover {
+    background: #edffca;
+    color: #1d3d02;
+}
+
+.error_balloon {
+    position: absolute;
+    background: url(img/error_balloon_b.png) bottom left no-repeat;
+    padding-bottom: 10px;
+}
+
+.error_balloon span {
+    display: block;
+    background: url(img/error_balloon_t.png) bottom left repeat-x;
+    border: 1px solid #602626;
+    border-bottom: 0;
+    padding: 2px 5px 3px 5px;
+    color: #c00;
+}
+
+.editor-disabled,
+.editor-enabled {
+    width: 290px;
+    height: 200px;
+}
+
+.editor-disabled {
+    border: 1px solid silver;
+}
+
+.editor-enabled {
+    border: 1px solid black;
+}
+
+.open {
+    background: #e0e0ff url(img/icon-disk.png) 2px 3px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 20px;
+    _padding: 3px 1px 2px 15px;
+}
+
+.rename {
+    background: #e0e0ff url(img/icon-edit.png) 2px 1px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 20px;
+    _padding: 3px 1px 2px 15px;
+}
+
+.delete {
+    background: #e0e0ff url(img/icon-delete.png) 2px 3px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 20px;
+    _padding: 3px 1px 2px 15px;
+}
+
+.cut {
+    background: #e0e0ff url(img/icon-cut.png) 2px 3px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 20px;
+    _padding: 3px 1px 2px 15px;
+}
+
+.copy {
+    background: #e0e0ff url(img/icon-copy.png) 2px 3px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 20px;
+    _padding: 3px 1px 2px 15px;
+}
+
+.paste {
+    background: #e0e0ff url(img/icon-paste.png) 2px 3px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 20px;
+    _padding: 3px 1px 2px 15px;
+}
+
+.upload {
+    background: #e0e0ff url(img/icon-upload.png) 2px 3px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 20px;
+    _padding: 3px 1px 2px 15px;
+}
+
+.mkdir {
+    background: #e0e0ff url(img/icon-mkdir.png) 2px 3px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 20px;
+    _padding: 3px 1px 2px 15px;
+}
+
+.select {
+    background: #e0e0ff url(img/icon-tick.png) 2px 3px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 0;
+    _padding: 3px 1px 2px 15px;
+    width: 22px;
+}
+
+.unselect {
+    background: #e0e0ff url(img/icon-untick.png) 2px 3px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 0;
+    _padding: 3px 1px 2px 15px;
+    width: 22px;
+}
+
+.back {
+    background: #e0e0ff url(img/icon-back.png) 2px 3px no-repeat;
+    float: left;
+    border: 1px solid #ebebff;
+    border-right: 1px solid #afafde;
+    border-bottom: 1px solid #afafde;
+    margin-right: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    padding: 3px 5px 2px 20px;
+    _padding: 3px 1px 2px 15px;
+}
+
+.disabled {
+    color: gray;
+}
+
+.c {
+    margin-top: -1px;
+    height: 1px;
+    overflow: hidden;
+    clear: both;
+}
+
+.input-normal {
+    font-size: 13px;
+    font-family: Verdana, Tahoma, Arial, sans-serif;
+    width: 150px;
+    background: #fff;
+    border: 1px solid silver;
+    padding: 1px;
+}
+
+.mini-button {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}

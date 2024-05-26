@@ -1,0 +1,26 @@
+This list may be incomplete.
+Please feel free to expand it as appropriate.
+
+images/ directory removed
+\tcpdf_config.php
+fonts/utils removed
+freefont removed
+dejavu fonts removed
+almohanad font removed
+ArialUnicodeMS font removed
+freemono font removed
+freeserif font removed
+MyungJo Medium font removed
+Kozuka fonts removed
+MSung font removed
+STSong font removed
+ZarBold font removed
+Helvetica font removed
+symbol font rmeoved
+times fonts removed
+zapfdingbats font removed
+Unicode to CID-0 tables removed
+Default font changed from Helvetica to FreeSans
+
+Historical changes (not originally documented):
+lang/eng.php modified

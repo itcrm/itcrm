@@ -1,0 +1,781 @@
+@charset "UTF-8";
+
+html,
+body {
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+    font-family: Verdana, Tahoma, Arial;
+    font-size: 12px;
+}
+h3,
+h2,
+h1 {
+    color: #bbb;
+}
+
+a {
+    color: #00c;
+    font-size: 12px;
+}
+
+table {
+    border-collapse: collapse;
+    border-color: #bbb;
+}
+.title {
+    background: #b0b0b0;
+    font-size: 10px;
+}
+.title td {
+    text-align: center;
+}
+.Data td {
+    padding-left: 3px;
+}
+
+#LoginForm {
+    padding-top: 150px;
+    display: block;
+    width: 320px;
+    line-height: 25px;
+}
+
+.formback {
+    background: #fcfbc4;
+}
+
+#AllDataDialog tr {
+    border-bottom: 1px dashed #6699cc;
+    color: #003399;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 12px 17px;
+}
+
+#AllDataDialog span {
+    white-space: nowrap;
+}
+
+a.button,
+button {
+    display: block;
+    float: left;
+    margin: 0 3px 15px 0;
+    padding: 2px 6px;
+    border: 1px solid #ccc;
+    border-color: #999 #858585 #666 #858585;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    background: #ccc url(../images/button.png) left top repeat-x;
+    font-family: "Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
+    font-size: 11px;
+    line-height: 16px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    white-space: nowrap;
+    vertical-align: baseline;
+}
+
+a.button span {
+    float: left;
+    padding-right: 2px;
+}
+
+a.right {
+    float: right;
+    margin-top: 2px;
+}
+
+/*.DropMenu{display: inline-block;}
+.DropMenu li {display: inline-block;}
+.DropMenu li a{text-decoration:none;}
+.DropMenu .subnav {display: none}*/
+
+div.label {
+    float: left;
+    width: 118px;
+    text-align: left;
+    padding-left: 5px;
+}
+div.left {
+    float: left;
+}
+div.clear {
+    clear: both;
+}
+
+.deleted {
+    color: #bbb;
+}
+.hidden {
+    border-right: 3px solid red;
+}
+.updated {
+    color: #777;
+}
+.del {
+    color: #f00;
+    font-size: 10px;
+}
+
+input.error,
+select.error {
+    border: 2px solid #f00;
+}
+
+#Loading {
+    position: absolute;
+    background: #cccccc;
+    border: 1px solid #888888;
+    padding: 3px;
+    font-size: 11px;
+    width: 75px;
+    z-index: 998;
+    color: #000000;
+    display: none;
+    top: 0px;
+    text-align: left;
+    right: 0px;
+}
+
+.Logout {
+    color: #f00;
+}
+
+div#menu {
+    border-bottom: 1px solid #000;
+    height: 20px;
+    margin: 10px 0 5px 0;
+}
+div#menu {
+    text-align: left;
+    padding: 0;
+}
+div#menu a.menu {
+    display: inline;
+    margin: 0 5px;
+    border: none;
+    text-decoration: none;
+}
+div#menu a.menu:hover {
+    text-decoration: underline;
+}
+
+.light {
+    color: #878787;
+    font-size: 10px;
+}
+.green {
+    color: #3c3;
+}
+.red {
+    color: #f00;
+}
+input,
+select {
+    font-size: 11px;
+    border: 1px solid #8c8c8c;
+    margin: 1px;
+}
+.add,
+.add tr td {
+    border-color: #fff;
+    text-align: center;
+    border: none;
+}
+
+.add tr td input,
+.add tr td select,
+.title input,
+.title select {
+    width: 90%;
+}
+.active {
+    background: #bfb;
+}
+.edit {
+    background: Gold;
+}
+tr.onedit {
+    background: #fc0;
+}
+tr.AdminEdit {
+    border-right: 3px solid blue;
+}
+
+tr.selected {
+    background: khaki;
+}
+
+a.extra {
+    float: left;
+    width: 17px;
+    margin: 0 3px;
+    height: 17px;
+    background: URL(/images/extra.gif) no-repeat;
+}
+a.edit {
+    background-position: top center;
+}
+a.delete {
+    background-position: center -34px;
+}
+a.restore {
+    background-position: center -51px;
+}
+a.template {
+    margin-left: 5px;
+    background-position: center -68px;
+}
+a.changes {
+    background-position: center -17px;
+}
+a.close {
+    background-position: center -85px;
+}
+a.print {
+    float: left;
+    width: 17px;
+    margin: 0 3px;
+    height: 17px;
+    background: URL(/images/Printer-icon.png) no-repeat;
+}
+a.image {
+    background-image: url("/images/image.png");
+    height: 19px;
+    width: 19px;
+}
+a.RowEdit {
+    background-image: url("/images/row.png");
+    height: 19px;
+    width: 19px;
+    background-size: 19px 19px;
+}
+a.file_upload {
+    background-image: url("/images/file_upload.png");
+    height: 19px;
+    width: 19px;
+}
+a.r_bile_upload {
+    background-image: url("/images/r_bile_upload.png");
+    height: 19px;
+    width: 19px;
+}
+a.r_bilde {
+    background-image: url("/images/r_bilde.png");
+    height: 19px;
+    width: 19px;
+}
+a.icon-expand {
+    background-image: url("/images/icon-expand.gif");
+    height: 19px;
+    width: 11px;
+}
+
+.exp_but {
+    background-image: url("/images/icon-expand_up.gif");
+    background-repeat: no-repeat;
+    background-size: 10px 40px;
+    float: right;
+    height: 40px;
+    width: 13px;
+    cursor: pointer;
+}
+
+.exp_but_up {
+    background-image: url("/images/icon-expand.gif");
+    background-repeat: no-repeat;
+    background-size: 10px 19px;
+    float: right;
+    height: 19px;
+    width: 13px;
+    cursor: pointer;
+}
+
+.exp_hide {
+    display: none;
+}
+
+.hide {
+    display: none;
+}
+#ievadeNoliktava {
+    margin-bottom: 5px;
+    background-color: silver;
+    height: 54px;
+    left: 0;
+    margin-left: 17px;
+    padding-right: 0;
+    padding-top: 5px;
+    position: static;
+    text-align: center;
+    width: 95%;
+}
+#tblRights tr td,
+#tblHideRights tr td {
+    text-align: center;
+}
+
+div.changes {
+    position: fixed;
+    right: 0px;
+    display: none;
+}
+div.changes h4 {
+    padding: 5px;
+    background: #bbb;
+}
+div.changes div.Main {
+    position: static;
+    right: 0px;
+    padding: 10px;
+    width: 450px;
+    background: #fff;
+    border: 2px solid #888;
+}
+div.changes div {
+    padding-left: 20px;
+}
+
+#scrollDiv {
+    height: 73%;
+    width: 100%;
+    overflow: auto;
+    position: absolute;
+    left: 0px;
+}
+#scrollDiv table {
+    width: 98%;
+    *width: 97%;
+}
+
+#DataList {
+    table-layout: fixed;
+}
+#DataList tr td {
+    overflow: hidden;
+}
+#DataList tr td.action {
+    overflow: visible;
+}
+
+span.calendarContainer {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 0px;
+    display: inline;
+    z-index: 950;
+}
+.calendar {
+    z-index: 1002;
+    float: left;
+    width: 220px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background: #ccc;
+    border: 1px solid #ccc;
+    padding: 2px;
+}
+.calendar input {
+    height: 25px;
+}
+.calendar .header {
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+    height: 29px;
+    background: #f7b64c;
+    border: 1px solid #e78f08;
+}
+.calendar .header .title {
+    padding: 7px 0;
+    background: none;
+}
+.calendar .header .title div {
+    padding-top: 4px;
+    padding-left: 30px;
+}
+.calendar .clr {
+    height: 1px;
+    clear: both;
+}
+
+.calendar a.selected {
+    background: #eee;
+    color: #f00;
+}
+.calendar .day {
+    text-decoration: none;
+    display: block;
+    padding: 5px 3px;
+    margin: 1px;
+    width: 20px;
+    font-weight: 700;
+    text-align: right;
+    color: #4894cd;
+    background: #fefefe;
+    float: left;
+    border: 1px solid #ddd;
+}
+.calendar .today {
+    background: #fc0;
+    color: #fff;
+}
+.calendar .week {
+    padding: 5px 3px;
+    margin: 1px;
+    width: 22px;
+    font-size: 10px;
+    font-weight: 400;
+    text-align: center;
+    color: #444;
+    background: none;
+    float: left;
+    border: none;
+}
+
+.calendar .day:hover {
+    color: #8ecbf8;
+    text-decoration: underline;
+}
+.calendar .next,
+.calendar .prev {
+    color: #ddd;
+}
+.calendar .btnNext,
+.calendar .btnPrev {
+    padding: 4px 5px;
+    margin: 2px;
+    cursor: pointer;
+    border: 1px solid #e78f08;
+    background: #ffe4b8;
+    color: #e78f08;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    width: 25px;
+}
+.calendar .btnNext {
+    float: right;
+}
+.calendar .btnPrev {
+    float: left;
+}
+
+.calendar .Time {
+    height: 29px;
+    background: #f7b64c;
+    border: 1px solid #e78f08;
+    text-align: center;
+}
+.calendar .Time span {
+    margin: 2px;
+}
+.calendar .Time div {
+    padding-top: 4px;
+    padding-left: 30px;
+}
+.calendar select.time {
+    width: 40px;
+}
+
+a.reminder {
+    float: left;
+    display: block;
+    margin: 0 5px;
+    padding: 2px 5px;
+    border: 1px solid #aaa;
+}
+.Odd {
+    background: #efefef;
+}
+
+#SupplierForm {
+    float: left;
+    margin-left: 3px;
+}
+#SupplierForm input,
+#SupplierForm div {
+    float: left;
+    margin: 2px;
+}
+
+#noliktava {
+    width: 100%;
+    position: absolute;
+    display: none;
+    left: 0px;
+}
+#noliktava .main {
+    width: 98%;
+    border: 5px solid #ddd;
+    background: #fff;
+}
+
+#matreals {
+    width: 100%;
+    position: absolute;
+    display: none;
+    left: 0px;
+}
+#matreals .main {
+    width: 98%;
+    border: 5px solid #ddd;
+    background: #fff;
+}
+
+#pavadzime {
+    width: 100%;
+    position: absolute;
+    display: none;
+    left: 0px;
+}
+#info .main {
+    width: 98%;
+    border: 5px solid #ddd;
+    background: #fff;
+}
+
+#info {
+    width: 100%;
+    position: absolute;
+    display: none;
+    left: 0px;
+}
+#pavadzime .main {
+    width: 98%;
+    border: 5px solid #ddd;
+    background: #fff;
+}
+
+#info .supplier {
+    border: 1px solid #aaa;
+    margin: 3px;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    float: left;
+    width: 32%;
+    text-align: left;
+    height: 19px;
+}
+#info .supplier a {
+    float: right;
+}
+#info .supplier .label {
+    padding-top: 3px;
+    margin-right: 3px;
+    font-weight: 700;
+    background: #fff;
+    height: 16px;
+    float: left;
+    width: 110px;
+    cursor: default;
+    overflow: hidden;
+    white-space: nowrap;
+}
+#info .supplier .label textarea {
+    position: absolute;
+    bottom: 5px;
+    width: 95%;
+    font-size: 13px;
+}
+#info .supplier .label span,
+#info .supplier .label textarea {
+    display: none;
+}
+#info .supplier .info {
+    padding-top: 3px;
+    cursor: default;
+    overflow: hidden;
+    white-space: nowrap;
+}
+#info .supplier .color_picker {
+    float: right;
+    display: none;
+}
+#info .supplier .over {
+    padding: 0;
+    background: #fff;
+    height: 120px;
+    padding: 7px;
+    border: 2px solid #777;
+    position: absolute;
+    width: 95%;
+    left: 0px;
+    z-index: 900;
+    white-space: normal;
+}
+#info .supplier .supOver {
+    padding: 0;
+    background: #fff;
+    height: 120px;
+    padding: 7px;
+    border: 2px solid #777;
+    position: absolute;
+    left: 0px;
+    width: 95%;
+    z-index: 900;
+    white-space: normal;
+}
+#info .supplier .supOver span {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+}
+#info .supplier .supOver textarea {
+    display: block;
+}
+
+#Pavadzime {
+    width: 100%;
+    position: absolute;
+    display: none;
+    left: 0px;
+}
+#Pavadzime .main {
+    width: 98%;
+    border: 5px solid #ddd;
+    background: #fff;
+}
+
+.addbutton {
+    background: url("/images/extra.gif") no-repeat scroll center -50px transparent;
+    float: right;
+    height: 17px;
+    margin: 0 3px;
+    width: 17px;
+}
+.editbutton {
+    background: url("/images/extra.gif") no-repeat scroll center top transparent;
+    float: right;
+    height: 17px;
+    margin: 0 3px;
+    width: 17px;
+}
+/*
+#bordertbl {border: 1px solid;}
+#bordertbl th {border: 1px solid;}
+#foottbl {border: 1px solid;}
+#foottbl td{border: 1px solid;}
+#Preces td
+{
+border:1px solid black;
+}
+
+*/
+
+#Preces th {
+    border: 1px solid black;
+}
+
+.bordersolid {
+    border: 1px solid black;
+}
+
+.bordersolid td {
+    border: 1px solid black;
+}
+
+.bordersolidadd td {
+    border: 1px solid black;
+}
+
+form.hideFilter table tr td {
+    display: none;
+}
+
+.page {
+    background: #eeeeee;
+    border: 1px solid #bebebe;
+    padding: 5px 7px 5px 7px;
+    margin: 2px;
+    color: #858585;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+}
+.pageActive {
+    background: #ffffff;
+    border: 1px solid #bebebe;
+    font-size: 11px;
+    padding: 5px 7px 5px 7px;
+    margin: 2px;
+}
+.pageActive:hover {
+    text-decoration: none;
+}
+
+.AutoTable {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #ffffff;
+    background-image: none;
+    background-origin: padding-box;
+    background-position: 0 0;
+    background-repeat: repeat;
+    background-size: auto auto;
+    border-collapse: collapse;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+    font-size: 12px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+    text-align: left;
+    width: auto;
+}
+.AutoTable th {
+    border-bottom-color: #6678b1;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    color: #003399;
+    font-size: 14px;
+    font-weight: normal;
+    padding-bottom: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 10px;
+}
+.AutoTable td {
+    border-bottom-color: #cccccc;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    color: #666699;
+    padding-bottom: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 6px;
+}
+.AutoTable tbody tr:hover td {
+    color: #000099;
+}
+
+.OnEditBox {
+    background-color: yellow;
+}
+
+a.noliktavaadd {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #dfeffc;
+    background-image: none;
+    background-origin: padding-box;
+    background-position: 0 0;
+    background-repeat: repeat;
+    background-size: auto auto;
+    cursor: pointer;
+    height: 16px;
+    position: absolute;
+    width: 16px;
+}
+
+#Noma table {
+    width: auto;
+}

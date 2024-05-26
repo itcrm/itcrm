@@ -1,0 +1,231 @@
+body,
+td,
+th {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+body {
+    background: white;
+    margin: 0;
+}
+
+a:link,
+a:visited,
+a:hover,
+a:active {
+    text-decoration: none;
+    color: black;
+}
+
+INPUT,
+SELECT,
+TEXTAREA {
+    border: 1px solid gray;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+#error {
+    border: 1px solid red;
+    background: #fff0f0;
+    text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #8c1e1e;
+}
+
+#header {
+    border-bottom: 2px solid silver;
+}
+
+#commands {
+    margin-bottom: 5px;
+    text-align: right;
+}
+
+#filelist {
+}
+
+.filelisttable {
+}
+
+#commands-rename {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    width: 380px;
+    float: left;
+}
+
+#commands-rename input {
+    float: left;
+    border: 1px solid #ebebff;
+    margin-right: 3px;
+    font-size: 11px;
+    color: black;
+    padding: 3px 5px 2px 5px;
+    _padding: 3px 1px 2px 1px;
+    width: 310px;
+}
+
+#commands-rename button {
+    float: left;
+    border: 0;
+    padding: 0;
+    margin: 4px 2px 0 0;
+    background: transparent;
+}
+
+#commands-mkdir {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    width: 180px;
+    float: left;
+}
+
+#commands-mkdir input {
+    float: left;
+    border: 1px solid #ebebff;
+    margin-right: 3px;
+    font-size: 11px;
+    color: black;
+    padding: 3px 5px 2px 5px;
+    _padding: 3px 1px 2px 1px;
+    width: 120px;
+}
+
+#commands-mkdir button {
+    float: left;
+    border: 0;
+    padding: 0;
+    margin: 4px 2px 0 0;
+    background: transparent;
+}
+
+#commands-upload {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    width: 280px;
+    float: left;
+}
+
+#commands-upload input {
+    float: left;
+    border: 1px solid #ebebff;
+    margin-right: 3px;
+    font-size: 11px;
+    color: black;
+    padding: 3px 5px 2px 5px;
+    _padding: 3px 1px 2px 1px;
+    width: 220px;
+}
+
+#commands-upload button {
+    float: left;
+    border: 0;
+    padding: 0;
+    margin: 4px 2px 0 0;
+    background: transparent;
+}
+
+.direntry {
+    font-size: 12px;
+    /*float: left;
+	width: 160px;*/
+    height: 18px;
+    /*overflow: hidden;*/
+    white-space: nowrap;
+    margin-right: 20px;
+    width: 100%;
+}
+
+.direntry-large {
+    padding-top: 10px;
+    font-size: 12px;
+    float: left;
+    width: 100px;
+    height: 80px;
+    overflow: hidden;
+    text-align: center;
+    margin-right: 5px;
+}
+
+.direntry-mega {
+    padding-top: 10px;
+    font-size: 12px;
+    float: left;
+    width: 100px;
+    height: 112px;
+    overflow: hidden;
+    text-align: center;
+    margin-right: 5px;
+}
+
+.direntry .folder {
+    background: url(img/folder-small.png) center left no-repeat;
+    /*font-weight: bold;*/
+    padding-left: 20px;
+    display: block;
+    height: 18px;
+    border: 0;
+}
+
+.direntry .file {
+    background: url(img/document-small.png) center left no-repeat;
+    display: block;
+    height: 18px;
+    padding-left: 20px;
+    border: 0;
+}
+
+.direntry .image {
+    background: url(img/image-small.png) center left no-repeat !important;
+}
+
+.direntry-large .folder {
+    background: url(img/folder.png) center top no-repeat;
+    /*font-weight: bold;*/
+    padding-top: 36px;
+    display: block;
+    height: 80px;
+    border: 0;
+}
+
+.direntry-large .file {
+    background: url(img/document.png) top center no-repeat;
+    padding-top: 36px;
+    display: block;
+    height: 80px;
+    border: 0;
+}
+
+.direntry-mega .folder {
+    background: url(img/folder-mega.png) center top no-repeat;
+    /*font-weight: bold;*/
+    padding-top: 68px;
+    display: block;
+    height: 110px;
+    border: 0;
+}
+
+.direntry-mega .file {
+    background: url(img/document-mega.png) top center no-repeat;
+    padding-top: 68px;
+    display: block;
+    height: 110px;
+    border: 0;
+}
+
+.active {
+    background-color: #e0e0ff !important;
+}
+
+.multi {
+    background: url(img/icon-tick.png) center left no-repeat !important;
+    background-color: #f2f2ff !important;
+}
