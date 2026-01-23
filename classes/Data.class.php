@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class Data extends DBObject {
     private $ID;

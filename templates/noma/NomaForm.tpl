@@ -1,4 +1,4 @@
-﻿<script type="text/javascript">
+<script type="text/javascript">
 $("Form#AddDataForm input#Person").autocomplete({
     source: "/lv/Data/AutocompliteJosn",
     select: function( event, ui){

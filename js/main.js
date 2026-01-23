@@ -1,4 +1,4 @@
-﻿jQuery(document).ready(function () {
+jQuery(document).ready(function () {
   document.documentElement.onmousemove = dataCursor;
 });
 

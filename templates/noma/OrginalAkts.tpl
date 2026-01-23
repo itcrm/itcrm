@@ -1,4 +1,4 @@
-﻿<p class="txt1"><strong>Pieņem&scaron;anas &ndash; nodo&scaron;anas akts nr. </strong><strong>A-<strong>{$LigumaNumurs}</strong></strong></p>
+<p class="txt1"><strong>Pieņem&scaron;anas &ndash; nodo&scaron;anas akts nr. </strong><strong>A-<strong>{$LigumaNumurs}</strong></strong></p>
 <p class="txt1"><strong>&nbsp;</strong></p>
 <p class="txt1"><strong>&nbsp;</strong></p>
 <table style="width: 761px; height: 332px;" border="1" cellspacing="0" cellpadding="0">

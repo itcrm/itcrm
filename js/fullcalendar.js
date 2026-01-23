@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @preserve
  * FullCalendar v1.5.3
  * http://arshaw.com/fullcalendar/

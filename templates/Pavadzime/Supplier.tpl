@@ -1,4 +1,4 @@
-﻿<div id="PavadzimesD[:IDSupplier:]" class="Pavadzime" >
+<div id="PavadzimesD[:IDSupplier:]" class="Pavadzime" >
     <h2>PREČU PAVADZĪME- RĒĶINS NR. A1-[:IDDoc:] </h2>
 <table border="0">
 <tr>

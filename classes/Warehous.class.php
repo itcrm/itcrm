@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class Warehous extends DBObject {
     private $ID;
