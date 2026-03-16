@@ -23,9 +23,7 @@ class Data extends DBObject {
     private $RemindDateEnd;
     private $RemindTo;
     private $Status;
-    private $Hidden;
     private $Changes;
-    private $AdminEdit;
     private $AllDay;
     private $allDay;
     private $AllDays;
@@ -94,7 +92,6 @@ class Data extends DBObject {
             case 'DeletephotoTagger':
                 return $this->DeletephotoTagger($_GET['id']);
             case 'Search':
-                if (!$_SESSION['isAdmin']) return;
                 $Vars['Content'] = $this->Search();
                 $Vars['Pages'] = parent::makePages($_SESSION['entry'], $_SESSION['page'], '#', $_SESSION['pagecount']);
                 break;
@@ -104,8 +101,6 @@ class Data extends DBObject {
                 return $this->setFilter();
             case 'Save':
                 if (!$_SESSION['User']) return '';
-                if ($_SESSION['User']->getStatus() < 4) return '';
-                if ($this->MyEntry($_POST['ID']) != 1) return '';
                 $ID = $this->Save();
                 if (is_numeric($ID)) {
                     $Data = $this->getRow($ID);
@@ -113,7 +108,6 @@ class Data extends DBObject {
                 } else return $ID;
             case 'Delete':
             case 'Restore':
-                if (!$_SESSION['isAdmin']) return '';
                 $Data = $this->getByID($_POST['ID']);
                 if (!$Data || !$Data->getID()) return Language::$Data['DataNotFound'];
                 return $Data->Delete();
@@ -142,15 +136,7 @@ class Data extends DBObject {
         $Vars['PriceTotal'] = $_SESSION['PriceTotal'];
         $Vars['TotalHours'] = $_SESSION['TotalHours'];
 
-        $Vars['add_r_bilde'] = $_SESSION['User']->getadd_r_bilde() == 0 ? 'hide' : '';
-        $Vars['add_files'] = $_SESSION['User']->getadd_files() == 0 ? 'hide' : '';
-
         $Vars['Reminder'] = $this->getReminder();
-
-        $Vars['MultiChange'] = $_SESSION['User']->getMultiChange() == 1 ? 'block' : 'none';
-        $Vars['NoAdmin'] = $_SESSION['User']->getStatus() < 4 ? 'hide' : '';
-
-        $Vars['HidePeriods'] = !$_SESSION['isAdmin'] ? 'hide' : '';
 
         $Users = Users::getAsArray();
         foreach ($Users as $k => $v) $Users[$k] = 'name: "' . $v . '", val:"' . $k . '"';
@@ -164,29 +150,6 @@ class Data extends DBObject {
         foreach ($Types as $k => $v) $Types[$k] = 'name: "' . $v . '", val:"' . $k . '"';
         $Vars['TypesList'] = '{' . implode('},{', $Types) . '}';
 
-        if (!$_SESSION['isAdmin']) {
-            $Users = Users::getAsArray($_SESSION['Rights']['Persons']);
-            if (!empty($Users)) {
-                foreach ($Users as $k => $v) $Users[$k] = 'name: "' . $v . '", val:"' . $k . '"';
-                $Vars['AllowedUsersList'] = '{' . implode('},{', $Users) . '}';
-            } else $Vars['AllowedUsersList'] = '';
-
-            $Orders = Orders::getAsArray($_SESSION['Rights']['Orders']);
-            if (!empty($Orders)) {
-                foreach ($Orders as $k => $v) $Orders[$k] = 'name: "' . $v . '", val:"' . $k . '"';
-                $Vars['AllowedOrdersList'] = '{' . implode('},{', $Orders) . '}';
-            } else $Vars['AllowedOrdersList'] = '';
-
-            $Types = Types::getAsArray($_SESSION['Rights']['Types']);
-            if (!empty($Types)) {
-                foreach ($Types as $k => $v) $Types[$k] = 'name: "' . $v . '", val:"' . $k . '"';
-                $Vars['AllowedTypesList'] = '{' . implode('},{', $Types) . '}';
-            } else $Vars['AllowedTypesList'] = '';
-        } else {
-            $Vars['AllowedUsersList'] = $Vars['UsersList'];
-            $Vars['AllowedOrdersList'] = $Vars['OrdersList'];
-            $Vars['AllowedTypesList'] = $Vars['TypesList'];
-        }
 
         if (is_array($_SESSION['Filter']))
             foreach ($_SESSION['Filter'] as $k => $v) {
@@ -208,8 +171,8 @@ class Data extends DBObject {
         $query = 'SELECT MIN(D.RemindDate) as Min,D.RemindDate,D.RemindTo,U.Login,U.Color,U.Status
                    FROM `Data` D
                LEFT JOIN Users U ON (U.ID=D.RemindTo)
-               WHERE D.RemindDate>"2000-00-00 00:00:00" AND U.Status<=' . $_SESSION['User']->getStatus() .
-            ' GROUP BY D.RemindTo';
+               WHERE D.RemindDate>"2000-00-00 00:00:00"
+               GROUP BY D.RemindTo';
 
         if (!$result = self::$DB->query($query))
             throw new AppError('Error on ' . get_class() . ' (' . __LINE__ . ')');
@@ -223,7 +186,7 @@ class Data extends DBObject {
 
         if (empty($Data)) return '';
         else {
-            if ($_SESSION['isAdmin']) $Data[] = array('RemindTo' => '0', 'Login' => Language::$Data['All']);
+            $Data[] = array('RemindTo' => '0', 'Login' => Language::$Data['All']);
             return $Data;
         }
     }
@@ -408,7 +371,6 @@ class Data extends DBObject {
             $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
             $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
             $row['Changes'] = $row['Changes'] == '' ? 'hide' : '';
-            $row['NoAdmin'] = $_SESSION['isAdmin'] ? '' : 'hide';
             if ($fileFnExists) $row['link'] = _faili_row_file_exists($row['ID']);
             $row['order_title'] = urlencode($row['Order']);
             if ($row['RemindDate'] == '00.00.00 00:00')
@@ -435,12 +397,6 @@ class Data extends DBObject {
             $fileFnExists = true;
         }
 
-        if ($_SESSION['User']->getOneDay() == 1) {
-            $_SESSION['Filter']['DateFrom'] = date("Y-m-j");
-            $_SESSION['Filter']['DateTo'] = date("Y-m-j", mktime(0, 0, 0, date("m"), date("d") + 1, date("Y")));
-            $_SESSION['Filter']['Operator'] = $_SESSION['User']->getID();
-        }
-
         $Filter = $this->getFilter();
 
         $query = 'SELECT D.*,
@@ -463,39 +419,21 @@ class Data extends DBObject {
             $Filter[] = 'D.`Status`=1';
         }
 
-        if (!isset($_SESSION['isAdmin']) || !$_SESSION['isAdmin']) {
-            $Filter[] = 'D.`Hidden`=0';
-        }
 
         $Sort = $_SESSION['Sort'] . ' DESC';
 
         if (isset(self::$url[2]) && self::$url[2] == 'Reminder') {
             unset($Filter);
 
-            if (!$_SESSION['isAdmin']) {
-                if (!empty($_SESSION['Rights']['Types']))
-                    $Filter['Type'] = 'D.IDType IN (' . implode(',', $_SESSION['Rights']['Types']) . ')';
-                if (!empty($_SESSION['Rights']['Orders']))
-                    $Filter['Order'] = 'D.IDOrder IN (' . implode(',', $_SESSION['Rights']['Orders']) . ')';
-                if (!empty($_SESSION['Rights']['Persons']))
-                    $Filter['Operator'] = 'D.IDUser IN (' . implode(',', $_SESSION['Rights']['Persons']) . ')';
-            }
-
-            if (self::$url[3] === '0' && $_SESSION['isAdmin']) $Filter['RemindTo'] = 'RemindTo>0';
+            if (self::$url[3] === '0') $Filter['RemindTo'] = 'RemindTo>0';
             else $Filter['RemindTo'] = 'RemindTo=' . (is_numeric(self::$url[3]) ? self::$url[3] : $_SESSION['User']->getID());
             unset(self::$url[2]);
 
             $Sort = 'D.RemindDate DESC ';
         }
 
-        if (!$_SESSION['isAdmin']) {
-            $where = ' WHERE D.`Status`=1 ' . (!empty($Filter) ? ' AND ( (' . implode(' AND ', $Filter) . ') )'                 // $query .= ' WHERE D.`Status`=1 '.(!empty($Filter) ? ' AND ( ('.implode(' AND ',$Filter).') OR D.RemindTo='.$_SESSION['User']->getID().')'
-                : ' OR D.RemindTo=' . $_SESSION['User']->getID()) . ' AND D.Hidden = 0 ';
-            $query .= $where;
-        } else {
-            $where = !empty($Filter) ? 'WHERE ' . implode(' AND ', $Filter) : '';
-            $query .= $where;
-        }
+        $where = !empty($Filter) ? 'WHERE ' . implode(' AND ', $Filter) : '';
+        $query .= $where;
 
         if (!empty($_SESSION['Filter']['Search'])) {
             $search = explode(' ', trim($_SESSION['Filter']['Search']));
@@ -576,6 +514,7 @@ class Data extends DBObject {
             }
 
             $Data = array();
+            $Data2 = [];
             $i = 0;
             $now = strtotime(date('Y-m-d H:i:00'));
             while ($row = $result->fetch_assoc()) {
@@ -595,35 +534,12 @@ class Data extends DBObject {
 
                 $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
                 $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
-                $row['HiddenClass'] = $row['Hidden'] == 1 ? 'hidden' : '';
                 $row['Changes'] = $row['Changes'] == '' ? 'hide' : '';
                 if ($fileFnExists) $row['link'] = _faili_row_file_exists($row['ID']);
                 $row['order_title'] = urlencode($row['Order']);
-                $row['NoAdmin'] = $_SESSION['isAdmin'] ? '' : 'hide';
                 $row['select'] = 'selected';
                 $row['checked'] = 'checked';
                 $row['Function'] = "UnCheckRow";
-                $row['CanEdit'] =   $this->MyEntry($row['ID']) == 1 ? '' : 'hide';
-                $row['CanCopy'] =   $_SESSION['User']->getStatus() < 4 ? 'hide' : '';
-                $row['AdminEditClass'] = $row['AdminEdit'] == 1 ? 'AdminEdit' : '';
-
-                $hideRights = isset($_SESSION['Rights']['Hide']) ? $_SESSION['Rights']['Hide'] : [];
-                $keysToCheck = [
-                    $row['IDPerson'] . '.' . $row['IDOrder'] . '.' . $row['IDType'],
-                    '0.' . $row['IDOrder'] . '.' . $row['IDType'],
-                    $row['IDPerson'] . '.0.' . $row['IDType'],
-                    $row['IDPerson'] . '.' . $row['IDOrder'] . '.0',
-                    $row['IDPerson'] . '.0.0',
-                    '0.' . $row['IDOrder'] . '.0',
-                    '0.0.' . $row['IDType'],
-                ];
-                foreach ($keysToCheck as $key) {
-                    if (isset($hideRights[$key]) && $hideRights[$key]) {
-                        $row['Sum'] = '&mdash;';
-                        $row['Hours'] = '&mdash;';
-                        break;
-                    }
-                }
 
                 if ($row['RemindDate'] == '00.00.00 00:00')
                     $row['RemindDate'] = '';
@@ -689,6 +605,7 @@ class Data extends DBObject {
         }
 
         $Data = array();
+        $Data1 = [];
         $i = 0;
         $now = strtotime(date('Y-m-d H:i:00'));
         while ($row = $result->fetch_assoc()) {
@@ -708,33 +625,9 @@ class Data extends DBObject {
 
             $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
             $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
-            $row['HiddenClass'] = $row['Hidden'] == 1 ? 'hidden' : '';
             $row['Changes'] = $row['Changes'] == '' ? 'hide' : '';
-            $row['NoAdmin'] = $_SESSION['isAdmin'] ? '' : 'hide';
             if ($fileFnExists) $row['link'] = _faili_row_file_exists($row['ID']);
             $row['order_title'] = urlencode($row['Order']);
-
-            $row['CanEdit'] =   $this->MyEntry($row['ID']) == 1 ? '' : 'hide';
-            $row['CanCopy'] =   $_SESSION['User']->getStatus() < 4 ? 'hide' : '';
-            $row['AdminEditClass'] = $row['AdminEdit'] == 1 ? 'AdminEdit' : '';
-
-            $hideRights = isset($_SESSION['Rights']['Hide']) ? $_SESSION['Rights']['Hide'] : [];
-            $keysToCheck = [
-                $row['IDPerson'] . '.' . $row['IDOrder'] . '.' . $row['IDType'],
-                '0.' . $row['IDOrder'] . '.' . $row['IDType'],
-                $row['IDPerson'] . '.0.' . $row['IDType'],
-                $row['IDPerson'] . '.' . $row['IDOrder'] . '.0',
-                $row['IDPerson'] . '.0.0',
-                '0.' . $row['IDOrder'] . '.0',
-                '0.0.' . $row['IDType'],
-            ];
-            foreach ($keysToCheck as $key) {
-                if (isset($hideRights[$key]) && $hideRights[$key]) {
-                    $row['Sum'] = '&mdash;';
-                    $row['Hours'] = '&mdash;';
-                    break;
-                }
-            }
 
             if ($row['RemindDate'] == '00.00.00 00:00')
                 $row['RemindDate'] = '';
@@ -802,37 +695,6 @@ class Data extends DBObject {
             $_SESSION['Filter']['DateTo'] = $tmp[0] . '-' . $tmp[1] . '-' . $tmp[2] . ($tmp[3] != '' ? ' ' . $tmp[3] : '') . ($tmp[4] != '' ? ':' . $tmp[4] : '');
         }
 
-        if (!$_SESSION['isAdmin']) {
-            $personss  = explode(", ", $_SESSION['Filter']['Person']);
-            $person_rez = array();
-            foreach ($personss as $k => $v) {
-                if (!in_array($k, $_SESSION['Rights']['Persons']))
-                    array_push($person_rez, $v);
-            }
-            if (empty($person_rez)) {
-                unset($_SESSION['Filter']['Person']);
-            }
-
-            $orderss  = explode(", ", $_SESSION['Filter']['Order']);
-            $order_rez = array();
-            foreach ($orderss as $k => $v) {
-                if (!in_array($k, $_SESSION['Rights']['Orders']))
-                    array_push($order_rez, $v);
-            }
-            if (empty($order_rez)) {
-                unset($_SESSION['Filter']['Order']);
-            }
-
-            $typess = explode(", ", $_SESSION['Filter']['Type']);
-            $type_rez = array();
-            foreach ($typess as $k => $v) {
-                if (!in_array($k, $_SESSION['Rights']['Types']))
-                    array_push($type_rez, $v);
-            }
-            if (empty($type_rez)) {
-                unset($_SESSION['Filter']['Type']);
-            }
-        }
         unset($_SESSION['Filter']['IDFilter']);
         return 1;
     }
@@ -877,11 +739,7 @@ class Data extends DBObject {
         } else {
             $Vars['Operator'] = isset($_SESSION['Filter']['Operator']) && $_SESSION['Filter']['Operator'] > 0
                 ? 'D.IDUser IN (' . $_SESSION['Filter']['Operator'] . ')'
-                : (!$_SESSION['isAdmin']
-                    ? (!empty($_SESSION['Rights']['Persons'])
-                        ? 'D.IDUser IN (' . implode(',', $_SESSION['Rights']['Persons']) . ')'
-                        : 'D.IDUser=-1')
-                    : '');
+                : '';
         }
 
         if (isset($_SESSION['FilterSaved']['IDOrder']) && $_SESSION['FilterSaved']['IDOrder']) {
@@ -890,12 +748,7 @@ class Data extends DBObject {
         } else {
             $Vars['Order'] = isset($_SESSION['Filter']['Order']) && $_SESSION['Filter']['Order'] > 0
                 ? 'D.IDOrder IN (' . $_SESSION['Filter']['Order'] . ')'
-                : (!$_SESSION['isAdmin']
-                    ? (!empty($_SESSION['Rights']['Orders'])
-                        ? 'D.IDOrder IN (' . implode(',', $_SESSION['Rights']['Orders']) . ')'
-                        : 'D.IDOrder=-1'
-                    )
-                    : '');
+                : '';
         }
         if (isset($_SESSION['FilterSaved']['TextOrder']) && $_SESSION['FilterSaved']['TextOrder'])
             $_SESSION['Filter']['TextOrder'] = $_SESSION['FilterSaved']['TextOrder'];
@@ -909,12 +762,7 @@ class Data extends DBObject {
         } else {
             $Vars['Type'] = isset($_SESSION['Filter']['Type']) && $_SESSION['Filter']['Type'] > 0
                 ? 'D.IDType IN(' . $_SESSION['Filter']['Type'] . ')'
-                : (!$_SESSION['isAdmin']
-                    ? (!empty($_SESSION['Rights']['Types'])
-                        ? 'D.IDType IN (' . implode(',', $_SESSION['Rights']['Types']) . ')'
-                        : 'D.IDType=-1'
-                    )
-                    : '');
+                : '';
         }
 
         if (isset($_SESSION['FilterSaved']['TextType']) && $_SESSION['FilterSaved']['TextType'])
@@ -996,8 +844,6 @@ class Data extends DBObject {
                         $New = Users::getById($New);
                         $New = $New->getLogin();
                     }
-                } elseif ($Var == 'Hidden') {
-                    if ((int)$New == $Old) continue;
                 } elseif ($Var == 'IDType') {
                     if ($Old != 0) {
                         $Old = Types::getById($Old);
@@ -1154,14 +1000,6 @@ class Data extends DBObject {
         if (empty($Err)) {
             if ($this->getID() < 1) $this->Add();
             else {
-                if ($_SESSION['User']->getStatus() < 99) {
-                    if ($this->getAdminEdit() == "1") {
-                        if ($_POST['pass'] != Config::EDIT_PASS) {
-                            return "Nepareiza parole";
-                        }
-                    }
-                }
-
                 $Data = $this->getById($_POST['ID']);
 
                 $Diffs = unserialize($Data->getChanges());
@@ -1200,16 +1038,11 @@ class Data extends DBObject {
     }
 
     function Add() {
-        if ($_SESSION['User']->getStatus() < 99) {
-            $this->AdminEdit  = 0;
-        }
-
-        if ($_POST[IDType] == Config::Noliktava) {
-            $res = $this->ceckArtikuls($_POST[PlaceTaken]);
+        if ($_POST['IDType'] == Config::Noliktava) {
+            $res = $this->ceckArtikuls($_POST['PlaceTaken']);
             if ($res == 1) {
                 return print "Vienadi artukuli.";
             }
-            $this->setAdminEdit('1');
         }
 
         $query = 'INSERT INTO `Data`
@@ -1233,9 +1066,7 @@ class Data extends DBObject {
                          `RemindDate`="' . $this->getRemindDate() . '",
                          `RemindDateEnd`="' . $this->getRemindDateEnd() . '",
                          `RemindTo`="' . (int)$this->getRemindTo() . '",
-                         `Hidden`="' . (int)$this->getHidden() . '",
                          `allDay`="' . (int)$this->getallDay() . '",
-                         `AdminEdit`="' . (int)$this->getAdminEdit() . '",
                          `Status`=' . ($_POST['Tpl'] == 1 ? '10' : '1');
 
         if (!self::$DB->query($query)) {
@@ -1288,9 +1119,7 @@ class Data extends DBObject {
                          `RemindDateEnd`="' . $this->getRemindDateEnd() . '",
                          `RemindTo`="' . (int)$this->getRemindTo() . '",
                          `Changes`="' . addslashes($this->getChanges()) . '",
-                         `AdminEdit`="' . (int)$this->getAdminEdit() . '",
-                         `allDay`="' . $allDay . '",
-                         `Hidden`="' . (int)$this->getHidden() . '"
+                         `allDay`="' . $allDay . '"
 
                    WHERE `ID`=' . (int)$this->getID();
         if (!self::$DB->query($query)) {
@@ -1310,7 +1139,6 @@ class Data extends DBObject {
         $Status = self::$url[2] == 'Restore' ? 1 : -1;
 
         if ($this->getStatus() == -1 && $Status == -1) {
-            if ($_POST['pass'] != Config::DEL_PASS) return Language::$Main['WrongDelPass'];
             $query = 'DELETE FROM `Data` WHERE `ID`=' . $this->getID();
         } else {
             $Changes = unserialize($this->getChanges());
@@ -1383,10 +1211,7 @@ class Data extends DBObject {
         $row['Function'] = "CeckRow";
         $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
         $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
-        $row['HiddenClass'] = $row['Hidden'] == 1 ? 'hidden' : '';
         $row['Changes'] = $row['Changes'] == '' ? 'hide' : '';
-        $row['NoAdmin'] = $_SESSION['isAdmin'] ? '' : 'hide';
-        $row['AdminEditClass'] = $row['AdminEdit'] == 1 ? 'AdminEdit' : '';
         if ($row['RemindDate'] == '00.00.00 00:00')
             $row['RemindDate'] = '';
         else {
@@ -1419,11 +1244,12 @@ class Data extends DBObject {
         $value = str_replace(array('-', ',', ' ', ':'), array('.', '.', '.', '.'), $value);
         $Date = explode('.', $value);
 
+        $Date[0] = (int)$Date[0];
         if ($Date[0] < 1000) $Date[0] += 2000;
-        if (!$Date[3]) $Date[3] = '00';
-        if (!$Date[4]) $Date[4] = '00';
+        if (!isset($Date[3]) || !$Date[3]) $Date[3] = '00';
+        if (!isset($Date[4]) || !$Date[4]) $Date[4] = '00';
         if (
-            !is_numeric($Date[0]) || !is_numeric($Date[1]) || !is_numeric($Date[2])
+            !is_numeric($Date[0]) || !isset($Date[1]) || !is_numeric($Date[1]) || !isset($Date[2]) || !is_numeric($Date[2])
             || !is_numeric($Date[3]) || !is_numeric($Date[4])
             || $Date[3] > 23 || $Date[4] > 59 || $Date[1] > 12 || $Date[3] > 31 || $Date[0] > 2099
         )
@@ -1450,6 +1276,27 @@ class Data extends DBObject {
         )
             throw new AppError(Language::$Data['WrongDateFormat']);
         else $this->RemindDate = $Date[0] . '-' . $Date[1] . '-' . $Date[2] . ' ' . $Date[3] . ':' . $Date[4] . ':00';
+    }
+
+    function setRemindDateEnd($value) {
+        if ($value == '') {
+            $this->RemindDateEnd = '2000-00-00 00:00:00';
+            return;
+        }
+
+        $value = str_replace(array('-', ',', ' ', ':'), array('.', '.', '.', '.'), $value);
+        $Date = explode('.', $value);
+
+        if ($Date[0] < 1000) $Date[0] += 2000;
+        if (!$Date[3]) $Date[3] = '00';
+        if (!$Date[4]) $Date[4] = '00';
+        if (
+            !is_numeric($Date[0]) || !is_numeric($Date[1]) || !is_numeric($Date[2])
+            || !is_numeric($Date[3]) || !is_numeric($Date[4])
+            || $Date[3] > 23 || $Date[4] > 59 || $Date[1] > 12 || $Date[3] > 31 || $Date[0] > 2099
+        )
+            throw new AppError(Language::$Data['WrongDateFormat']);
+        else $this->RemindDateEnd = $Date[0] . '-' . $Date[1] . '-' . $Date[2] . ' ' . $Date[3] . ':' . $Date[4] . ':00';
     }
 
     function setIDPerson($value) {
@@ -1526,7 +1373,6 @@ class Data extends DBObject {
             $Dati['RemindDateEnd'] = $row['RemindDateEnd'];
             $Dati['RemindTo'] = $row['RemindTo'];
             $Dati['Status'] = $row['Status'];
-            $Dati['Hidden'] = $row['Hidden'];
             $Dati['Changes'] = $row['Changes'];
             $Dati['DateShow'] = $row['DateShow'];
             $Dati['Date'] = $row['Date'];
@@ -1553,59 +1399,6 @@ class Data extends DBObject {
         return $result;
     }
 
-    function MyEntry($ID) {
-        $query = "SELECT IDUser FROM `Data` WHERE `ID`='" . $ID . "'";
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Data (' . __LINE__ . ')');
-        }
-
-        while ($row = $result->fetch_assoc()) {
-            $results = $row['IDUser'];
-        }
-        if ($_SESSION['User']->getStatus() < 3) {
-            return "0";
-        }
-
-        if ($_SESSION['User']->getStatus() >= 5) {
-            return "1";
-        } else {
-            if ($results == $_SESSION['User']->getID()) {
-                return "1";
-            }
-
-            if ($ID == 0) {
-                return "1";
-            }
-        }
-    }
-
-    function MyAdminEntry($ID) {
-        $query = "SELECT IDUser FROM `Data` WHERE `ID`='" . $ID . "'";
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Data (' . __LINE__ . ')');
-        }
-
-        while ($row = $result->fetch_assoc()) {
-            $results = $row['IDUser'];
-        }
-        if ($_SESSION['User']->getStatus() < 3) {
-            return "0";
-        }
-
-        if ($_SESSION['User']->getStatus() >= 5) {
-            return "1";
-        } else {
-            if ($results == $_SESSION['User']->getID()) {
-                return "1";
-            }
-
-            if ($ID == 0) {
-                return "1";
-            }
-        }
-    }
 
     function AutocompliteJosn($text) {
         $vowels = array("ē", "ū", "ī", "ā", "š", "ģ", "ķ", "ļ", "ž", "č", "ņ", "Ē", "Ū", "Ī", "Ā", "Š", "Ģ", "Ķ", "Ļ", "Ž", "Č", "Ņ");
@@ -1754,7 +1547,7 @@ class Data extends DBObject {
             $results['detalasID'] = $detalasID;
         }
 
-        $query2 = "SELECT PriceNote, PlaceTaken, Hours, TotalPrice, PlaceDone, Note, BookNote, AdminEdit FROM Data WHERE ID='" . $ID . "'";
+        $query2 = "SELECT PriceNote, PlaceTaken, Hours, TotalPrice, PlaceDone, Note, BookNote FROM Data WHERE ID='" . $ID . "'";
         $result2 = self::$DB->query($query2);
         $results2 = $result2->fetch_assoc();
 
@@ -1788,14 +1581,6 @@ class Data extends DBObject {
     }
 
     function SaveDetala($data) {
-        if ($_SESSION['User']->getStatus() < 99) {
-            if ($_POST['AdminEdit'] == "1") {
-                if ($_POST['pass'] != Config::EDIT_PASS) {
-                    return "Nepareiza parole";
-                }
-            }
-        }
-
         $query = 'UPDATE `noliktava` SET
                          `detalasID`="' . $data[detalasID] . '",
                          `daudzums`="' . $data[daudzums] . '",
@@ -1861,7 +1646,7 @@ class Data extends DBObject {
      * @author Jānis
      */
     function SaveNoliktava($Data) {
-        if ($data['IDType'] == Config::AddNoliktava || $data['IDType'] == Config::DelNoliktava) {
+        if ($Data['IDType'] == Config::AddNoliktava || $Data['IDType'] == Config::DelNoliktava) {
             $value = $Data['detalasID'];
             $value = (int)$value;
             if ($value == 0) throw new AppError(Language::$Data['SetIDDetaļas']);
@@ -1914,7 +1699,6 @@ class Data extends DBObject {
     function FormSave() {
         $Data = $this->getRow($_POST[ID]);
         $Data2 = $_POST;
-        $Data['pass'] = $Data2['pass'];
 
         foreach ($Data as $key => $value) {
             foreach ($Data2 as $key2 => $value2) {
@@ -1970,12 +1754,7 @@ class Data extends DBObject {
                LEFT JOIN Types T ON (T.ID=D.IDType)
                ';
 
-        if (!$_SESSION['isAdmin']) {
-            $where = ' WHERE D.`Status`=1 ' . (!empty($Filter) ? ' AND ( (' . implode(' AND ', $Filter) . ') )'                // $query .= ' WHERE D.`Status`=1 '.(!empty($Filter) ? ' AND ( ('.implode(' AND ',$Filter).') OR D.RemindTo='.$_SESSION['User']->getID().')'
-                : ' OR D.RemindTo=' . $_SESSION['User']->getID()) . ' AND D.Hidden = 0 ';
-        } else {
-            $where = !empty($Filter) ? 'WHERE ' . implode(' AND ', $Filter) : '';
-        }
+        $where = !empty($Filter) ? 'WHERE ' . implode(' AND ', $Filter) : '';
 
         if (!empty($_SESSION['Filter']['Search'])) {
             $search = explode(' ', trim($_SESSION['Filter']['Search']));

@@ -136,9 +136,7 @@ WHERE ID = "' . $Data['ID'] . '"';
                          `RemindDate`="' . $Data['From'] . '",
                          `RemindDateEnd`="' . $Data['To'] . '",
                          `RemindTo`="223",
-                         `Hidden`="' . (int)$Data['Hidden'] . '",
                          `allDay`="1",
-                         `AdminEdit`="' . (int)$Data['AdminEdit'] . '",
                          `Status`= "' . ($Data['Tpl'] == 1 ? '10' : '1') . '",
                          `Noma` = "1"';
 
@@ -258,26 +256,7 @@ VALUES (
         $Data['Banka'] = rawurldecode($Data['Banka']);
         $Data['Telefons'] = rawurldecode($Data['Telefons']);
 
-        if ($_SESSION['User']->getStatus() < 99) {
-            $Data['Rights'] = " mode : 'textareas',
-        theme : 'advanced',
-        fullscreen_new_window : true,
-         fullscreen_settings : {
-              theme_advanced_buttons1 : 'print,|,pagebreak,template,|,fullscreen',
-        },
-        plugins : 'pagebreak,save,print,template',
-        theme_advanced_buttons1 : 'save,print,|,pagebreak,template,|,fullscreen',
-        theme_advanced_buttons2 : '',
-        theme_advanced_buttons3 : '',
-        theme_advanced_buttons4 : '',
-        theme_advanced_toolbar_location : 'top',
-        theme_advanced_toolbar_align : 'left',
-        theme_advanced_statusbar_location : 'bottom',
-        theme_advanced_resizing : true,
-        template_external_list_url : '/js/noma_template_list.js',
-           ";
-        } else {
-            $Data['Rights'] =  '
+        $Data['Rights'] =  '
         mode : "textareas",
         theme : "advanced",
         fullscreen_new_window : true,
@@ -300,7 +279,6 @@ VALUES (
         // Drop lists for link/image/media/template dialogs
         template_external_list_url : "/js/noma_template_list.js",
         ';
-        }
 
         return $Data;
     }

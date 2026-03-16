@@ -432,10 +432,7 @@ function openCurrentFile(asImage) {
                 closeKeys: [27, 88, 67], // Array of keycodes to close Slimbox, default: Esc (27), 'x' (88), 'c' (67)
                 previousKeys: [37, 80], // Array of keycodes to navigate to the previous image, default: Left arrow (37), 'p' (80)
                 nextKeys: [39, 78], // Array of keycodes to navigate to the next image, default: Right arrow (39), 'n' (78)
-                allowEdit:
-                    typeof window._allowSlimboxEdits !== "undefined"
-                        ? window._allowSlimboxEdits
-                        : false,
+                allowEdit: true,
             });
         } else {
             //path = link.rel;

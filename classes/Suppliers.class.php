@@ -41,7 +41,6 @@ class Suppliers extends DBObject {
                 break;
 
             case 'Delete':
-                if (!$_SESSION['isAdmin']) return '';
                 $Supp = $this->getByID($_POST['ID']);
                 if (!$Supp || !$Supp->getID()) return Language::$Suppliers['NotFound'];
                 return $Supp->Delete();

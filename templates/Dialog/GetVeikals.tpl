@@ -9,7 +9,6 @@
 
                     <input style="display: none" id="rindasID" name="rindasID" type="text" value="[:rindasID:]"/>
                     <input style="display: none" id="SuperID" name="SuperID" type="text" value="[:SuperID:]"/>
-                    <input style="display: none" id="AdminEdit" name="AdminEdit" type="text" value="[:AdminEdit:]"/>
 
 <table  style="width: 27%;" border="0">
 <tr>

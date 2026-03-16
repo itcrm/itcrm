@@ -50,7 +50,6 @@
 <tr>
 <td><span>Piezīmes: </span></td>
 <td colspan="3"><textarea rows="5" cols="80"  class="light" name="Note">[:Note:]</textarea></td>
-<td><input type="checkbox" class="" style="width:15px; position:relative; top:2px; " value="1" name="Hidden"></td>
 
 </tr>
 <tr>

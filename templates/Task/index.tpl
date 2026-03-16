@@ -11,9 +11,6 @@
         var types = [ [:TypesList:] ];
         var users = [ [:UsersList:] ];
 
-        var usersAllowed = [ [:AllowedUsersList:] ];
-        var ordersAllowed = [ [:AllowedOrdersList:] ];
-        var typesAllowed = [ [:AllowedTypesList:] ];
 
         var TaskUsers =  [:TaskUsers:] ;
         var User = [:SelectUser:];

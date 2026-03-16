@@ -1,0 +1,520 @@
+-- CreateTable
+CREATE TABLE `Data` (
+    `ID` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `IDDoc` VARCHAR(250) NOT NULL DEFAULT '',
+    `IDUser` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDOrder` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `TextOrder` VARCHAR(250) NOT NULL DEFAULT '',
+    `IDType` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `TextType` VARCHAR(250) NOT NULL DEFAULT '',
+    `Sum` FLOAT NOT NULL DEFAULT 0.00,
+    `Hours` FLOAT NOT NULL DEFAULT 0.00,
+    `PlaceTaken` VARCHAR(400) NOT NULL DEFAULT '',
+    `PlaceDone` VARCHAR(400) NOT NULL DEFAULT '',
+    `IDPerson` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Note` MEDIUMTEXT NOT NULL DEFAULT '',
+    `Date` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `BookNote` MEDIUMTEXT NOT NULL DEFAULT '',
+    `TotalPrice` FLOAT NOT NULL DEFAULT 0.00,
+    `PriceNote` VARCHAR(250) NOT NULL DEFAULT '',
+    `AddDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `RemindDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `RemindDateEnd` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `RemindTo` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Status` TINYINT NOT NULL DEFAULT 0,
+    `Hidden` TINYINT NOT NULL DEFAULT 0,
+    `Changes` MEDIUMTEXT NOT NULL DEFAULT '',
+    `AdminEdit` TINYINT NOT NULL DEFAULT 0,
+    `allDay` BOOLEAN NOT NULL DEFAULT FALSE,
+    `Noma` INTEGER NOT NULL DEFAULT 0,
+    `Color` VARCHAR(32) NOT NULL DEFAULT '',
+    `NoteText` LONGTEXT NOT NULL DEFAULT '',
+
+    INDEX `AddDate`(`AddDate`),
+    INDEX `Date`(`Date`),
+    INDEX `IDDoc`(`IDDoc`),
+    INDEX `IDOrder`(`IDOrder`),
+    INDEX `IDPerson`(`IDPerson`),
+    INDEX `IDUser`(`IDUser`),
+    INDEX `TextOrder`(`TextOrder`),
+    INDEX `TextType`(`TextType`),
+    INDEX `Type`(`IDType`),
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Error` (
+    `ID` INTEGER NOT NULL AUTO_INCREMENT,
+    `Time` DATETIME(0) NOT NULL,
+    `User` INTEGER NOT NULL,
+    `Type` INTEGER NOT NULL,
+    `Url` VARCHAR(255) NOT NULL,
+    `Line` VARCHAR(50) NOT NULL,
+    `Message` VARCHAR(255) NOT NULL,
+
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Filters` (
+    `ID` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `Name` VARCHAR(50) NOT NULL DEFAULT '',
+    `Date` BOOLEAN NOT NULL DEFAULT false,
+    `DateType` BOOLEAN NOT NULL DEFAULT false,
+    `IDPerson` VARCHAR(255) NOT NULL DEFAULT '0',
+    `IDOperator` VARCHAR(255) NOT NULL DEFAULT '0',
+    `IDOrder` VARCHAR(255) NOT NULL DEFAULT '0',
+    `TextOrder` VARCHAR(50) NOT NULL DEFAULT '',
+    `IDType` VARCHAR(255) NOT NULL DEFAULT '0',
+    `TextType` VARCHAR(50) NOT NULL DEFAULT '',
+    `Sum` FLOAT NOT NULL DEFAULT 0,
+    `Hours` FLOAT NOT NULL DEFAULT 0,
+    `PlaceTaken` VARCHAR(250) NOT NULL DEFAULT '',
+    `PlaceDone` VARCHAR(250) NOT NULL DEFAULT '',
+    `Note` VARCHAR(255) NOT NULL DEFAULT '',
+    `BookNote` VARCHAR(255) NOT NULL DEFAULT '',
+    `AddDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `Status` TINYINT NOT NULL DEFAULT 0,
+    `Search` VARCHAR(255) NOT NULL DEFAULT '',
+
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Info` (
+    `IDData` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDSupplier` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDUser` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Info` VARCHAR(250) NOT NULL DEFAULT '',
+    `Color` VARCHAR(7) NOT NULL DEFAULT '',
+    `AddDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+
+    PRIMARY KEY (`IDData`, `IDSupplier`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Orders` (
+    `ID` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `IDUser` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Code` VARCHAR(50) NOT NULL DEFAULT '',
+    `Description` VARCHAR(200) NOT NULL DEFAULT '',
+    `Color` VARCHAR(20) NOT NULL DEFAULT '',
+    `AddDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `Status` TINYINT NOT NULL DEFAULT 0,
+    `Changes` TEXT NOT NULL DEFAULT '',
+
+    UNIQUE INDEX `Code`(`Code`),
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Rights` (
+    `IDUser` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Type` ENUM('Person', 'Order', 'Type', 'Folder') NOT NULL DEFAULT 'Person',
+    `Value` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (`IDUser`, `Type`, `Value`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RightsFilter` (
+    `IDUser` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDFilter` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (`IDUser`, `IDFilter`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RightsHide` (
+    `IDUser` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDPerson` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDOrder` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDType` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDFolder` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (`IDUser`, `IDPerson`, `IDOrder`, `IDType`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Suppliers` (
+    `ID` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `IDUser` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Name` VARCHAR(30) NOT NULL DEFAULT '',
+    `Description` VARCHAR(200) NOT NULL DEFAULT '',
+    `Color` VARCHAR(7) NOT NULL DEFAULT '',
+    `AddDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `Status` BOOLEAN NOT NULL DEFAULT false,
+
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Types` (
+    `ID` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `Code` VARCHAR(20) NOT NULL DEFAULT '',
+    `Description` VARCHAR(200) NOT NULL DEFAULT '',
+    `AddDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `Status` TINYINT NOT NULL DEFAULT 0,
+
+    UNIQUE INDEX `Code`(`Code`),
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Users` (
+    `ID` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `Login` VARCHAR(32) NOT NULL DEFAULT '',
+    `Password` VARCHAR(32) NOT NULL DEFAULT '',
+    `Color` VARCHAR(20) NOT NULL DEFAULT '',
+    `Name` VARCHAR(100) NOT NULL DEFAULT '',
+    `Phone` VARCHAR(100) NOT NULL DEFAULT '',
+    `AddDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `Status` TINYINT NOT NULL DEFAULT 0,
+    `add_order` VARCHAR(20) NOT NULL DEFAULT '0',
+    `add_r_bilde` VARCHAR(20) NOT NULL DEFAULT '0',
+    `add_files` VARCHAR(20) NOT NULL DEFAULT '0',
+    `OneDay` VARCHAR(20) NOT NULL DEFAULT '0',
+    `noliktava` INTEGER NOT NULL DEFAULT 0,
+    `MultiChange` INTEGER NOT NULL DEFAULT 0,
+    `DelFile` INTEGER NOT NULL DEFAULT 0,
+
+    UNIQUE INDEX `Login`(`Login`),
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `audit` (
+    `audit_id` INTEGER NOT NULL AUTO_INCREMENT,
+    `audit_time` INTEGER NULL,
+    `audit_uid` INTEGER NULL DEFAULT -1,
+    `audit_event` TEXT NULL,
+    `audit_ip` VARCHAR(255) NULL,
+    `audit_severity` SMALLINT NULL DEFAULT 0,
+    `audit_item` INTEGER NULL,
+    `audit_facility` INTEGER NULL,
+    `audit_subitem` INTEGER NULL DEFAULT 0,
+    `audit_backtrace` LONGTEXT NULL,
+    `audit_classname` VARCHAR(255) NULL,
+    `audit_instance` LONGTEXT NULL,
+    `audit_url` VARCHAR(255) NULL,
+
+    INDEX `idx_classname`(`audit_classname`),
+    INDEX `idx_item`(`audit_item`),
+    UNIQUE INDEX `idx_time_id`(`audit_time`, `audit_id`),
+    PRIMARY KEY (`audit_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `categories_linear` (
+    `id` INTEGER NOT NULL,
+    `level` INTEGER NULL,
+    `parent` INTEGER NULL,
+    `iorder` INTEGER NULL,
+    `title` VARCHAR(255) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `data_auditing` (
+    `ID` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ID_Row` INTEGER UNSIGNED NOT NULL,
+    `IDDoc` VARCHAR(250) NOT NULL DEFAULT '',
+    `IDUser` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDOrder` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `TextOrder` VARCHAR(250) NOT NULL DEFAULT '',
+    `IDType` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `TextType` VARCHAR(250) NOT NULL DEFAULT '',
+    `Sum` FLOAT NOT NULL DEFAULT 0.00,
+    `Hours` FLOAT NOT NULL DEFAULT 0.00,
+    `PlaceTaken` VARCHAR(400) NOT NULL DEFAULT '',
+    `PlaceDone` VARCHAR(400) NOT NULL DEFAULT '',
+    `IDPerson` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Note` MEDIUMTEXT NOT NULL,
+    `Date` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `BookNote` MEDIUMTEXT NOT NULL,
+    `TotalPrice` FLOAT NOT NULL DEFAULT 0.00,
+    `PriceNote` VARCHAR(250) NOT NULL DEFAULT '',
+    `AddDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `RemindDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `RemindDateEnd` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `RemindTo` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Status` TINYINT NOT NULL DEFAULT 0,
+    `Hidden` TINYINT NOT NULL DEFAULT 0,
+    `AdminEdit` TINYINT NOT NULL DEFAULT 0,
+    `allDay` BOOLEAN NOT NULL,
+    `Noma` INTEGER NOT NULL DEFAULT 0,
+    `Color` VARCHAR(32) NOT NULL,
+    `NoteText` LONGTEXT NOT NULL,
+
+    INDEX `AddDate`(`AddDate`),
+    INDEX `Date`(`Date`),
+    INDEX `IDDoc`(`IDDoc`),
+    INDEX `IDOrder`(`IDOrder`),
+    INDEX `IDPerson`(`IDPerson`),
+    INDEX `IDUser`(`IDUser`),
+    INDEX `TextOrder`(`TextOrder`),
+    INDEX `TextType`(`TextType`),
+    INDEX `Type`(`IDType`),
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `fileindex` (
+    `idx_id` BIGINT NOT NULL AUTO_INCREMENT,
+    `path` VARCHAR(255) NULL,
+    `filename` VARCHAR(255) NULL,
+    `type` TINYINT NULL,
+    `size` BIGINT NULL,
+    `date` DATETIME(0) NULL,
+    `updateDate` INTEGER NULL,
+
+    INDEX `idx_full`(`filename`(100), `path`(100)),
+    PRIMARY KEY (`idx_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `groups_linear` (
+    `id` INTEGER NOT NULL,
+    `level` INTEGER NULL,
+    `parent` INTEGER NULL,
+    `iorder` INTEGER NULL,
+    `title` VARCHAR(255) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `noliktava` (
+    `ID` INTEGER NOT NULL AUTO_INCREMENT,
+    `rindasID` INTEGER NOT NULL,
+    `detalasID` INTEGER NOT NULL,
+    `daudzums` FLOAT NOT NULL DEFAULT 0.00,
+    `type` INTEGER NOT NULL DEFAULT 0,
+    `Shop` INTEGER NOT NULL DEFAULT 0,
+    `ShopCategoryID` VARCHAR(255) NOT NULL,
+    `ShopDescription` VARCHAR(255) NOT NULL,
+    `ShopModelID` VARCHAR(255) NOT NULL,
+    `ShopTitle` VARCHAR(255) NOT NULL,
+    `OrginalCode` VARCHAR(255) NOT NULL,
+    `addition` INTEGER NOT NULL DEFAULT 100,
+    `offer` INTEGER NOT NULL DEFAULT 0,
+    `state` INTEGER NOT NULL DEFAULT 0,
+    `used` INTEGER NOT NULL DEFAULT 0,
+
+    UNIQUE INDEX `rindasID`(`rindasID`),
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `noma` (
+    `ID` INTEGER NOT NULL AUTO_INCREMENT,
+    `RowID` INTEGER NOT NULL,
+    `PersonID` INTEGER NOT NULL DEFAULT 0,
+    `AutoID` INTEGER NOT NULL DEFAULT 0,
+    `DayMony` INTEGER NOT NULL,
+    `From` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `To` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `Price` INTEGER NOT NULL DEFAULT 0,
+    `CautionMoney` INTEGER NOT NULL DEFAULT 0,
+    `Summ` INTEGER NOT NULL DEFAULT 0,
+    `GetLocation` VARCHAR(255) NOT NULL DEFAULT '0',
+    `ReturnLocation` VARCHAR(255) NOT NULL DEFAULT '0',
+    `Nr` VARCHAR(255) NOT NULL DEFAULT '0',
+    `ligums` MEDIUMTEXT NOT NULL,
+    `Akts` MEDIUMTEXT NOT NULL,
+    `Pielikums` MEDIUMTEXT NOT NULL,
+
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `nomasauto` (
+    `ID` INTEGER NOT NULL AUTO_INCREMENT,
+    `Nosaukums` VARCHAR(255) NOT NULL DEFAULT '',
+    `Reg_nr` VARCHAR(255) NOT NULL DEFAULT '',
+    `Sasija` VARCHAR(255) NOT NULL DEFAULT '',
+    `Reg_ap` VARCHAR(255) NOT NULL DEFAULT '',
+    `Vertiba` FLOAT NOT NULL DEFAULT 0.00,
+    `OrderID` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Status` INTEGER NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `parameters` (
+    `param_name` VARCHAR(255) NOT NULL DEFAULT '',
+    `param_value` TEXT NULL,
+    `param_id` INTEGER NOT NULL AUTO_INCREMENT,
+
+    UNIQUE INDEX `idx_param_name`(`param_name`),
+    PRIMARY KEY (`param_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `pavadzime` (
+    `ID` INTEGER NOT NULL AUTO_INCREMENT,
+    `DocID` INTEGER NOT NULL,
+    `Samaksa` TEXT NOT NULL,
+    `Sanemejs` TEXT NOT NULL,
+    `Atlaide` INTEGER NOT NULL,
+    `Izsniedza` TEXT NOT NULL,
+    `Kopa` FLOAT NOT NULL,
+    `atlaidessumma` FLOAT NOT NULL,
+    `PirmsNodokliem` FLOAT NOT NULL,
+    `PVN` FLOAT NOT NULL,
+    `Samaksai` FLOAT NOT NULL,
+    `SanemejaID` INTEGER NOT NULL,
+
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `pavadzime_preces` (
+    `ID` INTEGER NOT NULL AUTO_INCREMENT,
+    `DocID` INTEGER NOT NULL,
+    `Nosaukums` TEXT NOT NULL,
+    `Artikuls` TEXT NOT NULL,
+    `Daudzums` FLOAT NOT NULL,
+    `Mervieniba` TEXT NOT NULL,
+    `Cena` FLOAT NOT NULL,
+    `Summa` FLOAT NOT NULL,
+
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `photo_tagger` (
+    `ID` BIGINT NOT NULL AUTO_INCREMENT,
+    `photoid` INTEGER NOT NULL,
+    `y` FLOAT NOT NULL DEFAULT 0.0,
+    `width` FLOAT NOT NULL DEFAULT 0.0,
+    `height` FLOAT NOT NULL DEFAULT 0.0,
+    `message` TEXT NOT NULL,
+    `x` VARCHAR(20) NOT NULL,
+
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `sanemeji` (
+    `ID` INTEGER NOT NULL AUTO_INCREMENT,
+    `Nosaukums` VARCHAR(250) NOT NULL DEFAULT '',
+    `Kods` VARCHAR(250) NOT NULL DEFAULT '',
+    `Adrese` VARCHAR(250) NOT NULL DEFAULT '',
+    `Banka` VARCHAR(250) NOT NULL DEFAULT '',
+    `Konts` VARCHAR(250) NOT NULL DEFAULT '',
+    `Telefons` INTEGER NOT NULL,
+    `Epasts` VARCHAR(250) NOT NULL,
+    `Status` TINYINT NOT NULL DEFAULT 0,
+    `Changes` MEDIUMTEXT NOT NULL,
+
+    UNIQUE INDEX `Kods`(`Kods`),
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `session_storage` (
+    `session_id` VARCHAR(60) NOT NULL DEFAULT '0',
+    `session_param` VARCHAR(255) NOT NULL DEFAULT '',
+    `session_value` LONGTEXT NOT NULL,
+
+    INDEX `session_param`(`session_param`),
+    PRIMARY KEY (`session_id`, `session_param`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `telegram_users` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `users_id` INTEGER NOT NULL,
+    `users_login` VARCHAR(20) NOT NULL,
+    `tg_user` VARCHAR(100) NOT NULL,
+    `tg_chat_id` BIGINT NOT NULL,
+    `pas_nr` VARCHAR(45) NULL,
+
+    UNIQUE INDEX `tg_chat_id_UNIQUE`(`tg_chat_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `thumbcache` (
+    `thumb_id` INTEGER NOT NULL AUTO_INCREMENT,
+    `path` VARCHAR(255) NULL,
+    `width` INTEGER NULL,
+    `height` INTEGER NULL,
+    `filesize` INTEGER NULL,
+    `filedate` INTEGER NULL,
+
+    PRIMARY KEY (`thumb_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `data_test` (
+    `ID` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `IDDoc` VARCHAR(250) NOT NULL DEFAULT '',
+    `IDUser` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDOrder` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `TextOrder` VARCHAR(250) NOT NULL DEFAULT '',
+    `IDType` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `TextType` VARCHAR(250) NOT NULL DEFAULT '',
+    `Sum` FLOAT NOT NULL DEFAULT 0.00,
+    `Hours` FLOAT NOT NULL DEFAULT 0.00,
+    `PlaceTaken` VARCHAR(400) NOT NULL DEFAULT '',
+    `PlaceDone` VARCHAR(400) NOT NULL DEFAULT '',
+    `IDPerson` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Note` MEDIUMTEXT NOT NULL,
+    `Date` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `BookNote` MEDIUMTEXT NOT NULL,
+    `TotalPrice` FLOAT NOT NULL DEFAULT 0.00,
+    `PriceNote` VARCHAR(250) NOT NULL DEFAULT '',
+    `AddDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `RemindDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `RemindDateEnd` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `RemindTo` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `Status` TINYINT NOT NULL DEFAULT 0,
+    `Hidden` TINYINT NOT NULL DEFAULT 0,
+    `Changes` MEDIUMTEXT NOT NULL,
+    `AdminEdit` TINYINT NOT NULL DEFAULT 0,
+    `allDay` BOOLEAN NOT NULL,
+    `Noma` INTEGER NOT NULL DEFAULT 0,
+    `Color` VARCHAR(32) NOT NULL,
+    `NoteText` LONGTEXT NOT NULL,
+
+    INDEX `AddDate`(`AddDate`),
+    INDEX `Date`(`Date`),
+    INDEX `IDDoc`(`IDDoc`),
+    INDEX `IDOrder`(`IDOrder`),
+    INDEX `IDPerson`(`IDPerson`),
+    INDEX `IDUser`(`IDUser`),
+    INDEX `TextOrder`(`TextOrder`),
+    INDEX `TextType`(`TextType`),
+    INDEX `Type`(`IDType`),
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `filters_back` (
+    `ID` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `Name` VARCHAR(50) NOT NULL DEFAULT '',
+    `Date` BOOLEAN NOT NULL DEFAULT false,
+    `DateType` BOOLEAN NOT NULL DEFAULT false,
+    `IDPerson` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDOperator` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `IDOrder` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `TextOrder` VARCHAR(50) NOT NULL DEFAULT '',
+    `IDType` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    `TextType` VARCHAR(50) NOT NULL DEFAULT '',
+    `Sum` FLOAT NOT NULL DEFAULT 0,
+    `Hours` FLOAT NOT NULL DEFAULT 0,
+    `PlaceTaken` VARCHAR(250) NOT NULL DEFAULT '',
+    `PlaceDone` VARCHAR(250) NOT NULL DEFAULT '',
+    `Note` VARCHAR(255) NOT NULL DEFAULT '',
+    `BookNote` VARCHAR(255) NOT NULL DEFAULT '',
+    `AddDate` DATETIME(0) NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `Status` TINYINT NOT NULL DEFAULT 0,
+    `Search` VARCHAR(255) NOT NULL DEFAULT '',
+
+    PRIMARY KEY (`ID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+

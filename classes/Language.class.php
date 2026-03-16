@@ -12,11 +12,8 @@ class Language {
         'Types' => 'Tipi',
         'Orders' => 'Pasutījumi',
         'Filters' => 'Filtri',
-        'Rights' => 'Tiesības',
         'Logout' => 'Iziet',
         'msgConfirmDel' => 'Tiešām izdzēst?',
-        'msgDelPass' => 'Ievadiet dzēšanās paroli',
-        'WrongDelPass' => 'Nepareiza dzēšanās parole!',
         'Search' => 'Meklēt',
         'Tasks' => 'Uzdevumi',
         'Warehous' => 'Noliktava',
@@ -56,21 +53,7 @@ class Language {
         'Color' => 'Krāsa',
         'Name' => 'Vārds',
         'Phone' => 'Tālrunis',
-        'Rights' => 'Tiesības',
         'Acrions' => 'Darbības',
-        'Read' => 'Lasīt',
-        'ReadWrite' => 'Lasīt/Rakstīt',
-        'Admin' => 'Administrators',
-        'Deleted' => 'Nodzēsts',
-        'SuperUser' => 'Rakstīt/Labot',
-
-        'OrderAdmin' => 'Pas.Ad',
-        'R_bilde_Admin' => 'Pie.RB',
-        'File_Admin' => 'Pie.F',
-        'OneDay' => 'Re.Š',
-        'noliktava' => 'No.A',
-        'MultiChange' => 'Mu.L',
-        'DelFile' => 'Dz.F',
 
         'DuplicateLogin' => 'Tāds lietotājvārds jau eksistē!',
         'WrongLoginPassword' => 'Nepareizs logins vai parole',
@@ -99,7 +82,6 @@ class Language {
         'Actions' => 'Darbības',
         'SetCode' => 'Noradiet kodu',
         'OrderNotFound' => 'Pasūtījuma kods nav atrasts',
-        'NoRights' => 'Nepietiek tiesību!',
         'DuplicateEntry' => 'Tāds kods jau eksistē!',
         'Close' => 'Aizvert'
     );
@@ -162,17 +144,6 @@ class Language {
         'Name' => 'Nosaukums',
         'Note' => 'Piezīmes',
         'MoreData' => 'Papild. info',
-
-    );
-
-    public static $Rights = array(
-        'Title' => 'Tiesības',
-        'Persons' => 'Ievadītāji',
-        'Orders' => 'Pasutījumi',
-        'Types' => 'Tipi',
-        'Folders' => 'Faili',
-        'Delete' => '[del]',
-        'SetUser' => 'Lūdzu, izvēliet lietotāju!',
 
     );
 

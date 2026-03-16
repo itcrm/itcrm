@@ -64,26 +64,6 @@
  [:Content:]
 </table>
 
-<form id="AddFilterUsersForm" action="javascript:FilterRightsSave()" method="POST">
-<input type="hidden" id="IDFilter" name="IDFilter" />
-<table id="UsersList" cellpadding="2" cellspacing="0" width="20%" border="1" style="margin-left:1%; float:left;">
- <tr>
-   <td colspan="2" align="center" id="CurrentFilter">
-    &mdash;
-   </td>
-   <tr>
-   <td colspan="2" align="center">
-    <input type="submit" value="[[:Save:]]" />
-   </td>
- </tr>
- </tr>
- <tr>
-   <td width="50%" valign="top">[:Users1:]</td>
-   <td valign="top">[:Users2:]</td>
- </tr>
-
-</table>
-</form>
 
 <br/><br/>
  <script type="text/javascript">
@@ -91,9 +71,6 @@ var orders = [ [:OrdersList:] ];
 var types = [ [:TypesList:] ];
 var users = [ [:UsersList:] ];
 
-var usersAllowed = [ [:AllowedUsersList:] ];
-var ordersAllowed = [ [:AllowedOrdersList:] ];
-var typesAllowed = [ [:AllowedTypesList:] ];
 
  $(document).ready(function() {
      function split( val ) {

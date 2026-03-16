@@ -1,7 +1,6 @@
- <tr id="Data[:ID:]" class="Data [:Status:][:AdminEditClass:] [:HiddenClass:] [:Odd:] [:select:]" ondblclick="[:dblClick:]">
+ <tr id="Data[:ID:]" class="Data [:Status:] [:Odd:] [:select:]" ondblclick="[:dblClick:]">
     <td>
        <input type="checkbox" [:checked:] name="Row" value="[:ID:]" onClick="[:Function:]([:ID:])"/>
-       <span style="display:none" ID="AdminEdit[:ID:]">[:AdminEdit:]</span>
        </td>
 
     <td>
@@ -44,8 +43,6 @@
         <span id="PriceNote[:ID:]" class="light">[:PriceNote:]</span>
     </td>
     <td class="action">
-
-      <span class="hide" id="Hidden[:ID:]">[:Hidden:]</span>
 
      <!-- <a class="extra changes [:Changes:]" href="javascript:showChanges([:ID:]);  " id="changeBtn[:ID:]"></a> -->
 

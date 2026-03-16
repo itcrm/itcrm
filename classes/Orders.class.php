@@ -25,24 +25,20 @@ class Orders extends DBObject {
             case 'Filter':
                 return $this->setFilter();
             case 'Save':
-                if (!$_SESSION['User'] || $_SESSION['User']->getadd_order() == 0) return '';
+                if (!$_SESSION['User']) return '';
                 $ID = $this->Save();
                 if (is_numeric($ID)) {
                     $Order = $this->fetchRow($this->assignObject($this->getByID($ID)));
                     $Order['User'] = $_SESSION['User']->getLogin();
-                    $Rights = Rights::getRigthsByType('Order');
-                    if (!$Rights[$Order['ID']]) $Order['Restricted'] = '<b>!</b>';
                     return self::ArrayToJson(array(1, Template::Process('Row', $Order)));
                 }
                 return $ID;
             case 'Delete':
             case 'Restore':
-                if (!$_SESSION['User'] || $_SESSION['User']->getStatus() < 5) return '';
+                if (!$_SESSION['User']) return '';
                 $Order = $this->getByID($_POST['ID']);
                 if (!$Order || !$Order->getID())
                     return Language::$Orders['OrderNotFound'];
-                elseif (!$_SESSION['isAdmin'] && $Order->getIDUser() != $_SESSION['User']->getID())
-                    return Language::$Orders['NoRights'];
                 return $Order->Delete();
             default:
                 break;
@@ -60,7 +56,6 @@ class Orders extends DBObject {
         unset(self::$url[2]);
 
         $Vars['Content'] = $this->getOrdersList($Start);
-        $Vars['NoAdmin'] = $_SESSION['User']->getadd_order() == 0 ? 'hide' : '';
         $Vars['Sort'] = $_SESSION['Sort'] == '`ID` DESC' ? '' : '+';
         return Template::Process('index', $Vars);
     }
@@ -96,8 +91,7 @@ class Orders extends DBObject {
         $filter = $this->getFilter();
 
         $query = 'SELECT COUNT(*) FROM Orders '
-            . (!$_SESSION['isAdmin'] ? ' WHERE `Status`=1' . ($filter != '' ? ' AND ' . $filter : '')
-                : ($filter != '' ? ' WHERE ' . $filter : ''));
+            . ($filter != '' ? ' WHERE ' . $filter : '');
 
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Error on ' . get_class() . ' (' . __LINE__ . ')');
@@ -116,21 +110,16 @@ class Orders extends DBObject {
         $query = 'SELECT O.*, U.`Login` as User
                     FROM `Orders` O
                     LEFT JOIN Users U ON (O.IDUser=U.ID)
-                 ' . (!$_SESSION['isAdmin'] ? ' WHERE O.`Status`=1' . ($filter != '' ? ' AND ' . $filter : '')
-            : ($filter != '' ? ' WHERE ' . $filter : '')) . '
+                 ' . ($filter != '' ? ' WHERE ' . $filter : '') . '
                 ORDER BY O.' . $_SESSION['OrderSort'] . '
                 LIMIT ' . $Start . ',' . Config::PAGE_LENGTH;
 
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Orders (' . __LINE__ . ')');
         }
-        $Users = count(Users::getAsArray());
-        $Rights = Rights::getRigthsByType('Order');
         $Orders = array();
         while ($row = $result->fetch_assoc()) {
-            if (isset($Rights[$row['ID']]) && $Rights[$row['ID']] < $Users) $row['Restricted'] = '<b>!</b>';
             $Orders[] = $this->fetchRow($row);
-            $row['ID'] . '=' . (isset($Rights[$row['ID']]) ? intval($Rights[$row['ID']]) : 0) . '<br/>';
         }
 
         if (!empty($Orders)) {
@@ -143,7 +132,6 @@ class Orders extends DBObject {
     function fetchRow($row) {
         $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
         $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
-        $row['NoAdmin'] = $_SESSION['User']->getadd_order() == 0 ? 'hide' : '';
         $row['Changes'] = $row['Changes'] == '' ? 'hide' : '';
 
         return $row;
@@ -162,11 +150,8 @@ class Orders extends DBObject {
         return $orders;
     }
 
-    static function getAsArray($Orders = -1) {
-        if (is_array($Orders) && empty($Orders)) return '';
-
+    static function getAsArray() {
         $query = 'SELECT * FROM `Orders` WHERE `Status`=1
-                  ' . (is_array($Orders) ? ' AND ID IN (' . implode(',', $Orders) . ')' : '') . '
                    ORDER BY `Code`';
 
         if (!$result = self::$DB->query($query)) {
@@ -248,9 +233,6 @@ class Orders extends DBObject {
         if (empty($Err)) {
             if ($this->getID() < 1) $this->Add();
             else {
-                if ($this->getIDUser() != $_SESSION['User']->getID() && !$_SESSION['isAdmin'])
-                    return self::ArrayToJson(array(Language::$Orders['NoRights']));
-
                 $Data = $this->getById($_POST['ID']);
                 $Diffs = unserialize($Data->getChanges());
                 if (!is_array($Diffs))
@@ -289,9 +271,6 @@ class Orders extends DBObject {
         }
 
         $this->setID(self::$DB->insert_id);
-        if ($_POST['RightsAdd'] == 1)
-            Rights::addRights($this->getID(), 'Order');
-        Rights::addRights($this->getID(), 'Folder');
         file_get_contents('/faili/xml/sysrpc.php?cmd=createorder&orderId=' . $this->getID());
         include("faili/sysapi.php");
         $ID = $this->getCode();
@@ -308,10 +287,6 @@ class Orders extends DBObject {
                          `Changes`="' . addslashes($this->getChanges()) . '"
                    WHERE `ID`=' . (int)$this->getID();
 
-        if ($_POST['RightsDel'] == 1)
-            Rights::DeleteById($this->getID(), 'Order');
-        elseif ($_POST['RightsAdd'] == 1) Rights::addRights($this->getID(), 'Order');
-
         if (!self::$DB->query($query)) {
             throw new AppError('Update error on Orders (' . __LINE__ . ')');
         }
@@ -321,9 +296,7 @@ class Orders extends DBObject {
         $Status = self::$url[2] == 'Restore' ? 1 : -1;
 
         if ($this->getStatus() == -1 && $Status == -1) {
-            if ($_POST['pass'] != Config::DEL_PASS) return Language::$Main['WrongDelPass'];
             $query = 'DELETE FROM `Orders` WHERE `ID`=' . $this->getID();
-            Rights::DeleteById($this->getID(), 'Order');
         } else $query = 'Update `Orders`
                             SET `Status`=' . $Status . ' WHERE `ID`=' . $this->getID();
 

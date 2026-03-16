@@ -143,10 +143,8 @@ WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = 2362';
 
             $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
             $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
-            $row['HiddenClass'] = $row['Hidden'] == 1 ? 'hidden' : '';
             $row['Changes'] = $row['Changes'] == '' ? 'hide' : '';
             $row['order_title'] = urlencode($row['Order']);
-            $row['NoAdmin'] = $_SESSION['isAdmin'] ? '' : 'hide';
 
             if ($row['IDType'] == Config::Noliktava) $row['dblClick'] = 'getNolMatreals(this);';
 

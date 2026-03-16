@@ -111,9 +111,6 @@ div.clear {
 .deleted {
     color: #bbb;
 }
-.hidden {
-    border-right: 3px solid red;
-}
 .updated {
     color: #777;
 }
@@ -203,10 +200,6 @@ select {
 tr.onedit {
     background: #fc0;
 }
-tr.AdminEdit {
-    border-right: 3px solid blue;
-}
-
 tr.selected {
     background: khaki;
 }
@@ -314,10 +307,6 @@ a.icon-expand {
     position: static;
     text-align: center;
     width: 95%;
-}
-#tblRights tr td,
-#tblHideRights tr td {
-    text-align: center;
 }
 
 div.changes {

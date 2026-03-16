@@ -66,9 +66,6 @@ var orders = [ [:OrdersList:] ];
 var types = [ [:TypesList:] ];
 var users = [ [:UsersList:] ];
 
-var usersAllowed = [ [:AllowedUsersList:] ];
-var ordersAllowed = [ [:AllowedOrdersList:] ];
-var typesAllowed = [ [:AllowedTypesList:] ];
 
  $(document).ready(function() {
 

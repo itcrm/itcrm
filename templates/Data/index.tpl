@@ -26,8 +26,6 @@
         <option value="BookNote">Piezīmju teksts</option>
         <option value="TotalPrice">kop.</option>
         <option value="PriceNote">.</option>
-        <option value="AdminEdit">Labot tikai admin</option>
-        <option value="Hidden">Redzēt tikai admin</option>
 </select>
 <span>:</span> <input type= "text" name= "value" ID= "value">
 <input type="checkbox" title="Pievienot sākumā" id = "left" value="left" name="position">
@@ -40,7 +38,7 @@
 
 <div class="clear"><!--  --></div>
 
-<form id="AddDataForm" action="javascript:Save('Data'), editbox(0, this)" method="POST" class="[:NoAdmin:]"  style="padding-right: 17px; margin-left: 17px;" onkeydown="return rejectEnter(event)">
+<form id="AddDataForm" action="javascript:Save('Data'), editbox(0, this)" method="POST" style="padding-right: 17px; margin-left: 17px;" onkeydown="return rejectEnter(event)">
 <input type="text" name="ID" class="hide" />
 <table class="add" cellpadding="0" cellspacing="0" width="98%" border="1" align="center">
 <tr height="30">
@@ -50,12 +48,12 @@
     <select id="Tpl" name="Tpl" style="position:absolute; width:125px; height:18px; top:-2px; left:0px; display:none;" onchange="if($(this).val()>0) $('#newTplBtn').css('color','red'); else $('#newTplBtn').css('color',''); if($(this).val()>1) GetTpl($(this).val(),1); $(this).hide()">
             <option value="0">----</option>
             [:TplList:]
-            <option value="1" class="[:HidePeriods:]">[[:NewTpl:]]</option>
+            <option value="1">[[:NewTpl:]]</option>
     </select>
     </span>
         <input style="margin-left: 7px;" type="text" class="light" name="IDDoc" value="[[:IDDoc:]]"/><br/>
 
-    <span style="position:relative; top:0px; left:0px;" class="[:HidePeriods:]">
+    <span style="position:relative; top:0px; left:0px;">
         <a href="javascript:;" id="editTplBtn" onclick="$('#TplEdit').toggle();" style="position:absolute; left:-10px; top:1px;">E</a>
     <select id="TplEdit" style="position:absolute; width:125px; height:18px; top:-2px; left:0px; display:none;" onchange="if($(this).val()>0) { $('#editTplBtn').css('color','red'); GetTpl($(this).val()); $('select[name=Tpl]',this.form).val(1); } else $('#editTplBtn').css('color','');  $(this).hide()">
         <option value="0">----</option>
@@ -92,12 +90,10 @@
         <input type="text" class="light" name="PriceNote" value="[[:PriceNote:]]">
     </td>
     <td width="124">
-     <input type="checkbox"  title="Var labot tikai administrātors vai aizpildītājs."  class="" name="AdminEdit" value="1" style="width:15px; position:relative; top:2px; "/>
     <input type="submit" value="[[:Save:]]"  style="width:70px" onclick="addAutocomplete(); $('#newTplBtn, #editTplBtn').css('color','');" /><li onclick="event.returnValue = false;  MultiEdit(); return false;" style=" display:block; cursor: pointer; float: right; height: 16px;width: 16px;  list-style-type: none; margin: 2px;" title="" class="ui-state-default ui-corner-all">
             <span class="ui-icon ui-icon-check"> </span>
             <span class="text" style="display: none;">.ui-icon-circle-close</span>
         </li>
-    <br/><input type="checkbox" title="Slēp! Var redzēt tikai administrātors." name="Hidden" value="1" style="width:15px; position:relative; top:2px; " class="[:HidePeriods:]"/>
     <input style="width:70px;"  type="button" value="&mdash;" onclick="this.form.reset(); $('#newTplBtn, #editTplBtn').css('color',''); $('input:not(:button,:submit)',this.form).addClass('light'); $('#DataList .onedit').removeClass('onedit'); $('#FilterForm').removeClass('hideFilter'); $('input.active').removeClass('edit'); $('input.disabl').removeClass('edit'); editbox(0,this); $('#ievadeNoliktava').remove();  $('tr.Selected').removeClass('Selected').addClass('selected'); " />
   <!--  <span style="position:relative; top:0px; left:0px;">
         <a href="javascript:;" onclick="reversEdit()" style="position:absolute; right:-12px; top:0px;">A</a>
@@ -179,7 +175,7 @@
         <input style="width:99%;" type="text" name="BookNote" value="[:BookNote:]">
     </td>
     <td width="50">[:PriceTotal:]<br/>[[:TotalPrice:]]<br/>
-        <input type="text" name="TotalPrice" value="[:TotelPrice:]"><br/>
+        <input type="text" name="TotalPrice" value="[:TotalPrice:]"><br/>
         <input type="text" name="PriceNote" value="[:PriceNote:]">
     </td>
     <td width="124">[[:Actions:]]<br/>
@@ -239,7 +235,7 @@
       <div style="float:right; width:20%; padding-right:10px;">
             <input type="text" style="width:100%;" onkeyup="filterSuppliers(this.value)" id="filterSups"/>
       </div>
-      <form id="SupplierForm" action="javascript:SaveSupplier()" class="[:NoAdmin:]" onkeydown="return rejectEnter(event)" style="width:70%;">
+      <form id="SupplierForm" action="javascript:SaveSupplier()" onkeydown="return rejectEnter(event)" style="width:70%;">
          <input type="text" class="hide" name="ID" />
          <input type="hidden" name="IDData" />
 
@@ -250,9 +246,7 @@
          <input type="text" name="Color"  />
          <input type="submit" value="[[:Save:]]" />
          <input type="button" name="Reset" onclick="this.form.reset(); $('a',this.form).hide(); $(this).hide()" value="&mdash;" style="margin-left:7px; display:none;" />
-         <span class="[:NoAdmin:]">
-            <a class="extra delete hide" href="javascript:Delete($('#SupplierForm input[name=ID]').val(),'Suppliers');"></a>
-         </span>
+         <a class="extra delete hide" href="javascript:Delete($('#SupplierForm input[name=ID]').val(),'Suppliers');"></a>
       </form>
       <div class="clear"><!--  --></div>
       <div id="Suppliers">
@@ -510,9 +504,6 @@ var orders = [ [:OrdersList:] ];
 var types = [ [:TypesList:] ];
 var users = [ [:UsersList:] ];
 
-var usersAllowed = [ [:AllowedUsersList:] ];
-var ordersAllowed = [ [:AllowedOrdersList:] ];
-var typesAllowed = [ [:AllowedTypesList:] ];
 
  $(document).ready(function() {
 

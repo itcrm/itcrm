@@ -106,9 +106,8 @@ $(".delete").click(function(){
         <input type="text"  class="light ed" name="PriceNote" value="[:PriceNote:]">
     </td>
    <!--  <td width="25">
-    <input type="checkbox" title="Sl�p! Var redz�t tikai administr�tors." name="Hidden" value="0" style="width:15px; position:relative; top:2px; " class="">
     <input type="submit" onclick="addAutocomplete(); $('#newTplBtn, #editTplBtn').css('color','');" style="width:70px" value="Saglab�t"> -->
-    <!-- <br> <input type="checkbox" title="Var labot tikai administr�tors." class="" name="AdminEdit" value="0" style="width:15px; position:relative; top:2px; ">
+    <!-- <br>
      <input type="button" onclick="this.form.reset(); $('#newTplBtn, #editTplBtn').css('color',''); $('input:not(:button,:submit)',this.form).addClass('light'); $('#DataList .onedit').removeClass('onedit'); $('#FilterForm').removeClass('hideFilter'); $('input.active').removeClass('edit'); $('input.disabl').removeClass('edit'); editbox(0,this);  $('tr.Selected').removeClass('Selected').addClass('selected'); " value="&mdash;" style="width:70px;"> -->
     <!-- <span style="position:relative; top:0px; left:0px;">
         <a style="position:absolute; right:-12px; top:0px;" onclick="reversEdit()" href="javascript:;">A</a>

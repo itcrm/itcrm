@@ -16,20 +16,16 @@ class Types extends DBObject {
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
             case 'Save':
-                if (!$_SESSION['isAdmin']) return '';
                 $ID = $this->Save();
                 if (is_numeric($ID)) {
                     $Type = $this->assignObject($this->getByID($ID));
                     if ($Type['Status'] > -1) $Type['Deleted'] = 'hide';
                     else $Type['Status'] = 'deleted';
-                    $Rights = Rights::getRigthsByType('Type');
-                    if (empty($Rights[$Type['ID']])) $Type['Restricted'] = '<b>!</b>';
                     return self::ArrayToJson(array(1, Template::Process('Row', $Type)));
                 } else return $ID;
                 break;
             case 'Delete':
             case 'Restore':
-                if (!$_SESSION['isAdmin']) return '';
                 $Type = $this->getByID($_POST['ID']);
                 if (!$Type || !$Type->getID()) return Language::$Types['TypeNotFound'];
                 return $Type->Delete();
@@ -39,27 +35,21 @@ class Types extends DBObject {
                 $Vars['Content'] = $this->getTypesList();
                 break;
         }
-        $Vars['NoAdmin'] = $_SESSION['isAdmin'] ? '' : 'hide';
         return Template::Process('index', $Vars);
     }
 
     function getTypesList() {
         $query = 'SELECT * FROM `Types`
-                 ' . (!$_SESSION['isAdmin'] ? ' WHERE `Status`=1' : '') . '
                  ORDER BY `ID` DESC';
 
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Types (' . __LINE__ . ')');
         }
 
-        $Users = count(Users::getAsArray());
-        $Rights = Rights::getRigthsByType('Type');
         $Types = array();
         while ($row = $result->fetch_assoc()) {
-            if (isset($Rights[$row['ID']]) && $Rights[$row['ID']] < $Users) $row['Restricted'] = '<b>!</b>';
             $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
             $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
-            $row['NoAdmin'] = $_SESSION['isAdmin'] ? '' : 'hide';
             $Types[] = $row;
         }
 
@@ -83,11 +73,8 @@ class Types extends DBObject {
         return $types;
     }
 
-    static function getAsArray($Types = -1) {
-        if (is_array($Types) && empty($Types)) return '';
-
+    static function getAsArray() {
         $query = 'SELECT * FROM `Types` WHERE `Status`=1
-                 ' . (is_array($Types)  ?  ' AND ID IN (' . implode(',', $Types) . ')' : '') . '
                    ORDER BY `Code`';
 
         if (!$result = self::$DB->query($query)) {
@@ -132,8 +119,6 @@ class Types extends DBObject {
         }
 
         $this->setID(self::$DB->insert_id);
-        if (!empty($_POST['RightsAdd']))
-            Rights::addRights($this->getID(), 'Type');
 
         return $this->getID();
     }
@@ -144,10 +129,6 @@ class Types extends DBObject {
                          `Description`="' . addslashes($this->getDescription()) . '"
                    WHERE `ID`=' . (int)$this->getID();
 
-        if (!empty($_POST['RightsDel']))
-            Rights::DeleteById($this->getID(), 'Type');
-        elseif (!empty($_POST['RightsAdd'])) Rights::addRights($this->getID(), 'Type');
-
         if (!self::$DB->query($query)) {
             throw new AppError('Update error on Types (' . __LINE__ . ')');
         }
@@ -157,9 +138,7 @@ class Types extends DBObject {
         $Status = self::$url[2] == 'Restore' ? 1 : -1;
 
         if ($this->getStatus() == -1 && $Status == -1) {
-            if ($_POST['pass'] != Config::DEL_PASS) return Language::$Main['WrongDelPass'];
             $query = 'DELETE FROM `Types` WHERE `ID`=' . $this->getID();
-            Rights::DeleteById($this->getID(), 'Type');
         } else $query = 'Update `Types`
                             SET `Status`=' . $Status . ' WHERE `ID`=' . $this->getID();
 

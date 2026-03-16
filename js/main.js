@@ -83,20 +83,6 @@ function Save(Class) {
       if (r == false) {
         return false;
       }
-      //Tiek isaukta parole priekš AdminEdit
-      if (Admin != 1) {
-        if (
-          $("form#AddDataForm [name=AdminEdit]").attr("checked") ||
-          $("#AdminEdit" + ID).html() == "1"
-        ) {
-          var pass = prompt("Lai labotu ievadiet paroli");
-
-          if (pass == "") {
-            alert("Ievadiet paroli");
-            return false;
-          }
-        }
-      }
     }
   }
 
@@ -171,7 +157,7 @@ function Save(Class) {
     }
   };
   Loading(f, 1);
-  $.post(URL + "/" + Class + "/Save", data + "&pass=" + pass, success);
+  $.post(URL + "/" + Class + "/Save", data, success);
 }
 
 function Delete(ID, Class) {
@@ -187,21 +173,9 @@ function Delete(ID, Class) {
       }
     } else alert(answ);
   };
-  if (
-    typeof $("#restore" + ID)[0] == "undefined" ||
-    $("#restore" + ID).hasClass("hide")
-  ) {
-    if (confirm(MSG_CONFIRM_DEL) == true) {
-      Loading(0, 1);
-      $.post(URL + "/" + Class + "/Delete", data, success);
-    }
-  } else {
-    var pass = prompt(MSG_DEL_PASS);
-
-    if (pass != null) {
-      Loading(0, 1);
-      $.post(URL + "/" + Class + "/Delete", data + "&pass=" + pass, success);
-    }
+  if (confirm(MSG_CONFIRM_DEL) == true) {
+    Loading(0, 1);
+    $.post(URL + "/" + Class + "/Delete", data, success);
   }
 }
 
@@ -269,15 +243,9 @@ function filterAutocomplete(t) {
     Type = $("#FilterForm [name=TypeFilterSelect]");
     Type.val("");
 
-    if ($("#FilterForm [name=IDFilter]").val() > 0) {
-      var usersData = users;
-      var ordersData = orders;
-      var typesData = types;
-    } else {
-      var usersData = usersAllowed;
-      var ordersData = ordersAllowed;
-      var typesData = typesAllowed;
-    }
+    var usersData = users;
+    var ordersData = orders;
+    var typesData = types;
 
     if (idOperator) {
       var Soperator = idOperator.split(", ");
@@ -358,9 +326,9 @@ function filterAutocomplete(t) {
     var OperatorRez = "";
     var AOperator = Operator.split(", ");
     for (g in AOperator) {
-      for (k in usersAllowed) {
-        if (usersAllowed[k].name == AOperator[g]) {
-          OperatorRez = OperatorRez + usersAllowed[k].val + ", ";
+      for (k in users) {
+        if (users[k].name == AOperator[g]) {
+          OperatorRez = OperatorRez + users[k].val + ", ";
         }
       }
     }
@@ -371,9 +339,9 @@ function filterAutocomplete(t) {
     var PersonRez = "";
     var APerson = Person.split(", ");
     for (g in APerson) {
-      for (k in usersAllowed) {
-        if (usersAllowed[k].name == APerson[g]) {
-          PersonRez = PersonRez + usersAllowed[k].val + ", ";
+      for (k in users) {
+        if (users[k].name == APerson[g]) {
+          PersonRez = PersonRez + users[k].val + ", ";
         }
       }
     }
@@ -384,9 +352,9 @@ function filterAutocomplete(t) {
     var OrderRez = "";
     var AOrder = Order.split(", ");
     for (g in AOrder) {
-      for (k in ordersAllowed) {
-        if (ordersAllowed[k].name == AOrder[g]) {
-          OrderRez = OrderRez + ordersAllowed[k].val + ", ";
+      for (k in orders) {
+        if (orders[k].name == AOrder[g]) {
+          OrderRez = OrderRez + orders[k].val + ", ";
         }
       }
     }
@@ -397,9 +365,9 @@ function filterAutocomplete(t) {
     var TypeRez = "";
     var AType = Type.split(", ");
     for (g in AType) {
-      for (k in typesAllowed) {
-        if (typesAllowed[k].name == AType[g]) {
-          TypeRez = TypeRez + typesAllowed[k].val + ", ";
+      for (k in types) {
+        if (types[k].name == AType[g]) {
+          TypeRez = TypeRez + types[k].val + ", ";
         }
       }
     }
@@ -433,40 +401,6 @@ function showChanges(ID, Class) {
   $.post(URL + "/" + Class + "/Changes", data, success);
 }
 
-function showFilterUsers(ID) {
-  $("#UsersList input").attr("checked", false);
-  $("#CurrentFilter").html($("#Name" + ID).html());
-  $("#IDFilter").val(ID);
-
-  var data = "ID=" + ID;
-  success = function (answ) {
-    Loading(0, 0);
-    try {
-      answ = eval("(" + answ + ")");
-      if (answ[0] == 1) {
-        answ = answ[1].split(",");
-        for (i = 0, l = answ.length; i < l; i++)
-          $("#usr" + answ[i]).attr("checked", true);
-      } else alert(answ[1]);
-    } catch (ex) {
-      alert(answ);
-    }
-  };
-  Loading(0, 1);
-  $.post(URL + "/Rights/Filter", data, success);
-}
-
-function FilterRightsSave() {
-  f = $("#AddFilterUsersForm");
-  var data = readForm(f);
-
-  success = function (answ) {
-    Loading(f, 0);
-    if (answ != 1) alert(answ);
-  };
-  Loading(f, 1);
-  $.post(URL + "/Rights/Filter/Save", data, success);
-}
 
 function EditUser(ID) {
   $(":input:not(:checkbox)", "#AddUsersForm")
@@ -489,40 +423,6 @@ function EditUser(ID) {
 
   $("input[name=Name]", f).attr("value", tds[3].innerHTML);
   $("input[name=Phone]", f).attr("value", tds[4].innerHTML);
-  $("select[name=Status]", f).attr("value", $("#Status" + ID).html());
-  var add_order = tds[6].innerHTML;
-  var add_r_bilde = tds[7].innerHTML;
-  var add_files = tds[8].innerHTML;
-  var OneDay = tds[9].innerHTML;
-  var noliktavas_ap = tds[10].innerHTML;
-  var MultiChange = tds[11].innerHTML;
-  var DelFile = tds[12].innerHTML;
-
-  if (add_order == "Ir") {
-    $("#EditOrder").attr("checked", "checked");
-  }
-
-  if (add_r_bilde == "Ir") {
-    $("#Add_r_bilde").attr("checked", "checked");
-  }
-
-  if (add_files == "Ir") {
-    $("#Add_file").attr("checked", "checked");
-  }
-
-  if (OneDay == "Ir") {
-    $("#OneDay").attr("checked", "checked");
-  }
-
-  if (noliktavas_ap == "Ir") {
-    $("#noliktava_ap").attr("checked", "checked");
-  }
-  if (MultiChange == "Ir") {
-    $("#MultiChange").attr("checked", "checked");
-  }
-  if (DelFile == "Ir") {
-    $("#DelFile").attr("checked", "checked");
-  }
 }
 
 function EditType(ID) {
@@ -580,10 +480,6 @@ function EditData(ID, noEdit) {
     $("input[name=ID]", f).val(0);
   }
 
-  if ($("#AdminEdit" + ID).html() == "1") {
-    $("#AddDataForm input[name=AdminEdit]").prop("checked", true);
-  }
-
   $("input[name=IDDoc]", f).val($("#Doc" + ID).html());
   $("input[name=Date]", f).val($("#Date" + ID).html());
   $("input[name=PersonSelect]", f).val($("#Person" + ID).html());
@@ -602,10 +498,6 @@ function EditData(ID, noEdit) {
   $("input[name=RemindDate]", f).val($("#RemindDate" + ID).html());
   $("input[name=RemindDateEnd]", f).val($("#RemindDateEnd" + ID).html());
   $("input[name=RemindTo]", f).val($("#RemindTo" + ID).html());
-  $("input[name=Hidden]", f).prop(
-    "checked",
-    $("#Hidden" + ID).html() == 1 ? true : false
-  );
   if (typeof $("#RemindPerson").val() != "undefined")
     $("#RemindPerson").val($("#RemindTo" + ID).html());
 
@@ -647,124 +539,6 @@ function EditFilter(ID) {
   $("input[name=BookNote]", f).val($("#BookNote" + ID).html());
 
   $("input, select", f).removeClass("light");
-}
-
-function saveRight(Type) {
-  var data =
-    "IDUser=" +
-    $("#IDUser").val() +
-    "&Type=" +
-    Type +
-    "&Value=" +
-    $("#" + Type + "s").val();
-  success = function (answ) {
-    Loading(0, 0);
-    if (answ == "1") {
-      $("#Allowed" + Type + "s").html("&mdash;");
-    } else {
-      try {
-        answ = eval("(" + answ + ")");
-        if ($("#Allowed" + Type + "s").html() == "ā€”")
-          $("#Allowed" + Type + "s").html("");
-        $("#Allowed" + Type + "s").prepend(
-          answ[0].replace(/#VAL#/, $("#" + Type + "s :selected").text())
-        );
-      } catch (ex) {
-        alert(answ);
-      }
-    }
-  };
-  Loading(0, 1);
-  $.post(URL + "/Rights/Save", data, success);
-}
-
-function saveHideRights() {
-  var data =
-    "IDUser=" +
-    $("#IDUser").val() +
-    "&IDPerson=" +
-    $("#HidePersons").val() +
-    "&IDOrder=" +
-    $("#HideOrders").val() +
-    "&IDType=" +
-    $("#HideTypes").val() +
-    "&IDFolder=" +
-    $("#HideFolders").val();
-
-  success = function (answ) {
-    Loading(0, 0);
-    try {
-      answ = eval("(" + answ + ")");
-      answ[0] = answ[0].replace(/#Person#/, $("#HidePersons :selected").text());
-      answ[0] = answ[0].replace(/#Order#/, $("#HideOrders :selected").text());
-      answ[0] = answ[0].replace(/#Type#/, $("#HideTypes :selected").text());
-      answ[0] = answ[0].replace(/#Folder#/, $("#HideFolders :selected").text());
-      $("#tblHideRights").append(answ[0]);
-    } catch (ex) {
-      alert(answ);
-    }
-  };
-  Loading(0, 1);
-  $.post(URL + "/Rights/Hide/Save", data, success);
-}
-
-function RightHideDel(Person, Order, Type, Folder) {
-  var data =
-    "IDUser=" +
-    $("#IDUser").val() +
-    "&IDPerson=" +
-    Person +
-    "&IDOrder=" +
-    Order +
-    "&IDType=" +
-    Type +
-    "&IDFolder=" +
-    Folder;
-  success = function (answ) {
-    Loading(0, 0);
-    if (answ == 1) {
-      $("#row_" + Person + "_" + Order + "_" + Type + "_" + Folder).remove();
-    } else alert(answ);
-  };
-  Loading(0, 1);
-  $.post(URL + "/Rights/Hide/Delete", data, success);
-}
-
-function RightDel(Type, ID) {
-  var data = "IDUser=" + $("#IDUser").val() + "&Type=" + Type + "&Value=" + ID;
-  success = function (answ) {
-    Loading(0, 0);
-    if (answ == 1) {
-      $("#Right_" + Type + "_" + ID).remove();
-      if ($("#Allowed" + Type + "s").html() == "")
-        $("#Allowed" + Type + "s").html("&mdash;");
-    } else alert(answ);
-  };
-  Loading(0, 1);
-  $.post(URL + "/Rights/Delete", data, success);
-}
-
-function getUserRights(ID) {
-  var data = "IDUser=" + ID;
-  success = function (answ) {
-    Loading(0, 0);
-    try {
-      answ = eval("(" + answ + ")");
-      $.each(answ, function (k, v) {
-        if (k == "Hide") {
-          if (v != "") $("#tblHideRights").append(v);
-        } else {
-          if (v == "") v = "&mdash;";
-          $("#Allowed" + k).html(v);
-        }
-      });
-    } catch (ex) {
-      alert(answ);
-    }
-  };
-  $("#tblHideRights tr:gt(1)").remove();
-  Loading(0, 1);
-  $.post(URL + "/Rights/Get", data, success);
 }
 
 function FilterData(form) {
@@ -834,8 +608,9 @@ function changeDateInterval(val) {
   from = $("#FilterForm input[name=DateFrom]");
   to = $("#FilterForm input[name=DateTo]");
 
+  // Use UTC methods so filter dates match the server/DB timezone (UTC)
   monthDays = new Array();
-  isLeap = d.getFullYear() % 4 == 0;
+  isLeap = d.getUTCFullYear() % 4 == 0;
   for (i = 1; i < 13; i++) {
     if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
       monthDays[i] = 31;
@@ -847,61 +622,61 @@ function changeDateInterval(val) {
   }
 
   if (val == 1) {
-    month = d.getMonth() + 1;
-    dateFrom = d.getDate();
-    dateTo = d.getDate() + 1;
+    month = d.getUTCMonth() + 1;
+    dateFrom = d.getUTCDate();
+    dateTo = d.getUTCDate() + 1;
 
-    from.val(d.getFullYear() + "-" + month + "-" + dateFrom);
-    to.val(d.getFullYear() + "-" + month + "-" + dateTo);
+    from.val(d.getUTCFullYear() + "-" + month + "-" + dateFrom);
+    to.val(d.getUTCFullYear() + "-" + month + "-" + dateTo);
   } else if (val == 2) {
-    if (d.getDate() - 7 < 0 && d.getMonth() == 0) {
-      year = d.getFullYear() - 1;
+    if (d.getUTCDate() - 7 < 0 && d.getUTCMonth() == 0) {
+      year = d.getUTCFullYear() - 1;
       month = 12;
-      date = monthDays[month] + (d.getDate() - 7);
-    } else if (d.getDate() - 7 < 0) {
-      year = d.getFullYear();
-      month = d.getMonth();
-      date = monthDays[month] + (d.getDate() - 7);
+      date = monthDays[month] + (d.getUTCDate() - 7);
+    } else if (d.getUTCDate() - 7 < 0) {
+      year = d.getUTCFullYear();
+      month = d.getUTCMonth();
+      date = monthDays[month] + (d.getUTCDate() - 7);
     } else {
-      year = d.getFullYear();
-      month = d.getMonth() + 1;
-      date = d.getDate() - 7;
+      year = d.getUTCFullYear();
+      month = d.getUTCMonth() + 1;
+      date = d.getUTCDate() - 7;
     }
 
-    monthTo = d.getMonth() + 1;
+    monthTo = d.getUTCMonth() + 1;
     monthFrom = month;
-    dateTo = d.getDate() + 1;
+    dateTo = d.getUTCDate() + 1;
     dateFrom = date;
 
     from.val(year + "-" + monthFrom + "-" + dateFrom);
-    to.val(d.getFullYear() + "-" + monthTo + "-" + dateTo);
+    to.val(d.getUTCFullYear() + "-" + monthTo + "-" + dateTo);
   } else if (val == 3) {
-    if (d.getMonth() == 0) {
-      year = d.getFullYear() - 1;
+    if (d.getUTCMonth() == 0) {
+      year = d.getUTCFullYear() - 1;
       month = 12;
     } else {
-      year = d.getFullYear();
-      month = d.getMonth();
+      year = d.getUTCFullYear();
+      month = d.getUTCMonth();
     }
 
     month = month;
-    monthTo = d.getMonth() + 1;
-    dateFrom = d.getDate() + 1;
-    dateTo = d.getDate() + 1;
+    monthTo = d.getUTCMonth() + 1;
+    dateFrom = d.getUTCDate() + 1;
+    dateTo = d.getUTCDate() + 1;
 
     from.val(year + "-" + month + "-" + dateFrom);
-    to.val(d.getFullYear() + "-" + monthTo + "-" + dateTo);
+    to.val(d.getUTCFullYear() + "-" + monthTo + "-" + dateTo);
   } else if (val == 4) {
-    month = d.getMonth() + 1;
-    dateFrom = d.getDate() + 1;
-    dateTo = d.getDate() + 1;
+    month = d.getUTCMonth() + 1;
+    dateFrom = d.getUTCDate() + 1;
+    dateTo = d.getUTCDate() + 1;
 
-    from.val(d.getFullYear() - 1 + "-" + month + "-" + dateFrom);
-    to.val(d.getFullYear() + "-" + month + "-" + dateTo);
+    from.val(d.getUTCFullYear() - 1 + "-" + month + "-" + dateFrom);
+    to.val(d.getUTCFullYear() + "-" + month + "-" + dateTo);
   } else if (val == 5) {
-    month = d.getMonth() + 1;
-    dateFrom = d.getDate() + 1;
-    year = d.getFullYear();
+    month = d.getUTCMonth() + 1;
+    dateFrom = d.getUTCDate() + 1;
+    year = d.getUTCFullYear();
 
     from.val("2000-1-1");
     to.val(year + "-" + month + "-" + dateFrom);
@@ -1699,18 +1474,6 @@ function NoliktavaDialogSave() {
 
   var data = $("#MatrealsDialogForm").serialize();
   var ID = $("#MatrealsDialogForm #rindasID").val();
-  var AdminEdit = $("#MatrealsDialogForm #AdminEdit").val();
-
-  if (Admin != 1) {
-    if (AdminEdit == 1) {
-      var pass = prompt("Lai labotu ievadiet paroli");
-
-      if (pass == "") {
-        alert("Ievadiet paroli");
-        return;
-      }
-    }
-  }
 
   success = function (answ) {
     Loading(0, 0);
@@ -1723,7 +1486,7 @@ function NoliktavaDialogSave() {
 
     if (answ[0] == 1) {
       //$('#Data'+ID).replaceWith(answ[1]);
-      SaveForm(pass);
+      SaveForm();
       $("#DialogForm").dialog("close");
       $("#DialogForm").remove();
       $("div#scrollDiv").append('<div id="DialogForm"></div>');
@@ -1733,7 +1496,7 @@ function NoliktavaDialogSave() {
   };
 
   Loading(0, 1);
-  $.post(URL + "/Data/SaveDetala", data + "&pass=" + pass, success);
+  $.post(URL + "/Data/SaveDetala", data, success);
 }
 
 function clerNoliktava() {
@@ -1875,25 +1638,14 @@ function ChangeField() {
       $(".SelectChange [name=values]").autocomplete("destroy");
       $(".SelectChange #ID").remove();
     }
-    if (val2 == "Hidden" || val2 == "AdminEdit") {
-      $(".SelectChange #value").remove();
-      $("form.SelectChange span").after(
-        '<input id="value" type="checkbox" value="1" name="value">'
-      );
-
-      $("form.SelectChange #replace").attr("checked", true);
-      $("form.SelectChange input:checkbox").attr("disabled", true);
-      $("form.SelectChange #value").attr("disabled", false);
-    } else {
-      $(".SelectChange #value").remove();
-      $("form.SelectChange span").after(
-        '<input type="text" id="value" name="value">'
-      );
-      $(".SelectChange #value").attr("name", "value");
-      $("form.SelectChange #replace").attr("checked", false);
-      $("form.SelectChange input:checkbox").attr("disabled", false);
-      //$(".SelectChange #value").attr("name",val)
-    }
+    $(".SelectChange #value").remove();
+    $("form.SelectChange span").after(
+      '<input type="text" id="value" name="value">'
+    );
+    $(".SelectChange #value").attr("name", "value");
+    $("form.SelectChange #replace").attr("checked", false);
+    $("form.SelectChange input:checkbox").attr("disabled", false);
+    //$(".SelectChange #value").attr("name",val)
   }
 }
 
@@ -2034,7 +1786,7 @@ function UnCeckAllRow() {
   );
 }
 
-function SaveForm(password) {
+function SaveForm() {
   var ID = $("form#MatrealsDialogForm input#rindasID").val();
   var Sum = $("form#MatrealsDialogForm input#daudzums").val();
   var Data = $("form#MatrealsDialogForm").serialize();
@@ -2049,7 +1801,7 @@ function SaveForm(password) {
     $("#Data" + ID).replaceWith(answ[1]);
   };
   Loading(0, 1);
-  $.post("/lv/Data/FormSave", Data + "&pass=" + password, success);
+  $.post("/lv/Data/FormSave", Data, success);
 }
 
 function editfil(ID) {
@@ -2217,15 +1969,3 @@ function HTMLFilter(selector, query) {
   });
 }
 
-function AddPictureChangeForm() {
-  var FormData = $("Form#AdminEditProtect").serializeArray();
-  $.ajax({
-    type: "POST",
-    cache: false,
-    url: "/lv/Josn/AdminEditProtect",
-    data: FormData,
-    success: function (data) {
-      $("#DialogForm").html(data);
-    },
-  });
-}

@@ -476,7 +476,6 @@ WHERE ID = "' . $ID . '"';
         $Cont['RemindDate'] = '';
         $Cont['Note'] = $Title . '; ' . $Code . '; ' . $Adress . '; ' . $Bank . '; ' . $Account . '; ' . $Phone . '; ' . $Mail;
         $Cont['Date'] = date('Y-m-d H:i:s');
-        $Cont['AdminEdit'] = '1';
         $_POST = $Cont;
         $data = new Data;
         $data->Save();

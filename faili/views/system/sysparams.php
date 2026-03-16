@@ -3,10 +3,6 @@
 class CVSysParams {
     function render() {
         global $_core;
-        $admin = $_core->user->status == 99;
-        if (!$admin) {
-            return '<div id="error">Pieeja liegta!</div>';
-        }
 
         $q = new CQuery("SELECT * FROM parameters ORDER BY param_name");
 

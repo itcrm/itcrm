@@ -3,13 +3,10 @@
 class Config {
     const ROOT_URL = "";
 
-    const DB_HOST_NAME = "localhost";
-    const DB_USER_NAME = "YOUR_MARIADB_USER";
-    const DB_PASSWORD = "YOUR_MARIADB_PASSWORD";
-    const DB_DATABASE_NAME = "YOUR_MARIADB_DATABASE";
-
-    const DEL_PASS = "rkm69g";
-    const EDIT_PASS = "1qwqa";
+    const DB_HOST_NAME = _DB_HOST;
+    const DB_USER_NAME = _DB_USER;
+    const DB_PASSWORD = _DB_PASS;
+    const DB_DATABASE_NAME = _DB_NAME;
 
     // PARAMS
     const SHOW_PERIOD = -2; // days

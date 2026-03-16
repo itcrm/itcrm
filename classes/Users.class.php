@@ -9,13 +9,6 @@ class Users extends DBObject {
     private $Phone;
     private $AddDate;
     private $Status;
-    private $add_order;
-    private $add_r_bilde;
-    private $add_files;
-    private $OneDay;
-    private $noliktava;
-    private $MultiChange;
-    private $DelFile;
 
     function __construct() {
         foreach ($this as $k => $v) {
@@ -62,11 +55,6 @@ class Users extends DBObject {
                 return Language::$Users['UserDisabled'];
             else {
                 $_SESSION['User'] = $this;
-                $_SESSION['isAdmin'] = $this->getStatus() == 99;
-                $_SESSION['Rights'] = Rights::getRightsArr($_SESSION['User']->getID());
-                if ($_SESSION['Rights']['Persons'] == '') $_SESSION['Rights']['Persons'] = array(-1);
-                if ($_SESSION['Rights']['Orders'] == '') $_SESSION['Rights']['Orders'] = array(-1);
-                if ($_SESSION['Rights']['Types'] == '') $_SESSION['Rights']['Types'] = array(-1);
             }
 
             return 1;
@@ -77,7 +65,6 @@ class Users extends DBObject {
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
             case 'Save':
-                if (!$_SESSION['isAdmin']) return '';
                 $ID = $this->Save();
                 if (is_numeric($ID)) {
                     $User = $this->fetchRow($this->assignObject($this->getByID($ID)));
@@ -89,9 +76,8 @@ class Users extends DBObject {
                 break;
             case 'Delete':
             case 'Restore':
-                if (!$_SESSION['isAdmin']) return '';
                 $User = $this->getByID($_POST['ID']);
-                if (!$User || !$User->getID() || $User->getStatus() == '99') return Language::$Users['UserNotFound'];
+                if (!$User || !$User->getID()) return Language::$Users['UserNotFound'];
                 return $User->Delete();
                 break;
             default:
@@ -99,13 +85,11 @@ class Users extends DBObject {
                 $Vars['Content'] = $this->getUsersList();
                 break;
         }
-        $Vars['NoAdmin'] = $_SESSION['isAdmin'] ? '' : 'hide';
         return Template::Process('index', $Vars);
     }
 
     function getUsersList() {
         $query = 'SELECT * FROM `Users`
-                 ' . (!$_SESSION['isAdmin'] ? ' WHERE `Status`<99' : '') . '
                  ORDER BY `Status` DESC';
 
         if (!$result = self::$DB->query($query)) {
@@ -124,24 +108,8 @@ class Users extends DBObject {
     }
 
     function fetchRow($row) {
-        $StatusTexts = array(
-            -1 => Language::$Users['Deleted'],
-            1 => Language::$Users['Read'],
-            4 => Language::$Users['SuperUser'],
-            5 => Language::$Users['ReadWrite'],
-            99 => Language::$Users['Admin']
-        );
         $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
         $row['RowClass'] = $row['Status'] == -1 ? 'deleted' : '';
-        $row['StatusText'] = isset($StatusTexts[$row['Status']]) ? $StatusTexts[$row['Status']] : '';
-        $row['NoAdmin'] = $_SESSION['isAdmin'] ? '' : 'hide';
-        $row['add_order'] = $row['add_order'] == 0 ? 'Nav' : 'Ir';
-        $row['add_r_bilde'] = $row['add_r_bilde'] == 0 ? 'Nav' : 'Ir';
-        $row['add_files'] = $row['add_files'] == 0 ? 'Nav' : 'Ir';
-        $row['OneDay'] = $row['OneDay'] == 0 ? 'Nav' : 'Ir';
-        $row['noliktava'] = $row['noliktava'] == 0 ? 'Nav' : 'Ir';
-        $row['MultiChange'] = $row['MultiChange'] == 0 ? 'Nav' : 'Ir';
-        $row['DelFile'] = $row['DelFile'] == 0 ? 'Nav' : 'Ir';
 
         return $row;
     }
@@ -161,16 +129,8 @@ class Users extends DBObject {
         return $users;
     }
 
-    static function getAsArray($Users = -1) {
-        if (is_array($Users) && empty($Users)) return '';
-
-        $query = 'SELECT * FROM `Users` WHERE `Status`>-2 '
-            . ($Users == 1
-                ? 'AND Status<99'
-                : (is_array($Users)
-                    ? ' AND ID IN (' . implode(',', $Users) . ')'
-                    : '')
-            ) . '
+    static function getAsArray() {
+        $query = 'SELECT * FROM `Users` WHERE `Status`>-2
                    ORDER BY `Login`';
 
         if (!$result = self::$DB->query($query)) {
@@ -201,14 +161,6 @@ class Users extends DBObject {
             if ($this->getID() < 1) $this->Add();
             else $this->Update();
 
-            if ($_POST['CopyRights'] == 1) {
-                if ($_POST['ID'] == 0) {
-                    $_POST['ID'] = $this->getID();
-                }
-
-                $this->CopyRights($this->getID(), $_POST['FromID']);
-            }
-
             return $this->getID();
         } else {
             $Err[0] = 0;
@@ -224,25 +176,13 @@ class Users extends DBObject {
                          `Name`="' . addslashes($this->getName()) . '",
                          `Phone`="' . addslashes($this->getPhone()) . '",
                          `AddDate`=NOW(),
-                         `Status`=' . (int)$this->setStauts() . ',
-                         `add_order`=' . (int)$this->getadd_order() . ',
-                         `add_r_bilde`=' . (int)$this->getadd_r_bilde() . ',
-                         `add_files`=' . (int)$this->getadd_files() . ',
-                         `OneDay`=' . (int)$this->getOneDay() . ',
-                         `noliktava`=' . (int)$this->getnoliktava() . ',
-                         `DelFile`=' . (int)$this->getDelFile() . ',
-                         `MultiChange`=' . (int)$this->getMultiChange();
+                         `Status`=99';
 
         if (!self::$DB->query($query)) {
             throw new AppError('Write error on Users (' . __LINE__ . ') ');
         }
 
         $this->setID(self::$DB->insert_id);
-        if ($_POST['RightsAdd'] == 1)
-            Rights::addRightsToUser($this->getID());
-
-        if ($_POST['RightsUserAdd'] == 1)
-            Rights::addUsersToUser($this->getID());
 
         return $this->getID();
     }
@@ -255,26 +195,8 @@ class Users extends DBObject {
             : '') . '
                          `Color`="' . addslashes($this->getColor()) . '",
                          `Name`="' . addslashes($this->getName()) . '",
-                         `Phone`="' . addslashes($this->getPhone()) . '",
-                         `Status`=' . (int)$this->getStatus() . ',
-                         `add_order`=' . (int)$this->getadd_order() . ',
-                         `add_r_bilde`=' . (int)$this->getadd_r_bilde() . ',
-                         `add_files`=' . (int)$this->getadd_files() . ',
-                         `OneDay`=' . (int)$this->getOneDay() . ',
-                         `noliktava`=' . (int)$this->getnoliktava() . ',
-                         `DelFile`=' . (int)$this->getDelFile() . ',
-                         `MultiChange`=' . (int)$this->getMultiChange() . '
+                         `Phone`="' . addslashes($this->getPhone()) . '"
                    WHERE `ID`=' . (int)$this->getID();
-
-        if ($_POST['RightsDel'] == 1)
-            Rights::DeleteByUser($this->getID());
-        elseif ($_POST['RightsAdd'] == 1) Rights::addRightsToUser($this->getID());
-
-        if ($_POST['RightsUserAdd'] == 1)
-            Rights::addUsersToUser($this->getID());
-
-        if ($_POST['RightsAddAllUser'] == 1)
-            Rights::addUserToUsers($this->getID());
 
         if (!self::$DB->query($query)) {
             throw new AppError('Update error on Users (' . __LINE__ . ')');
@@ -285,10 +207,7 @@ class Users extends DBObject {
         $Status = self::$url[2] == 'Restore' ? 1 : -1;
 
         if ($this->getStatus() == -1 && $Status == -1) {
-            if ($_POST['pass'] != Config::DEL_PASS) return Language::$Main['WrongDelPass'];
             $query = 'DELETE FROM `Users` WHERE `ID`=' . $this->getID();
-            Rights::DeleteById($this->getID(), 'Person');
-            Rights::DeleteFilterRights($this->getID());
         } else $query = 'Update `Users`
                             SET `Status`=' . $Status . ' WHERE `ID`=' . $this->getID();
 
@@ -346,24 +265,4 @@ class Users extends DBObject {
         return $results;
     }
 
-    function CopyRights($ID, $FromID) {
-        if ($ID != $FromID) {
-            $query = "
-    INSERT INTO `Rights` (`IDUser`, `Type`, `Value`)
-SELECT '" . $ID . "', `Type`, `Value`
-FROM   `Rights`
-WHERE IDUser = '" . $FromID . "'";
-            if (!self::$DB->query($query)) {
-                throw new AppError('Clone Rights error on Users (' . __LINE__ . ')');
-            }
-
-            $user = $this->GetUserByID($FromID);
-
-            $query = "UPDATE `Users` SET Phone=CONCAT(Phone, ' +" . $user . "') where `ID` = " . $ID;
-
-            if (!self::$DB->query($query)) {
-                throw new AppError('Clone LOG error on Users (' . __LINE__ . ')');
-            }
-        }
-    }
 }

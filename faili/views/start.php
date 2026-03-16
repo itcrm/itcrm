@@ -233,12 +233,8 @@ class CVStart {
 
         $out .= '<br class="c"/>';
 
-        $allowSlimboxEdits = (CFileManagerEx::checkSlimboxEdit()) ? 1 : 0;
-
         register_script('scripts/wheel.js');
         register_startup('
-            window._allowSlimboxEdits = ' . ($allowSlimboxEdits) . ';
-
             window.addEvent("domready", function() {
                 initLoadingOverlay();
 
@@ -278,7 +274,7 @@ class CVStart {
             $subPath = iconv('utf-8', 'windows-1257', $subPath);
         }
 
-        if (!CFileManagerEx::checkCurrentUser() || !CFileManagerEx::checkPath($subPath, true)) {
+        if (!CFileManagerEx::checkPath($subPath, true)) {
             return '<div class="error" id="error">Pieeja liegta!</div>';
         }
 

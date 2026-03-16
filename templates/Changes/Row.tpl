@@ -1,7 +1,6 @@
- <tr id="Data[:ID:]" class="Data [:Status:] [:AdminEditClass:] [:HiddenClass:] [:Odd:] [:select:]" ondblclick="[:dblClick:]">
+ <tr id="Data[:ID:]" class="Data [:Status:] [:Odd:] [:select:]" ondblclick="[:dblClick:]">
     <td>
        <input type="checkbox" [:checked:] name="Row" value="[:ID:]" onClick="[:Function:]([:ID:])"/>
-       <span style="display:none" ID="AdminEdit[:ID:]">[:AdminEdit:]</span>
     </td>
     <td>
        <span class="light" id="Doc[:ID:]">[:IDDoc:]</span>

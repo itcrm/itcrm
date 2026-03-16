@@ -1,5 +1,5 @@
 <div style="float:right; padding-right:10px; font-size:14px;">
-  <form name="SearchForm" action="[:URL:]/Data/Search" method="POST" style="display:block; float:left; display:[:NoAdmin:]">
+  <form name="SearchForm" action="[:URL:]/Data/Search" method="POST" style="display:block; float:left;">
     <input type="text" name="Search" value="[:SearchStr:]" style="width:150px;"/>&nbsp;
     <select name="Period">
       <option value="99" [:SearchP99:]>[[:AllPeriod:]]</option>
@@ -47,7 +47,6 @@
 <a class="menu" href="[:URL:]/Users">[[:Users:]]</a>
 <a class="menu" href="[:URL:]/Types">[[:Types:]]</a>
 <a class="menu" href="[:URL:]/Orders">[[:Orders:]]</a>
-<a class="menu" style="display:[:NoAdmin:]" href="[:URL:]/Filters">[[:Filters:]]</a>
-<a class="menu" href="[:URL:]/Rights">[[:Rights:]]</a>
+<a class="menu"  href="[:URL:]/Filters">[[:Filters:]]</a>
 <a class="menu" href="[:URL:]/Task">[[:Tasks:]]</a>
 <a class="menu" href="[:URL:]/Warehous">[[:Warehous:]]</a>

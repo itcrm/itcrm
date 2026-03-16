@@ -141,14 +141,7 @@ class Josn extends DBObject {
             case 'AddPicture':
                 $Send['ID'] = $_POST['ID'];
                 $Data = Data::getRow($_POST['ID']);
-                if ($Data['AdminEdit'] == 1 && $_SESSION['isAdmin'] != 1) {
-                    print Template::Process('/Dialog/ProtectForm', $Send);
-                } else {
-                    print Template::Process('/Dialog/AddPicture', $Data);
-                }
-                die;
-            case 'AdminEditProtect':
-                print $this->AdminEditProtect($_POST['ID'], $_POST['passwd']);
+                print Template::Process('/Dialog/AddPicture', $Data);
                 die;
             case 'ErrorLogger':
                 print $this->ErrorLogger($_POST);
@@ -157,13 +150,8 @@ class Josn extends DBObject {
     }
 
     function GetFilterOrders($code) {
-        $UID = $_SESSION['User']->getID();
-        $Rights = Rights::getRightsArr($UID);
-        //Jaaizvieto ar sesijas usera ID AND `Status`=1
-
         $code = substr(strrchr(", " . $code, ', '), 2);
         $query = "SELECT ID,Code FROM `Orders` WHERE Code LIKE '" . $code . "%'
-                  AND ID IN (" . implode(',', $Rights['Orders']) . ")
                    ORDER BY `Code` LIMIT 0,20";
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Josn (' . __LINE__ . ')');
@@ -178,17 +166,9 @@ class Josn extends DBObject {
     }
 
     function GetFilterPersons($code) {
-        $UID = $_SESSION['User']->getID();
-        $Rights = Rights::getRightsArr($UID);
-        //Jaaizvieto ar sesijas usera ID
-
-        $_SESSION['isAdmin'] == 1 ? $IdIn = "" : $IdIn = "AND ID IN (" . implode(',', $Rights['Persons']) . ")";
-
         $code = substr(strrchr(", " . $code, ', '), 2);
         $query = "SELECT ID, Login FROM `Users` WHERE Login LIKE '%" . $code . "%' AND `Status` >-3
-    " . $IdIn . "
     ORDER BY `Login` LIMIT 0,30";
-        //Jaizveido nosacijums ka admins cvar redzet visus respektivi ja sesija esi atzimets ka admins videjo rindu izlaizam.
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Josn (' . __LINE__ . ')');
         }
@@ -202,13 +182,8 @@ class Josn extends DBObject {
     }
 
     function GetFilterTypes($code) {
-        $UID = $_SESSION['User']->getID();
-        $Rights = Rights::getRightsArr($UID);
-        //Jaaizvieto ar sesijas usera ID AND `Status`=1
-
         $code = substr(strrchr(", " . $code, ', '), 2);
         $query = "SELECT ID, Code FROM `Types` WHERE Code LIKE '" . $code . "%'
-                  AND ID IN (" . implode(',', $Rights['Types']) . ")
                    ORDER BY `Code` LIMIT 0,30";
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Josn (' . __LINE__ . ')');
@@ -441,20 +416,6 @@ class Josn extends DBObject {
 
         $Info['__template'] = '/Pavadzime/Supplier';
         return Template::Process($Info);
-    }
-
-    /**
-     * Funkcija paredzēta rindas bildes aizsardzībai pret izmainīšanu ja rindai ir pievienots AdminEdit statuss
-     *
-     * @return Template
-     */
-    private function AdminEditProtect($ID, $password) {
-        $Data['ID'] = $ID;
-        if ($password == Config::EDIT_PASS) {
-            return Template::Process('/Dialog/AddPicture', $Data);
-        } else {
-            return Template::Process('/Dialog/ProtectFormFalse', $Data);
-        }
     }
 
     /**

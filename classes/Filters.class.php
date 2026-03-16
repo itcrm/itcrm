@@ -66,7 +66,7 @@ class Filters extends DBObject {
             case 'editRow':
                 return $this->editFilter($_POST['ID']);
             case 'Save':
-                if (!$_SESSION['User'] || ($_POST['ID'] && !$_SESSION['isAdmin'])) return '';
+                if (!$_SESSION['User']) return '';
                 $ID = $this->Save();
                 if (is_numeric($ID)) {
                     $Data = $this->getRow($ID);
@@ -75,30 +75,13 @@ class Filters extends DBObject {
                 return $ID;
             case 'Delete':
             case 'Restore':
-                if (!$_SESSION['isAdmin']) return '';
                 $Filter = $this->getByID($_POST['ID']);
                 if (!$Filter || !$Filter->getID()) return Language::$Filters['DataNotFound'];
                 return $Filter->Delete();
             default:
                 break;
         }
-        if (!$_SESSION['isAdmin']) return;
         $Vars['Content'] = $this->getFiltersList();
-        $Users = Users::getAsArray(1);
-        $Vars['Users1'] = array();
-        $Vars['Users2'] = array();
-        $half = ceil(count($Users) / 2);
-        $i = 1;
-        foreach ($Users as $id => $login) {
-            if ($half <= $i) $Vars['Users1'][] = array('ID' => $id, 'Login' => $login);
-            else  $Vars['Users2'][] = array('ID' => $id, 'Login' => $login);
-            $i++;
-        }
-        if (!empty($Vars['Users1'])) $Vars['Users1']['__template'] = 'User';
-        else unset($Vars['Users1']);
-        if (!empty($Vars['Users2'])) $Vars['Users2']['__template'] = 'User';
-        else unset($Vars['Users2']);
-        $Vars['NoAdmin'] = $_SESSION['User']->getStatus() < 5 ? 'hide' : '';
 
         $Users = Users::getAsArray();
         foreach ($Users as $k => $v) $Users[$k] = 'name: "' . $v . '", val:"' . $k . '"';
@@ -112,29 +95,6 @@ class Filters extends DBObject {
         foreach ($Types as $k => $v) $Types[$k] = 'name: "' . $v . '", val:"' . $k . '"';
         $Vars['TypesList'] = '{' . implode('},{', $Types) . '}';
 
-        if (!$_SESSION['isAdmin']) {
-            $Users = Users::getAsArray($_SESSION['Rights']['Persons']);
-            if (!empty($Users)) {
-                foreach ($Users as $k => $v) $Users[$k] = 'name: "' . $v . '", val:"' . $k . '"';
-                $Vars['AllowedUsersList'] = '{' . implode('},{', $Users) . '}';
-            } else $Vars['AllowedUsersList'] = '';
-
-            $Orders = Orders::getAsArray($_SESSION['Rights']['Orders']);
-            if (!empty($Orders)) {
-                foreach ($Orders as $k => $v) $Orders[$k] = 'name: "' . $v . '", val:"' . $k . '"';
-                $Vars['AllowedOrdersList'] = '{' . implode('},{', $Orders) . '}';
-            } else $Vars['AllowedOrdersList'] = '';
-
-            $Types = Types::getAsArray($_SESSION['Rights']['Types']);
-            if (!empty($Types)) {
-                foreach ($Types as $k => $v) $Types[$k] = 'name: "' . $v . '", val:"' . $k . '"';
-                $Vars['AllowedTypesList'] = '{' . implode('},{', $Types) . '}';
-            } else $Vars['AllowedTypesList'] = '';
-        } else {
-            $Vars['AllowedUsersList'] = $Vars['UsersList'];
-            $Vars['AllowedOrdersList'] = $Vars['OrdersList'];
-            $Vars['AllowedTypesList'] = $Vars['TypesList'];
-        }
 
         if (is_array($_SESSION['Filter']))
             foreach ($_SESSION['Filter'] as $k => $v) {
@@ -193,11 +153,7 @@ class Filters extends DBObject {
     }
 
     static function getFilter($ID) {
-        if (!$_SESSION['isAdmin'])
-            $query = 'SELECT F.* FROM `Filters` F, `RightsFilter` RF
-                   WHERE F.ID=RF.IDFilter AND RF.`IDUser`=' . $_SESSION['User']->getID() . '
-                         AND Status=1 AND F.ID=' . (int)$ID;
-        else $query = 'SELECT * FROM `Filters`
+        $query = 'SELECT * FROM `Filters`
                         WHERE ID=' . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
@@ -205,6 +161,8 @@ class Filters extends DBObject {
         }
 
         $Filter = $result->fetch_assoc();
+
+        if ($Filter === null) return null;
 
         $Filter['Date'] = self::filterDate($Filter['Date']);
 
@@ -270,11 +228,7 @@ class Filters extends DBObject {
     }
 
     static function getOptionsList() {
-        if (!$_SESSION['isAdmin'])
-            $query = 'SELECT F.ID,F.Name FROM `Filters` F, `RightsFilter` RF
-                   WHERE F.ID=RF.IDFilter AND RF.`IDUser`=' . $_SESSION['User']->getID() . ' AND Status=1
-                ORDER BY `Name`';
-        else $query = 'SELECT ID,Name FROM `Filters`
+        $query = 'SELECT ID,Name FROM `Filters`
                    WHERE Status=1
                 ORDER BY `Name`';
 
@@ -417,7 +371,6 @@ class Filters extends DBObject {
 
         if ($this->getStatus() == -1 && $Status == -1) {
             $query = 'DELETE FROM `Filters` WHERE `ID`=' . $this->getID();
-            Rights::DeleteFilterRights(0, $this->getID());
         } else $query = 'Update `Filters`
                             SET `Status`=' . $Status . ' WHERE `ID`=' . $this->getID();
 
@@ -497,7 +450,7 @@ class Filters extends DBObject {
         $this->Name = $v;
     }
 
-    function MultiPersons($ID, $table, $colum) {
+    static function MultiPersons($ID, $table, $colum) {
         if ($ID == '') {
             return '';
         }

@@ -55,20 +55,19 @@ class System extends DBObject {
 
         if (
             isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ||
-            strpos($TMP, 'script') == 1
+            is_string($TMP) && strpos($TMP, 'script') == 1
         ) return Template::Clear(Template::Parse($TMP, $Global, 'Main'));
         elseif (!empty($Vars['Ajax'])) return Template::Clear(Template::Parse($Vars['Ajax'], $Global, 'Main'));
 
         if (!isset($Vars['Header'])) {
             $Header = array();
-            if ($_SESSION['User']) {
+            if (!empty($_SESSION['User'])) {
                 $sortKey = isset($_POST['Sort']) ? 'Sort' . $_POST['Sort'] : 'Sort';
                 $searchPeriodKey = isset($_POST['Period']) ? 'SearchP' . $_POST['Period'] : 'SearchP';
                 $Header['Menu'] = Template::Process(
                     '/Menu',
                     array(
                         'Login' => $_SESSION['User']->getLogin(),
-                        'NoAdmin' => isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] ? '' : 'none',
                         'SearchStr' => isset($_POST['Search']) ? $_POST['Search'] : '',
                         $sortKey => 'selected',
                         'FindDeleted' => isset($_POST['FindDeleted']) && $_POST['FindDeleted'] == 1 ? 'checked' : '',
@@ -83,7 +82,7 @@ class System extends DBObject {
         if (!isset($Vars['Footer'])) $Vars['Footer'] = Template::Process('/Footer');
 
         if (!isset($Vars['Content'])) {
-            if (!$_SESSION['User']) {
+            if (empty($_SESSION['User'])) {
                 $tpl = '/LoginForm';
                 $Vars['Content'] = Template::Process($tpl);
             }
@@ -93,11 +92,9 @@ class System extends DBObject {
         if (!isset($Vars['JSVariables']))
             $Vars['JSVariables'] =
                 'var MSG_CONFIRM_DEL="' . Language::$Main['msgConfirmDel'] . '";
-                        var MSG_DEL_PASS="' . Language::$Main['msgDelPass'] . '";
                         var URL="' . self::getRoot() . '";
                         var ROOT="' . Config::ROOT_URL . '";
                         var LANG="' . self::$url[0] . '";
-                        var Admin="' . $_SESSION['isAdmin'] . '";
                         var Months = [\'' . implode('\',\'', explode(',', Language::$Main['Months'])) . '\'];
                         var Week = [\'' . implode('\',\'', explode(',', Language::$Main['CalendarWeek'])) . '\'];
                         var noliktava="' . Config::Noliktava . '";

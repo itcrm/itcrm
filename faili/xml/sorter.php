@@ -147,7 +147,7 @@ foreach ($dirList as $file) {
                     if ($date !== false) {
                         $addDate = SQLnow(true);
                         $log .= "Veidoju rindu: Date:{$date},AddDate:{$addDate},Type:{$sorterType},Order:{$userOrder}, Note:{$file}\n";
-                        new CQuery("INSERT INTO Data (IDDoc,IDUser,IDPerson,Date,AddDate,IDType,IDOrder,Note,Status,AdminEdit,Hidden) VALUES ('sorter',{$sorterUser},{$sorterUser},'{$date}','{$addDate}',{$sorterType},{$userOrder},'" . sql_escape($file) . "',1,1,0)");
+                        new CQuery("INSERT INTO Data (IDDoc,IDUser,IDPerson,Date,AddDate,IDType,IDOrder,Note,Status) VALUES ('sorter',{$sorterUser},{$sorterUser},'{$date}','{$addDate}',{$sorterType},{$userOrder},'" . sql_escape($file) . "',1)");
                     }
                 }
 
@@ -175,7 +175,7 @@ foreach ($dirList as $file) {
                 if ($date !== false) {
                     $addDate = SQLnow(true);
                     $log .= "Veidoju rindu: Date:{$date},AddDate:{$addDate},Type:{$sorterType},Order:{$finOrder}, Note:{$file}\n";
-                    new CQuery("INSERT INTO Data (IDDoc,IDUser,IDPerson,Date,AddDate,IDType,IDOrder,Note,Status,AdminEdit,Hidden) VALUES ('sorter',{$sorterUser},{$sorterUser},'{$date}','{$addDate}',{$sorterType},{$finOrder},'" . sql_escape($file) . "',1,1,0)");
+                    new CQuery("INSERT INTO Data (IDDoc,IDUser,IDPerson,Date,AddDate,IDType,IDOrder,Note,Status) VALUES ('sorter',{$sorterUser},{$sorterUser},'{$date}','{$addDate}',{$sorterType},{$finOrder},'" . sql_escape($file) . "',1)");
                 }
                 break;
             }
@@ -215,7 +215,7 @@ foreach ($dirList as $file) {
                         if ($date !== false) {
                             $addDate = SQLnow(true);
                             $log .= "Veidoju rindu: Date:{$date},AddDate:{$addDate},Type:{$sorterType},Order:{$order->id}, Note:{$file}\n";
-                            new CQuery("INSERT INTO Data (IDDoc,IDUser,IDPerson,Date,AddDate,IDType,IDOrder,Note,Status,AdminEdit,Hidden) VALUES ('sorter',{$sorterUser},{$sorterUser},'{$date}','{$addDate}',{$sorterType},{$order->id},'" . sql_escape($file) . "',1,1,0)");
+                            new CQuery("INSERT INTO Data (IDDoc,IDUser,IDPerson,Date,AddDate,IDType,IDOrder,Note,Status) VALUES ('sorter',{$sorterUser},{$sorterUser},'{$date}','{$addDate}',{$sorterType},{$order->id},'" . sql_escape($file) . "',1)");
                         }
                         $moved = true;
                         break;

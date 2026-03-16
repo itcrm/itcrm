@@ -133,9 +133,7 @@ switch ($cmd) {
             if (CONVERT) {
                 $path = iconv('utf-8', 'windows-1257', $path);
             }
-            if (CFileManagerEx::checkDelete()) {
-                moveToTrash($path);
-            }
+            moveToTrash($path);
             break;
         }
     case 'delete-multi': {
@@ -147,9 +145,7 @@ switch ($cmd) {
                     if (CONVERT) {
                         $fpath = iconv('utf-8', 'windows-1257', $fpath);
                     }
-                    if (CFileManagerEx::checkDelete()) {
-                        moveToTrash($fpath);
-                    }
+                    moveToTrash($fpath);
                 }
             }
             break;

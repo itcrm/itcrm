@@ -42,6 +42,5 @@
         <a class="extra edit" href="javascript:EditFilter([:ID:]);"></a>
         <a class="extra restore [:Deleted:]" href="javascript:Restore([:ID:],'Filters');"></a>
         <a class="extra delete" href="javascript:Delete([:ID:],'Filters');"></a>
-        <a class="extra changes" href="javascript:showFilterUsers([:ID:]);"></a>
     </td>
  </tr>

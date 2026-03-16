@@ -53,8 +53,6 @@ class Changes extends DBObject {
             if ($i % 2 == 0) $row['Odd'] = 'Odd';
             $i++;
             $row['Changes'] = $row['Changes'] == '' ? 'hide' : '';
-            $row['AdminEditClass'] = $row['AdminEdit'] == 1 ? 'AdminEdit' : '';
-            $row['HiddenClass'] = $row['Hidden'] == 1 ? 'hidden' : '';
             $Changes[] = $row;
         }
         if (!empty($Changes)) {

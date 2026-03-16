@@ -25,7 +25,6 @@ class Task extends DBObject {
                 break;
             case 'Save':
                 if (!isset($_SESSION['User']) || !$_SESSION['User']) return '';
-                if ($_SESSION['User']->getStatus() < 5) return '';
 
                 $ID = $this->Save();
                 return $ID;
@@ -76,8 +75,7 @@ class Task extends DBObject {
                         $UIDs = $_SESSION['User']->getID();
                     }
 
-                    if ($_SESSION['User']->getStatus() > 1) {
-                        $atbilde = "<div id=\"task\">
+                    $atbilde = "<div id=\"task\">
 <form onkeydown=\"return rejectEnter(event)\" class=\"\" method=\"POST\" action=\"javascript:Save('Task')\" id=\"AddTaskForm\">
 <p class=\"add\" style=\"font-size:12px;\">
 <span>Laiks:<input  id=\"datepicker\" type=\"text\"><input type=\"text\" name=\"RemindDate\" class=\"hide\"/>
@@ -104,7 +102,6 @@ class Task extends DBObject {
             <input type=\"text\" name=\"PriceNote\" value=\"" . $row['PriceNote'] . "\" class=\"hide\"/>
 
             <input type=\"text\" name=\"Statuss\" value=\"" . $row['Status'] . "\" class=\"hide\"/>
-            <input type=\"text\" name=\"Hidden\" value=\"" . $row['Hidden'] . "\" class=\"hide\"/>
 </span>
 
 <span> No:  <span>" . $row['kas'] . "</span>
@@ -125,21 +122,6 @@ class Task extends DBObject {
 </p>
 </form>
 </div>";
-                    } else {
-                        $atbilde = "<div id=\"task\">
-<form  style=\"font-size:12px;\">
-<p>
-<p>Laiks: " . $laiks . " Kam: " . $row['Lietotajs'] . " No: " . $row['kas'] . " </p>
-<p>Tips: " . $row['tips'] . " Pasūtijums: <a href=\"#\" onClick=\"data(" . $row['PasID'] . ")\">" . $row['Pasutijums'] . "</a> </p>
-<p>" . $row['Note'] . "</p>
-</br>
-<p>" . $row['BookNote'] . "</p>
-<p><a ref=\"#\" style=\"cursor: pointer; cursor: hand;\" onClick=\"izmainas()\" ID=\"changeBtn\" class=\"extra changes " . $class . "\"></a></p>
-
-</p>
-</form>
-</div>";
-                    }
 
                     $Task['Data'] = $atbilde;
                     $Task['Changes'] = $izmainas;
@@ -164,29 +146,6 @@ class Task extends DBObject {
         foreach ($Types as $k => $v) $Types[$k] = 'name: "' . $v . '", val:"' . $k . '"';
         $Vars['TypesList'] = '{' . implode('},{', $Types) . '}';
 
-        if (@!$_SESSION['isAdmin']) {
-            $Users = Users::getAsArray($_SESSION['Rights']['Persons']);
-            if (!empty($Users)) {
-                foreach ($Users as $k => $v) $Users[$k] = 'name: "' . $v . '", val:"' . $k . '"';
-                $Vars['AllowedUsersList'] = '{' . implode('},{', $Users) . '}';
-            } else $Vars['AllowedUsersList'] = '';
-
-            $Orders = Orders::getAsArray($_SESSION['Rights']['Orders']);
-            if (!empty($Orders)) {
-                foreach ($Orders as $k => $v) $Orders[$k] = 'name: "' . $v . '", val:"' . $k . '"';
-                $Vars['AllowedOrdersList'] = '{' . implode('},{', $Orders) . '}';
-            } else $Vars['AllowedOrdersList'] = '';
-
-            $Types = Types::getAsArray($_SESSION['Rights']['Types']);
-            if (!empty($Types)) {
-                foreach ($Types as $k => $v) $Types[$k] = 'name: "' . $v . '", val:"' . $k . '"';
-                $Vars['AllowedTypesList'] = '{' . implode('},{', $Types) . '}';
-            } else $Vars['AllowedTypesList'] = '';
-        } else {
-            $Vars['AllowedUsersList'] = $Vars['UsersList'];
-            $Vars['AllowedOrdersList'] = $Vars['OrdersList'];
-            $Vars['AllowedTypesList'] = $Vars['TypesList'];
-        }
 
         if (isset($_SESSION['Filter']) && is_array($_SESSION['Filter']))
             foreach ($_SESSION['Filter'] as $k => $v) {
@@ -194,16 +153,11 @@ class Task extends DBObject {
                 else $Vars[$k] = $v;
             }
 
-        if ($_SESSION['User']->getStatus() <= 1) {
-            $Vars['edit'] = "false";
-            $Vars['save'] = " ";
-        } else {
-            $Vars['edit'] = "true";
-            $Vars['save'] = ",
+        $Vars['edit'] = "true";
+        $Vars['save'] = ",
         Saglabāt: function() {Saglabat(event);
           $(this).dialog('close');
           } ";
-        }
 
         $Vars['sesionid'] = $_SESSION['User']->getID();
         $Vars['SelectUser'] = isset($_SESSION['TaskUser']) ? $_SESSION['TaskUser'] : null;
@@ -280,7 +234,7 @@ class Task extends DBObject {
         }
 
         while ($row = $result->fetch_assoc()) {
-            $Data = "&Tpl=0&ID=" . $row['TaskID'] . "&Sum=" . $row['Sum'] . "&Hours=" . $row['Hours'] . "&Date=" . $row['Date'] . "&TotalPrice=" . $row['TotalPrice'] . "&IDPerson=" . $row['IDPerson'] . "&PlaceTaken=" . $row['PlaceTaken'] . "&IDDoc=" . $row['IDDoc'] . "&TextOrder=" . $row['TextOrder'] . "&PlaceDone=" . $row['PlaceDone'] . "&TextType=" . $row['TextType'] . "&PriceNote=" . $row['PriceNote'] . "&Statuss=" . $row['Status'] . "&Hidden=" . $row['Hidden'] . "&IDType=" . $row['IDType'] . "&TypeSelect=" . $row['tips'] . "&OrderSelect=" . $row['Pasutijums'] . "&Note=" . $row['Note'] . "&BookNote=" . $row['BookNote'] . "&RemindTo=" . $row['RemindTo'] . "&PersonSelect=" . $row['RemindTo'] . "&IDOrder=" . $row['IDOrder'] . "&AllDay=" . $row['allDay'];
+            $Data = "&Tpl=0&ID=" . $row['TaskID'] . "&Sum=" . $row['Sum'] . "&Hours=" . $row['Hours'] . "&Date=" . $row['Date'] . "&TotalPrice=" . $row['TotalPrice'] . "&IDPerson=" . $row['IDPerson'] . "&PlaceTaken=" . $row['PlaceTaken'] . "&IDDoc=" . $row['IDDoc'] . "&TextOrder=" . $row['TextOrder'] . "&PlaceDone=" . $row['PlaceDone'] . "&TextType=" . $row['TextType'] . "&PriceNote=" . $row['PriceNote'] . "&Statuss=" . $row['Status'] . "&IDType=" . $row['IDType'] . "&TypeSelect=" . $row['tips'] . "&OrderSelect=" . $row['Pasutijums'] . "&Note=" . $row['Note'] . "&BookNote=" . $row['BookNote'] . "&RemindTo=" . $row['RemindTo'] . "&PersonSelect=" . $row['RemindTo'] . "&IDOrder=" . $row['IDOrder'] . "&AllDay=" . $row['allDay'];
         }
 
         return $Data;
