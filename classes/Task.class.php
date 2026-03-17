@@ -24,7 +24,7 @@ class Task extends DBObject {
                 $_SESSION['TaskDina'] = $_POST['dina'];
                 break;
             case 'Save':
-                if (!$_SESSION['User']) return '';
+                if (!isset($_SESSION['User']) || !$_SESSION['User']) return '';
                 if ($_SESSION['User']->getStatus() < 5) return '';
 
                 $ID = $this->Save();
@@ -188,7 +188,7 @@ class Task extends DBObject {
             $Vars['AllowedTypesList'] = $Vars['TypesList'];
         }
 
-        if (is_array($_SESSION['Filter']))
+        if (isset($_SESSION['Filter']) && is_array($_SESSION['Filter']))
             foreach ($_SESSION['Filter'] as $k => $v) {
                 if ($k == 'FindDeleted' && $v == 1) $Vars[$k] = 'checked';
                 else $Vars[$k] = $v;
