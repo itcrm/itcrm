@@ -69,21 +69,21 @@ class Warehous extends DBObject {
         //Darbības ar Preci;
         $query = "UPDATE `Data` SET " . $TotalPrice . " " . $Hours . " WHERE `ID`=" . $ID;
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
         }
         // Rindai tiek pievienots teksts ar detaļas numuru un daudzumu kas tika pievienots;
         //Darbibas ar Rindu;
         $query = "UPDATE `Data` SET
                      `Note` = '" . addslashes(Data::getNote()) . " " . $title . "*" . $daudzums . " " . $vienibas . "' " . $RTotalPrice . " WHERE `ID`=" . $RID;
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
         }
     }
 
     function HewOrder($ID, $order) {
         $query = "SELECT Data.ID, Data.IDorder, noliktava.detalasID, noliktava.daudzums FROM Data, noliktava  WHERE noliktava.rindasID = Data.ID and Data.IDorder = " . $order . " AND IDtype = " . Config::ReservNoliktava . " AND noliktava.detalasID =" . $ID;
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
         }
         if ($result->num_rows == 0) {
             return "`TotalPrice` = `TotalPrice`-";
@@ -96,7 +96,7 @@ class Warehous extends DBObject {
         // atgriešanas parbaude -- Jarisina jautajums ko darit ja parbaude izgazas dzest rindu vai mainit statusu, piedavaju atgriest mainigo lai veiktu darbibu.
         $query = "SELECT Data.ID, Data.IDorder, noliktava.detalasID, noliktava.daudzums FROM Data, noliktava  WHERE noliktava.rindasID = Data.ID and Data.IDorder = " . $order . " AND IDtype = " . Config::ReservNoliktava . " AND noliktava.detalasID =" . $ID;
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
         }
         if ($result->num_rows == 0) {
             return print "Šim pasūtijumam nav rezervētā atlikuma";
@@ -126,7 +126,7 @@ class Warehous extends DBObject {
 WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = 2362';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Warehous (' . __LINE__ . ')');
+            throw new AppError('Read error on Warehous (' . __LINE__ . ')');
         }
         $Warehous = array();
 
@@ -197,7 +197,7 @@ WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = 2362';
         $query = 'SELECT * FROM `noliktava` WHERE `rindasID`=' . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('SQL Read error on Class (' . get_class($this) . ') in function (' . __FUNCTION__ . ') on Line (' . __LINE__ . ')');
+            throw new AppError('SQL Read error on Class (' . get_class($this) . ') in function (' . __FUNCTION__ . ') on Line (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -219,7 +219,7 @@ WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = 2362';
         $query = "INSERT INTO `noliktava` (rindasID, daudzums, type) VALUES('" . $ID . "', '" . $Sum . "', 1)";
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Warehous (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Warehous (' . __LINE__ . ') : ' . self::$DB->error);
         }
     }
 }

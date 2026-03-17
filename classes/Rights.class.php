@@ -82,7 +82,7 @@ class Rights extends DBObject {
         $query = 'SELECT IDUser FROM RightsFilter WHERE IDFilter=' . (int)$ID;
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Read error on Rights (' . __LINE__ . ')');
+            throw new AppError('Read error on Rights (' . __LINE__ . ')');
 
         $Users = array();
         while ($row = $result->fetch_assoc()) {
@@ -97,13 +97,13 @@ class Rights extends DBObject {
         $query = 'DELETE FROM RightsFilter WHERE IDFilter=' . (int)$_POST['IDFilter'];
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Error on Rights (' . __LINE__ . ')');
+            throw new AppError('Error on Rights (' . __LINE__ . ')');
 
         $query = 'INSERT INTO RightsFilter
                   VALUES (' . (implode(',' . (int)$_POST['IDFilter'] . '),(', $_POST['User']) . ',' . (int)$_POST['IDFilter']) . ')';
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Error on Rights (' . __LINE__ . ')');
+            throw new AppError('Error on Rights (' . __LINE__ . ')');
 
         return 1;
     }
@@ -112,12 +112,12 @@ class Rights extends DBObject {
         $query = 'DELETE FROM RightsFilter WHERE IDFilter=' . $IDFilter;
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Error on Rights (' . __LINE__ . ')');
+            throw new AppError('Error on Rights (' . __LINE__ . ')');
 
         $query = 'DELETE FROM RightsFilter WHERE IDUser=' . $IDUser;
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Error on Rights (' . __LINE__ . ')');
+            throw new AppError('Error on Rights (' . __LINE__ . ')');
     }
 
     static function getRightsArr($ID) {
@@ -126,7 +126,7 @@ class Rights extends DBObject {
                    WHERE IDUser=' . (int)$ID;
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Read error on Rights (' . __LINE__ . ')');
+            throw new AppError('Read error on Rights (' . __LINE__ . ')');
 
         $Rights = array(
             'Persons' => array(),
@@ -143,7 +143,7 @@ class Rights extends DBObject {
                     WHERE IDUser=' . (int)$ID;
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Read error on Rights (' . __LINE__ . ')');
+            throw new AppError('Read error on Rights (' . __LINE__ . ')');
 
         while ($row = $result->fetch_assoc())
             $Rights['Hide'][$row['IDPerson'] . '.' . $row['IDOrder'] . '.' . $row['IDType'] . '.' . $row['IDFolder']] = true;
@@ -158,7 +158,7 @@ class Rights extends DBObject {
                 GROUP BY `Value`';
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Read error on Rights (' . __LINE__ . ')');
+            throw new AppError('Read error on Rights (' . __LINE__ . ')');
 
         $Rights = array();
         while ($row = $result->fetch_assoc()) {
@@ -174,7 +174,7 @@ class Rights extends DBObject {
                    WHERE IDUser=' . (int)$ID;
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Read error on Rights (' . __LINE__ . ')');
+            throw new AppError('Read error on Rights (' . __LINE__ . ')');
 
         $Values = array(
             'Person' => Users::getAsArray(),
@@ -215,7 +215,7 @@ class Rights extends DBObject {
                    WHERE IDUser=' . (int)$ID;
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Read error on Rights (' . __LINE__ . ')');
+            throw new AppError('Read error on Rights (' . __LINE__ . ')');
 
         $Hide = array();
         while ($row = $result->fetch_assoc()) {
@@ -267,28 +267,28 @@ class Rights extends DBObject {
                   (' . implode(',"Order",' . $ID . '),(', array_keys($Orders)) . ',"Order",' . $ID . ')';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Rights (' . __LINE__ . ')');
+            throw new AppError('Write error on Rights (' . __LINE__ . ')');
         }
 
         $query = 'REPLACE INTO `Rights` (`Value`,Type,IDUser) VALUES
                   (' . implode(',"Type",' . $ID . '),(', array_keys($Types)) . ',"Type",' . $ID . ')';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Rights (' . __LINE__ . ')');
+            throw new AppError('Write error on Rights (' . __LINE__ . ')');
         }
 
         $query = 'REPLACE INTO `Rights` (`Value`,Type,IDUser) VALUES
                   (' . implode(',"Person",' . $ID . '),(', array_keys($Users)) . ',"Person",' . $ID . ')';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Rights (' . __LINE__ . ')');
+            throw new AppError('Write error on Rights (' . __LINE__ . ')');
         }
 
         $query = 'REPLACE INTO `Rights` (`Value`,Type,IDUser) VALUES
                   (' . implode(',"Folder",' . $ID . '),(', array_keys($Folders)) . ',"Folder",' . $ID . ')';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Rights (' . __LINE__ . ')');
+            throw new AppError('Write error on Rights (' . __LINE__ . ')');
         }
     }
 
@@ -299,7 +299,7 @@ class Rights extends DBObject {
                   (' . implode(',"Person",' . $ID . '),(', array_keys($Users)) . ',"Person",' . $ID . ')';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Rights (' . __LINE__ . ')');
+            throw new AppError('Write error on Rights (' . __LINE__ . ')');
         }
     }
 
@@ -310,7 +310,7 @@ class Rights extends DBObject {
                   (' . implode(',"Person",' . $ID . '),(', array_keys($Users)) . ',"Person",' . $ID . ')';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Rights (' . __LINE__ . ')');
+            throw new AppError('Write error on Rights (' . __LINE__ . ')');
         }
     }
 
@@ -321,7 +321,7 @@ class Rights extends DBObject {
                   (' . implode(',"' . $Type . '",' . $ID . '),(', array_keys($Users)) . ',"' . $Type . '",' . $ID . ')';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Rights (' . __LINE__ . ')');
+            throw new AppError('Write error on Rights (' . __LINE__ . ')');
         }
     }
 
@@ -330,7 +330,7 @@ class Rights extends DBObject {
      */
     function Save() {
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if (empty($Err)) {
             $query = 'REPLACE INTO `Rights`
@@ -339,7 +339,7 @@ class Rights extends DBObject {
                               `Value`=' . (int)$this->getValue();
 
             if (!self::$DB->query($query)) {
-                throw new Error('Write error on Rights (' . __LINE__ . ')');
+                throw new AppError('Write error on Rights (' . __LINE__ . ')');
             }
             return 1;
         } else {
@@ -349,7 +349,7 @@ class Rights extends DBObject {
 
     function SaveHide() {
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if (empty($Err)) {
             $query = 'REPLACE INTO `RightsHide`
@@ -360,7 +360,7 @@ class Rights extends DBObject {
                               `IDFolder`=' . (int)$this->getIDFolder();
 
             if (!self::$DB->query($query)) {
-                throw new Error('Write error on Rights (' . __LINE__ . ')');
+                throw new AppError('Write error on Rights (' . __LINE__ . ')');
             }
 
             $Vars =  array(
@@ -381,7 +381,7 @@ class Rights extends DBObject {
 
     function Delete() {
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if (empty($Err)) {
             $query = 'DELETE FROM `Rights`
@@ -389,7 +389,7 @@ class Rights extends DBObject {
                          AND `Type`="' . addslashes($this->getType()) . '"
                          AND `Value`=' . $this->getValue();
             if (!self::$DB->query($query)) {
-                throw new Error('Delete error on Types (' . __LINE__ . ')');
+                throw new AppError('Delete error on Types (' . __LINE__ . ')');
             }
 
             return 1;
@@ -402,7 +402,7 @@ class Rights extends DBObject {
                        WHERE `Type`="' . $Type . '"
                          AND `Value`=' . $ID;
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Types (' . __LINE__ . ')');
+            throw new AppError('Delete error on Types (' . __LINE__ . ')');
         }
     }
 
@@ -410,13 +410,13 @@ class Rights extends DBObject {
         $query = 'DELETE FROM `Rights`
                        WHERE `IDUser`=' . $ID;
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Types (' . __LINE__ . ')');
+            throw new AppError('Delete error on Types (' . __LINE__ . ')');
         }
     }
 
     function DeleteHide() {
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if (empty($Err)) {
             $query = 'DELETE FROM `RightsHide`
@@ -425,7 +425,7 @@ class Rights extends DBObject {
                          AND `IDOrder`=' . (int)$this->getIDOrder() . '
                          AND `IDType`=' . (int)$this->getIDType();
             if (!self::$DB->query($query)) {
-                throw new Error('Delete error on Types (' . __LINE__ . ')');
+                throw new AppError('Delete error on Types (' . __LINE__ . ')');
             }
 
             return 1;
@@ -437,7 +437,7 @@ class Rights extends DBObject {
                        WHERE `Type`="' . $type . '"
                          AND `IDUser`=' . $IDUser;
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Types (' . __LINE__ . ')');
+            throw new AppError('Delete error on Types (' . __LINE__ . ')');
         }
 
         return "1";
@@ -465,7 +465,7 @@ class Rights extends DBObject {
                   (' . implode(',"' . $type . '",' . $IDUser . '),(', array_keys($masivs)) . ',"' . $type . '",' . $IDUser . ')';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Rights (' . __LINE__ . ')');
+            throw new AppError('Write error on Rights (' . __LINE__ . ')');
         }
 
         $Rights = $this->getRights($_SESSION['User']->getID());
@@ -495,12 +495,12 @@ class Rights extends DBObject {
 
         if ($type == 'get') return $this->$key;
         elseif ($type == 'set') $this->$key = $params[0];
-        else throw new Error(get_class($this) . '::' . $method . ' does not exists');
+        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setIDUser($value) {
         $value = (int)$value;
-        if ($value == 0) throw new Error(Language::$Rights['SetUser']);
+        if ($value == 0) throw new AppError(Language::$Rights['SetUser']);
         else $this->IDUser = $value;
     }
 }

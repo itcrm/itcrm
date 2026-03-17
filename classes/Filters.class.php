@@ -41,7 +41,7 @@ class Filters extends DBObject {
                       WHERE F.ID=' . (int)$_POST['ID'];
 
                 if (!$result = self::$DB->query($query))
-                    throw new Error('Error on ' . get_class() . ' (' . __LINE__ . ')');
+                    throw new AppError('Error on ' . get_class() . ' (' . __LINE__ . ')');
 
                 $Filter = $result->fetch_assoc();
                 $Filter['PersonFilterSelect'] =  Filters::MultiPersons($Filter['IDPerson'], 'Users', 'Login');
@@ -148,7 +148,7 @@ class Filters extends DBObject {
         $query = 'SELECT * FROM `Filters` ORDER BY ID DESC';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Filters (' . __LINE__ . ')');
+            throw new AppError('Read error on Filters (' . __LINE__ . ')');
         }
 
         $Dates = array(
@@ -201,7 +201,7 @@ class Filters extends DBObject {
                         WHERE ID=' . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Filters (' . __LINE__ . ')');
+            throw new AppError('Read error on Filters (' . __LINE__ . ')');
         }
 
         $Filter = $result->fetch_assoc();
@@ -279,7 +279,7 @@ class Filters extends DBObject {
                 ORDER BY `Name`';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Filters (' . __LINE__ . ')');
+            throw new AppError('Read error on Filters (' . __LINE__ . ')');
         }
         $filters = '';
         while ($row = $result->fetch_assoc()) {
@@ -334,10 +334,10 @@ class Filters extends DBObject {
     function Save() {
         $_POST = $this->clearDefaultValues($_POST);
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if (empty($Err)) {
-            if ($this->getID() == 0) $this->Add();
+            if ($this->getID() < 1) $this->Add();
             else $this->Update();
 
             return $this->getID();
@@ -381,7 +381,7 @@ class Filters extends DBObject {
                          `AddDate`=NOW(),
                          `Status`=1';
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Filters (' . __LINE__ . ')');
+            throw new AppError('Write error on Filters (' . __LINE__ . ')');
         }
 
         $this->setID(self::$DB->insert_id);
@@ -408,7 +408,7 @@ class Filters extends DBObject {
                          `BookNote`="' . addslashes($this->getBokkNote()) . '"
                    WHERE `ID`=' . (int)$this->getID();
         if (!self::$DB->query($query)) {
-            throw new Error('Update error on Filters (' . __LINE__ . ')');
+            throw new AppError('Update error on Filters (' . __LINE__ . ')');
         }
     }
 
@@ -422,7 +422,7 @@ class Filters extends DBObject {
                             SET `Status`=' . $Status . ' WHERE `ID`=' . $this->getID();
 
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Filters (' . __LINE__ . ')');
+            throw new AppError('Delete error on Filters (' . __LINE__ . ')');
         }
 
         return 1;
@@ -433,16 +433,16 @@ class Filters extends DBObject {
                     FROM `Filters` WHERE `ID`=' . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Filters ' . __LINE__);
+            throw new AppError('Read error on Filters ' . __LINE__);
         }
-        return self::fetchObject($result, new self);
+        return (new self)->fetchObject($result, new self);
     }
 
     static function getRow($ID) {
         $query = 'SELECT * FROM `Filters` WHERE ID=' . (int)$ID . ' ORDER BY ID DESC';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error($query . 'Read error on Filter (' . __LINE__ . ')');
+            throw new AppError($query . 'Read error on Filter (' . __LINE__ . ')');
         }
 
         $Dates = array(
@@ -486,13 +486,13 @@ class Filters extends DBObject {
 
         if ($type == 'get') return $this->$key;
         elseif ($type == 'set') $this->$key = $params[0];
-        else throw new Error(get_class($this) . '::' . $method . ' does not exists');
+        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setName($v) {
         $v = trim($v);
         if ($v == '')
-            throw new Error(Language::$Filters['SetName']);
+            throw new AppError(Language::$Filters['SetName']);
 
         $this->Name = $v;
     }
@@ -503,7 +503,7 @@ class Filters extends DBObject {
         }
         $query = "SELECT " . $colum . " FROM " . $table . " WHERE ID IN (" . $ID . ")";
         if (!$result = self::$DB->query($query)) {
-            throw new Error($query . ' Read error on Data (' . __LINE__ . ')');
+            throw new AppError($query . ' Read error on Data (' . __LINE__ . ')');
         }
         $res = '';
         while ($row = $result->fetch_assoc()) {
@@ -516,7 +516,7 @@ class Filters extends DBObject {
         $query = 'SELECT * FROM `Filters` WHERE ID=' . (int)$ID . ' ORDER BY ID DESC';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error($query . 'Read error on Filter (' . __LINE__ . ')');
+            throw new AppError($query . 'Read error on Filter (' . __LINE__ . ')');
         }
 
         $Dates = array(

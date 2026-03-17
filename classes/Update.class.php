@@ -27,7 +27,7 @@ class Update extends DBObject {
         $query = "SELECT ID FROM Data WHERE IDType =" . $Type;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('SQL Read error on Class (' . get_class($this) . ') in function (' . __FUNCTION__ . ') on Line (' . __LINE__ . ')');
+            throw new AppError('SQL Read error on Class (' . get_class($this) . ') in function (' . __FUNCTION__ . ') on Line (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -59,7 +59,7 @@ class Update extends DBObject {
     function Update($ID, $TextType) {
         $query = 'UPDATE `Data` SET TextType = "' . $TextType . '" WHERE ID=' . $ID;
         if (!self::$DB->query($query)) {
-            throw new Error('SQL Read error on Class (' . get_class($this) . ') in function (' . __FUNCTION__ . ') on Line (' . __LINE__ . ')');
+            throw new AppError('SQL Read error on Class (' . get_class($this) . ') in function (' . __FUNCTION__ . ') on Line (' . __LINE__ . ')');
         }
     }
 }

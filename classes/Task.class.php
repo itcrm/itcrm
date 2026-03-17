@@ -52,7 +52,7 @@ class Task extends DBObject {
           WHERE D.ID =' . $taskid . '';
 
                 if (!$result = self::$DB->query($query)) {
-                    throw new Error('Read error on Tasks (' . __LINE__ . ')');
+                    throw new AppError('Read error on Tasks (' . __LINE__ . ')');
                 }
                 $skaits = 0;
 
@@ -250,7 +250,7 @@ class Task extends DBObject {
 
         $query = 'SELECT *, Data.ID as TaskID, Data.Changes as izmainas FROM Data LEFT JOIN Orders ON Orders.ID=Data.IDOrder WHERE `RemindDate` IS NOT NULL and `RemindTo`= ' . $UID . ' ';                                 //and `Date` between '. $a .' and ' . $b .'
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Tasks (' . __LINE__ . ')');
+            throw new AppError('Read error on Tasks (' . __LINE__ . ')');
         }
         while ($row = $result->fetch_assoc()) {
             $task['end'] = $row['RemindDateEnd'];
@@ -276,7 +276,7 @@ class Task extends DBObject {
           WHERE D.ID =' . $id . '';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Tasks (' . __LINE__ . ')');
+            throw new AppError('Read error on Tasks (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -294,7 +294,7 @@ class Task extends DBObject {
         if (($obj->getRemindDate() != '0000-00-00 00:00:00' && $obj->getRemindDate() != '2000-00-00 00:00:00')
             && !is_numeric($obj->getRemindTo())
         )
-            Error::setError(get_class(), 'RemindDate', 'Set remind to ' . $obj->getRemindTo());
+            AppError::setError(get_class(), 'RemindDate', 'Set remind to ' . $obj->getRemindTo());
         elseif ($obj->getRemindDate() == '0000-00-00 00:00:00' || $obj->getRemindDate() == '2000-00-00 00:00:00')
             $obj->setRemindTo(0);
 
@@ -303,7 +303,7 @@ class Task extends DBObject {
         }
 
         if (empty($Err)) {
-            if ($obj->getID() == 0) $obj->Add();
+            if ($obj->getID() < 1) $obj->Add();
             else {
                 $Data = $obj->getById($_POST['ID']);
                 $Diffs = unserialize($Data->getChanges());
@@ -361,7 +361,7 @@ class Task extends DBObject {
                 $query = 'SELECT *, Data.ID as TaskID, Data.Changes as izmainas FROM Data LEFT JOIN Orders ON Orders.ID=Data.IDOrder WHERE `RemindDate` BETWEEN "' . $Start . '" AND "' . $End . '" and `RemindTo`=  ' . $User . ' UNION   SELECT *, Data.ID as TaskID, Data.Changes as izmainas FROM Data LEFT JOIN Orders ON Orders.ID=Data.IDOrder WHERE `RemindDate` BETWEEN "' . $Startt . '" AND "' . $Endd . '" and `RemindTo`=  ' . $User . ' AND allDay = 1 ';                                 //and `Date` between '. $a .' and ' . $b .'
 
                 if (!$result = self::$DB->query($query)) {
-                    throw new Error('Read error on Tasks (' . __LINE__ . ')');
+                    throw new AppError('Read error on Tasks (' . __LINE__ . ')');
                 }
                 while ($row = $result->fetch_assoc()) {
                     $task['color'] = $row['Color'];

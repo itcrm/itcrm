@@ -32,7 +32,7 @@ class Info extends DBObject {
                    ORDER BY S.`Name` ASC';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Info (' . __LINE__ . ')');
+            throw new AppError('Read error on Info (' . __LINE__ . ')');
         }
         $Info = array(array(), array());
 
@@ -54,7 +54,7 @@ class Info extends DBObject {
      */
     function Save() {
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if (empty($Err)) {
             $this->Add();
@@ -75,7 +75,7 @@ class Info extends DBObject {
                           `AddDate`=NOW()';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Info (' . __LINE__ . ')');
+            throw new AppError('Write error on Info (' . __LINE__ . ')');
         }
 
         return 1;
@@ -85,7 +85,7 @@ class Info extends DBObject {
         $query = 'DELETE FROM `Info` WHERE `IDSupplier`=' . $IDS;
 
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Info (' . __LINE__ . ')');
+            throw new AppError('Delete error on Info (' . __LINE__ . ')');
         }
 
         return 1;
@@ -100,6 +100,6 @@ class Info extends DBObject {
 
         if ($type == 'get') return $this->$key;
         elseif ($type == 'set') $this->$key = $params[0];
-        else throw new Error(get_class($this) . '::' . $method . ' does not exists');
+        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 }

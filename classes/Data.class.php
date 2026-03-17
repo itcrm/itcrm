@@ -212,7 +212,7 @@ class Data extends DBObject {
             ' GROUP BY D.RemindTo';
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Error on ' . get_class() . ' (' . __LINE__ . ')');
+            throw new AppError('Error on ' . get_class() . ' (' . __LINE__ . ')');
 
         $Data = array();
         $now = strtotime(date('Y-m-d H:i:s'));
@@ -363,7 +363,7 @@ class Data extends DBObject {
         $query2 .= $where;
 
         if (!$result = self::$DB->query($query2)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
         while ($row = $result->fetch_assoc()) {
             $_SESSION['entry'] = $row['kopskaits'];
@@ -387,7 +387,7 @@ class Data extends DBObject {
         }
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         $Data = array();
@@ -562,7 +562,7 @@ class Data extends DBObject {
             $query4 .= " WHERE D.ID IN" . $CechedRow;
 
             if (!$result = self::$DB->query($query4)) {
-                throw new Error('Read error on Data (' . __LINE__ . ')');
+                throw new AppError('Read error on Data (' . __LINE__ . ')');
             }
             while ($row = $result->fetch_assoc()) {
                 $start_kopskaits = $row['kopskaits'];
@@ -572,7 +572,7 @@ class Data extends DBObject {
             }
 
             if (!$result = self::$DB->query($query3)) {
-                throw new Error('Read error on Data (' . __LINE__ . ')');
+                throw new AppError('Read error on Data (' . __LINE__ . ')');
             }
 
             $Data = array();
@@ -667,7 +667,7 @@ class Data extends DBObject {
         $query2 .= ' and D.ID NOT IN' . $CechedRow;
 
         if (!$result = self::$DB->query($query2)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
         while ($row = $result->fetch_assoc()) {
             $_SESSION['entry'] = $row['kopskaits'] + $start_kopskaits;
@@ -685,7 +685,7 @@ class Data extends DBObject {
         $query .= ' LIMIT ' . $pagestart . ', ' . $page;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         $Data = array();
@@ -1117,7 +1117,7 @@ class Data extends DBObject {
     function getTplAsOpt() {
         $query = 'SELECT BookNote, ID FROM Data WHERE Status=10 ORDER BY BookNote';
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         $Opts = '';
@@ -1140,7 +1140,7 @@ class Data extends DBObject {
         if (($this->getRemindDate() != '0000-00-00 00:00:00' && $this->getRemindDate() != '2000-00-00 00:00:00')
             && !is_numeric($this->getRemindTo())
         )
-            Error::setError(get_class(), 'RemindDate', 'Set remind to ' . $this->getRemindTo());
+            AppError::setError(get_class(), 'RemindDate', 'Set remind to ' . $this->getRemindTo());
         elseif ($this->getRemindDate() == '0000-00-00 00:00:00' || $this->getRemindDate() == '2000-00-00 00:00:00')
             $this->setRemindTo(0);
 
@@ -1148,11 +1148,11 @@ class Data extends DBObject {
             $this->setAllDays(1);
         }
 
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
         if ($_POST['Tpl'] == 1) unset($Err);
 
         if (empty($Err)) {
-            if ($this->getID() == 0) $this->Add();
+            if ($this->getID() < 1) $this->Add();
             else {
                 if ($_SESSION['User']->getStatus() < 99) {
                     if ($this->getAdminEdit() == "1") {
@@ -1239,7 +1239,7 @@ class Data extends DBObject {
                          `Status`=' . ($_POST['Tpl'] == 1 ? '10' : '1');
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
         }
 
         $this->setID(self::$DB->insert_id);
@@ -1294,7 +1294,7 @@ class Data extends DBObject {
 
                    WHERE `ID`=' . (int)$this->getID();
         if (!self::$DB->query($query)) {
-            throw new Error('Update error on Data (' . __LINE__ . ')');
+            throw new AppError('Update error on Data (' . __LINE__ . ')');
         }
 
         $type = (int)$this->getIDType();
@@ -1324,7 +1324,7 @@ class Data extends DBObject {
         }
 
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Data (' . __LINE__ . ')');
+            throw new AppError('Delete error on Data (' . __LINE__ . ')');
         }
         return 1;
     }
@@ -1334,9 +1334,9 @@ class Data extends DBObject {
                     FROM `Data` WHERE `ID`=' . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data ' . __LINE__);
+            throw new AppError('Read error on Data ' . __LINE__);
         }
-        return self::fetchObject($result, new self);
+        return (new self)->fetchObject($result, new self);
     }
 
     static function getRow($ID) {
@@ -1358,7 +1358,7 @@ class Data extends DBObject {
                    WHERE D.ID=' . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         $row = $result->fetch_assoc();
@@ -1407,11 +1407,11 @@ class Data extends DBObject {
 
         if ($type == 'get') return $this->$key;
         elseif ($type == 'set') $this->$key = $params[0];
-        else throw new Error(get_class($this) . '::' . $method . ' does not exists');
+        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setIDDoc($value) {
-        if ($value == '') throw new Error(Language::$Data['SetIDDoc']);
+        if ($value == '') throw new AppError(Language::$Data['SetIDDoc']);
         $this->IDDoc = $value;
     }
 
@@ -1427,7 +1427,7 @@ class Data extends DBObject {
             || !is_numeric($Date[3]) || !is_numeric($Date[4])
             || $Date[3] > 23 || $Date[4] > 59 || $Date[1] > 12 || $Date[3] > 31 || $Date[0] > 2099
         )
-            throw new Error(Language::$Data['WrongDateFormat']);
+            throw new AppError(Language::$Data['WrongDateFormat']);
         else $this->Date = $Date[0] . '-' . $Date[1] . '-' . $Date[2] . ' ' . $Date[3] . ':' . $Date[4];
     }
 
@@ -1448,25 +1448,25 @@ class Data extends DBObject {
             || !is_numeric($Date[3]) || !is_numeric($Date[4])
             || $Date[3] > 23 || $Date[4] > 59 || $Date[1] > 12 || $Date[3] > 31 || $Date[0] > 2099
         )
-            throw new Error(Language::$Data['WrongDateFormat']);
+            throw new AppError(Language::$Data['WrongDateFormat']);
         else $this->RemindDate = $Date[0] . '-' . $Date[1] . '-' . $Date[2] . ' ' . $Date[3] . ':' . $Date[4] . ':00';
     }
 
     function setIDPerson($value) {
         $value = (int)$value;
-        if ($value == 0) throw new Error(Language::$Data['SetIDPerson']);
+        if ($value == 0) throw new AppError(Language::$Data['SetIDPerson']);
         else $this->IDPerson = $value;
     }
 
     function setIDOrder($value) {
         $value = (int)$value;
-        if ($value == 0) throw new Error(Language::$Data['SetIDOrder']);
+        if ($value == 0) throw new AppError(Language::$Data['SetIDOrder']);
         else $this->IDOrder = $value;
     }
 
     function setIDType($value) {
         $value = (int)$value;
-        if ($value == 0) throw new Error(Language::$Data['SetIDType']);
+        if ($value == 0) throw new AppError(Language::$Data['SetIDType']);
         else $this->IDType = $value;
     }
 
@@ -1500,7 +1500,7 @@ class Data extends DBObject {
                where D.ID = ' . $ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -1547,7 +1547,7 @@ class Data extends DBObject {
         $query = "SELECT ID FROM `Users` WHERE `Name`='" . $name . "'";
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         return $result;
@@ -1557,7 +1557,7 @@ class Data extends DBObject {
         $query = "SELECT IDUser FROM `Data` WHERE `ID`='" . $ID . "'";
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -1584,7 +1584,7 @@ class Data extends DBObject {
         $query = "SELECT IDUser FROM `Data` WHERE `ID`='" . $ID . "'";
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -1612,7 +1612,7 @@ class Data extends DBObject {
         $text = str_replace($vowels, "%", $text);
         $query = "select ID, Nosaukums as label from sanemeji WHERE Nosaukums LIKE '%" . $text . "%' AND Status = 0 ";
         if (!$result = self::$DB->query($query))
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
 
         $results = array();
         while ($row = $result->fetch_assoc()) {
@@ -1637,7 +1637,7 @@ class Data extends DBObject {
         $query = "SELECT * FROM photo_tagger WHERE photoid =" . $ID;
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
 
         $results = array();
         while ($row = $result->fetch_assoc()) {
@@ -1657,7 +1657,7 @@ class Data extends DBObject {
                          `x`="' . $_GET['x'] . '"';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
         }
         $this->setID(self::$DB->insert_id);
         return $this->getID();
@@ -1667,7 +1667,7 @@ class Data extends DBObject {
         $query = 'DELETE FROM photo_tagger WHERE id=' . $ID;
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
         }
         $this->setID(self::$DB->insert_id);
         return $this->getID();
@@ -1676,7 +1676,7 @@ class Data extends DBObject {
     function DataByID($ID, $colum) {
         $query = "SELECT " . $colum . " FROM Data WHERE ID=" . $ID;
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error with Data class Function DataByID On Line:(' . __LINE__ . ')');
+            throw new AppError('Read error with Data class Function DataByID On Line:(' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -1688,7 +1688,7 @@ class Data extends DBObject {
     function NolByID($ID, $colum) {
         $query = "SELECT " . $colum . " FROM `noliktava` WHERE rindasID=" . $ID;
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -1766,7 +1766,7 @@ class Data extends DBObject {
     function categoryMaker($ID) {
         $query = "SELECT * FROM categories_linear Order by iorder ASC";
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error with Data class Function categoryMaker On Line:(' . __LINE__ . ')');
+            throw new AppError('Read error with Data class Function categoryMaker On Line:(' . __LINE__ . ')');
         }
         $results = array();
         while ($row = $result->fetch_assoc()) {
@@ -1813,14 +1813,14 @@ class Data extends DBObject {
                    WHERE `rindasID`=' . $data[rindasID];
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
         }
 
         if ($data[SuperID] == 0) {
             $query = 'INSERT INTO `noliktava` (`rindasID`,`detalasID`,`daudzums`,`type`,`Shop`,`ShopTitle`,`ShopDescription`,`ShopModelID`,`ShopCategoryID`,`OrginalCode`,`addition`,`offer`,`state`,`used`) VALUES (' . $data[rindasID] . ',"' . $data[detalasID] . '","' . $data[daudzums] . '",1,"' . $data[Shop] . '","' . $data[ShopTitle] . '","' . $data[ShopDescription] . '","' . $data[ShopModelID] . '","' . $data[ShopCategoryID] . '","' . $data[OrginalCode] . '","' . $data[addition] . '","' . $data[offer] . '","' . $data[state] . '","' . $data[used] . '")';
 
             if (!self::$DB->query($query)) {
-                throw new Error('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
+                throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
             }
         }
 
@@ -1840,12 +1840,12 @@ class Data extends DBObject {
         if ($result->num_rows == 0) {
             $query = "INSERT INTO `noliktava` (`rindasID`, `detalasID`, `daudzums`) VALUES (" . $data[rindasID] . ", " . $data[detalasID] . ", " . $data[daudzums] . ")";
             if (!self::$DB->query($query)) {
-                throw new Error('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
+                throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
             }
         } else {
             $query = "UPDATE `noliktava` SET `rindasID`= " . $data[rindasID] . ", `detalasID`=" . $data[detalasID] . ", `daudzums`=" . $data[daudzums] . " WHERE rindasID =" . $data[rindasID];
             if (!self::$DB->query($query)) {
-                throw new Error('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
+                throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
             }
         }
 
@@ -1856,7 +1856,7 @@ class Data extends DBObject {
     /**
      * Pārliecinas vai ir ievadītas preces vērtības
      *
-     * @return Error
+     * @throws AppError
      * @param array $Data
      * @author Jānis
      */
@@ -1864,11 +1864,11 @@ class Data extends DBObject {
         if ($data['IDType'] == Config::AddNoliktava || $data['IDType'] == Config::DelNoliktava) {
             $value = $Data['detalasID'];
             $value = (int)$value;
-            if ($value == 0) throw new Error(Language::$Data['SetIDDetaļas']);
+            if ($value == 0) throw new AppError(Language::$Data['SetIDDetaļas']);
 
             $value2 = $Data['daudzums'];
             $value2 = (int)$value2;
-            if ($value2 == 0) throw new Error(Language::$Data['SetSkaits']);
+            if ($value2 == 0) throw new AppError(Language::$Data['SetSkaits']);
         }
     }
 
@@ -1896,7 +1896,7 @@ class Data extends DBObject {
                     if ($data['position'] == "replace") $position = "'" . $data['value'] . "'";
                     $query = "UPDATE `Data` SET `IDUser`=" . $_SESSION['User']->getID() . ", `" . $data['fields'] . "` = " . $position . " WHERE ID = " . $ID;
                     if (!self::$DB->query($query)) {
-                        throw new Error('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
+                        throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
                     }
                 }
             }
@@ -2012,7 +2012,7 @@ class Data extends DBObject {
         $query .= $where;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
         while ($row = $result->fetch_assoc()) {
             $_SESSION['CechedRow'][$row['ID']] = $row['ID'];
@@ -2027,7 +2027,7 @@ class Data extends DBObject {
         $query = "SELECT * FROM groups_linear ORDER BY FIELD(id, " . $IDD . ") DESC";
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
         $i = 0;
         while ($row = $result->fetch_assoc()) {
@@ -2054,7 +2054,7 @@ class Data extends DBObject {
         $query = "SELECT * FROM groups_linear WHERE id IN (" . $ID . "0)";
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
         while ($row = $result->fetch_assoc()) {
             $rows .= "<h6 style='margin: 2px;'>" . $row['title'] . "</h6>";

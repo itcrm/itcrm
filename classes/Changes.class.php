@@ -45,7 +45,7 @@ class Changes extends DBObject {
                WHERE D.`ID_Row`=' . $ID . ' ORDER BY ID_ROW DESC';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Changes  (' . __LINE__ . ')');
+            throw new AppError('Read error on Changes  (' . __LINE__ . ')');
         }
         $Changes = array();
 

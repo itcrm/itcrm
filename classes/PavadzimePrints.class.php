@@ -14,7 +14,7 @@ class PavadzimePrints extends TCPDF {
         $query = 'SELECT ID,IDDoc,Date,Note,PlaceTaken,PlaceDone FROM `Data` WHERE ID = ' . $ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -39,7 +39,7 @@ class PavadzimePrints extends TCPDF {
         $query = 'SELECT ID,DocID,Samaksa,Sanemejs,Atlaide,Izsniedza,Kopa,atlaidessumma,PirmsNodokliem,PVN,Samaksai FROM `pavadzime` WHERE DocID = ' . $DocID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -52,7 +52,7 @@ class PavadzimePrints extends TCPDF {
         $query = 'SELECT Nosaukums, Kods, Adrese, Banka, Konts FROM `sanemeji` WHERE Nosaukums = "' . $sanemejs . '"';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -77,7 +77,7 @@ class PavadzimePrints extends TCPDF {
         $query = 'SELECT ID,Nosaukums,Artikuls,Daudzums,Mervieniba,Cena,Summa FROM `pavadzime_preces` WHERE DocID = ' . $DocID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {

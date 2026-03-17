@@ -39,7 +39,7 @@ VALUES (
  "' . $Data['OrderID'] . '","' . $Data['Nosaukums'] . '", "' . $Data['Reg_nr'] . '", "' . $Data['Sasija'] . '", "' . $Data['Reg_ap'] . '", "' . $Data['Vertiba'] . '");';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
         }
 
         return 1;
@@ -49,7 +49,7 @@ VALUES (
         $query = "SELECT * FROM `nomasauto` where Status = 0 ";
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         $results = array();
@@ -65,7 +65,7 @@ VALUES (
     function ChangeAuto($ID) {
         $query = 'SELECT * FROM `nomasauto` WHERE ID = "' . $ID . '"';
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         $results = array();
@@ -88,7 +88,7 @@ SET `Nosaukums` = "' . str_replace("%27%27", "%22", rawurlencode($Data['Nosaukum
 WHERE ID = "' . $Data['ID'] . '"';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
         }
 
         return 1;
@@ -98,7 +98,7 @@ WHERE ID = "' . $Data['ID'] . '"';
         $query = "select nomasauto.ID, Orders.Code AS Nosaukums from `nomasauto`, `Orders` WHERE nomasauto.OrderID = Orders.ID AND Code LIKE '%" . $text . "%' AND nomasauto.Status = 0";
 
         if (!$result = self::$DB->query($query))
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
 
         $results = array();
         while ($row = $result->fetch_assoc()) {
@@ -143,7 +143,7 @@ WHERE ID = "' . $Data['ID'] . '"';
                          `Noma` = "1"';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Noma (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Noma (' . __LINE__ . ') : ' . self::$DB->error);
         }
         $From = strtotime($this->dataconvert($Data['From']));
         $To = strtotime($this->dataconvert($Data['To']));
@@ -158,7 +158,7 @@ WHERE ID = "' . $Data['ID'] . '"';
 VALUES("' . $ID . '","' . $Data['PersonID'] . '","1 (viena) darbadiena","' . "20" . $Data['From'] . $atstarpe . "20" . $Data['To'] . '")';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Noma (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Noma (' . __LINE__ . ') : ' . self::$DB->error);
         }
 
         $dienas = ($To - $From) / 86400;
@@ -192,7 +192,7 @@ VALUES (
  "' . $Data['PersonID'] . '","' . $ID . '","' . $Data['AutoID'] . '","' . $Data['Nr'] . '","' . $Data['From'] . '","' . $Data['To'] . '","' . rawurlencode($Data['GetLocation']) . '","' . rawurlencode($Data['ReturnLocation']) . '");';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
         }
 
         $Data = Data::getRow($ID);
@@ -308,7 +308,7 @@ VALUES (
         $query = "UPDATE `noma` SET ligums='" . urlencode($Data['Data']) . "' WHERE RowID=" . $Data['ID'];
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Noma (' . __LINE__ . ')');
+            throw new AppError('Write error on Noma (' . __LINE__ . ')');
         }
 
         return 1;
@@ -318,7 +318,7 @@ VALUES (
         $query = "UPDATE `noma` SET Pielikums='" . urlencode($Data['Data']) . "' WHERE RowID=" . $Data['ID'];
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Noma (' . __LINE__ . ')');
+            throw new AppError('Write error on Noma (' . __LINE__ . ')');
         }
 
         return 1;
@@ -328,7 +328,7 @@ VALUES (
         $query = "UPDATE `noma` SET Akts='" . urlencode($Data['Data']) . "' WHERE RowID=" . $Data['ID'];
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Noma (' . __LINE__ . ')');
+            throw new AppError('Write error on Noma (' . __LINE__ . ')');
         }
 
         return 1;

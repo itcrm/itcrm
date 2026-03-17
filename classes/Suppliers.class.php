@@ -21,7 +21,7 @@ class Suppliers extends DBObject {
                        ' . ($this->getID() > 0 ? ' AND ID!=' . $this->getID() : '');
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Suppliers (' . __LINE__ . ')');
+            throw new AppError('Read error on Suppliers (' . __LINE__ . ')');
         }
 
         if ($result->num_rows == 0) return 1;
@@ -57,7 +57,7 @@ class Suppliers extends DBObject {
                  ORDER BY `ID` DESC';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Users (' . __LINE__ . ')');
+            throw new AppError('Read error on Users (' . __LINE__ . ')');
         }
         $Supp = array();
 
@@ -76,13 +76,13 @@ class Suppliers extends DBObject {
 
     function Save() {
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if (empty($Err)) {
             $Check = $this->checkDuplicates();
             if ($Check != 1) return $Check;
 
-            if ($this->getID() == 0) $this->Add();
+            if ($this->getID() < 1) $this->Add();
             else $this->Update();
 
             return $this->getID();
@@ -102,7 +102,7 @@ class Suppliers extends DBObject {
                          `Status`=1';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Suppliers (' . __LINE__ . ')');
+            throw new AppError('Write error on Suppliers (' . __LINE__ . ')');
         }
 
         $this->setID(self::$DB->insert_id);
@@ -118,7 +118,7 @@ class Suppliers extends DBObject {
                    WHERE `ID`=' . (int)$this->getID();
 
         if (!self::$DB->query($query)) {
-            throw new Error('Update error on Suppliers (' . __LINE__ . ')');
+            throw new AppError('Update error on Suppliers (' . __LINE__ . ')');
         }
     }
 
@@ -126,7 +126,7 @@ class Suppliers extends DBObject {
         $query = 'DELETE FROM `Suppliers` WHERE `ID`=' . $this->getID();
 
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Suppliers (' . __LINE__ . ')');
+            throw new AppError('Delete error on Suppliers (' . __LINE__ . ')');
         }
         Info::Delete($this->getID());
 
@@ -137,9 +137,9 @@ class Suppliers extends DBObject {
         $query = "SELECT * FROM `Suppliers` WHERE `ID`=" . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Suppliers (' . __LINE__ . ')');
+            throw new AppError('Read error on Suppliers (' . __LINE__ . ')');
         }
-        return self::fetchObject($result, new self);
+        return (new self)->fetchObject($result, new self);
     }
 
     /**
@@ -151,13 +151,13 @@ class Suppliers extends DBObject {
 
         if ($type == 'get') return $this->$key;
         elseif ($type == 'set') $this->$key = $params[0];
-        else throw new Error(get_class($this) . '::' . $method . ' does not exists');
+        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setName($v) {
         $v = trim(mb_substr($v, 0, 30));
         if ($v == '' || $v == Language::$Data['Name'])
-            throw new Error(Language::$Suppliers['SetName']);
+            throw new AppError(Language::$Suppliers['SetName']);
         else $this->Name = $v;
     }
 

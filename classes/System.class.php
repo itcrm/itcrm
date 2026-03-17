@@ -23,7 +23,7 @@ class System extends DBObject {
     function Run() {
         try {
             echo $this->Load();
-        } catch (Error $ex) {
+        } catch (AppError $ex) {
             die($ex->getMessage());
         }
     }

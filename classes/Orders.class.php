@@ -100,7 +100,7 @@ class Orders extends DBObject {
                 : ($filter != '' ? ' WHERE ' . $filter : ''));
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Error on ' . get_class() . ' (' . __LINE__ . ')');
+            throw new AppError('Error on ' . get_class() . ' (' . __LINE__ . ')');
         }
 
         $row = $result->fetch_array();
@@ -122,7 +122,7 @@ class Orders extends DBObject {
                 LIMIT ' . $Start . ',' . Config::PAGE_LENGTH;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Orders (' . __LINE__ . ')');
+            throw new AppError('Read error on Orders (' . __LINE__ . ')');
         }
         $Users = count(Users::getAsArray());
         $Rights = Rights::getRigthsByType('Order');
@@ -152,7 +152,7 @@ class Orders extends DBObject {
     static function getOptionsList() {
         $query = 'SELECT * FROM `Orders` WHERE `Status`=1 ORDER BY `Code`';
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Orders (' . __LINE__ . ')');
+            throw new AppError('Read error on Orders (' . __LINE__ . ')');
         }
         $orders = '';
         while ($row = $result->fetch_assoc()) {
@@ -170,7 +170,7 @@ class Orders extends DBObject {
                    ORDER BY `Code`';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Orders (' . __LINE__ . ')');
+            throw new AppError('Read error on Orders (' . __LINE__ . ')');
         }
         $Orders = array();
         while ($row = $result->fetch_assoc()) {
@@ -243,10 +243,10 @@ class Orders extends DBObject {
             $this->fetchObject($this->assignObject($this->getById($_POST['ID'])));
 
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if (empty($Err)) {
-            if ($this->getID() == 0) $this->Add();
+            if ($this->getID() < 1) $this->Add();
             else {
                 if ($this->getIDUser() != $_SESSION['User']->getID() && !$_SESSION['isAdmin'])
                     return self::ArrayToJson(array(Language::$Orders['NoRights']));
@@ -284,8 +284,8 @@ class Orders extends DBObject {
                          `Status`=1';
 
         if (!self::$DB->query($query)) {
-            if (self::$DB->errno == 1062) throw new Error(Language::$Orders['DuplicateEntry']);
-            throw new Error('Write error on Orders (' . __LINE__ . ')');
+            if (self::$DB->errno == 1062) throw new AppError(Language::$Orders['DuplicateEntry']);
+            throw new AppError('Write error on Orders (' . __LINE__ . ')');
         }
 
         $this->setID(self::$DB->insert_id);
@@ -313,7 +313,7 @@ class Orders extends DBObject {
         elseif ($_POST['RightsAdd'] == 1) Rights::addRights($this->getID(), 'Order');
 
         if (!self::$DB->query($query)) {
-            throw new Error('Update error on Orders (' . __LINE__ . ')');
+            throw new AppError('Update error on Orders (' . __LINE__ . ')');
         }
     }
 
@@ -328,7 +328,7 @@ class Orders extends DBObject {
                             SET `Status`=' . $Status . ' WHERE `ID`=' . $this->getID();
 
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Orders (' . __LINE__ . ')');
+            throw new AppError('Delete error on Orders (' . __LINE__ . ')');
         }
 
         return 1;
@@ -338,16 +338,16 @@ class Orders extends DBObject {
         $query = "SELECT * FROM `Orders` WHERE `ID`=" . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Orders (' . __LINE__ . ')');
+            throw new AppError('Read error on Orders (' . __LINE__ . ')');
         }
-        return self::fetchObject($result, new self);
+        return (new self)->fetchObject($result, new self);
     }
 
     function getCodeById($ID) {
         $query = "SELECT Code FROM `Orders` WHERE `ID`=" . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -365,12 +365,12 @@ class Orders extends DBObject {
 
         if ($type == 'get') return $this->$key;
         elseif ($type == 'set') $this->$key = $params[0];
-        else throw new Error(get_class($this) . '::' . $method . ' does not exists');
+        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setCode($value) {
         $value = trim($value);
-        if ($value == '') throw new Error(Language::$Orders['SetCode']);
+        if ($value == '') throw new AppError(Language::$Orders['SetCode']);
         else $this->Code = $value;
     }
 }

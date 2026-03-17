@@ -9,7 +9,7 @@ abstract class DBObject {
     static function Connect() {
         DBObject::$DB = mysqli_connect(Config::DB_HOST_NAME, Config::DB_USER_NAME, Config::DB_PASSWORD, Config::DB_DATABASE_NAME);
         if (mysqli_connect_errno()) {
-            throw new Error(mysqli_connect_error());
+            throw new AppError(mysqli_connect_error());
         }
 
         DBObject::$DB->query('SET NAMES UTF8');
@@ -20,7 +20,7 @@ abstract class DBObject {
     }
 
     function fetchObject($vals, $Object = '') {
-        if (get_class($vals) == 'mysqli_result') $vals = $vals->fetch_assoc();
+        if ($vals instanceof mysqli_result) $vals = $vals->fetch_assoc();
 
         $Obj = $Object == '' ? $this : $Object;
 
@@ -28,8 +28,8 @@ abstract class DBObject {
             if (isset($vals[$v]))
                 try {
                     $Obj->{'set' . $v}($vals[$v]);
-                } catch (Error $ex) {
-                    $ex->setError(get_class($Obj), $v);
+                } catch (AppError $ex) {
+                    AppError::setError(get_class($Obj), $v, $ex->getMessage());
                 }
         }
 
@@ -40,7 +40,7 @@ abstract class DBObject {
         $aVars = array();
 
         if (!$Obj) $Obj[0] = $this;
-        elseif (get_class($Obj) == 'mysqli_result') {
+        elseif ($Obj instanceof mysqli_result) {
             while ($row = $Obj->fetch_assoc()) $aVars[] = $row;
             return empty($aVars) ? '' : $aVars;
         }

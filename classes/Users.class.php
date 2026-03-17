@@ -29,7 +29,7 @@ class Users extends DBObject {
                        ' . ($this->getID() > 0 ? ' AND ID!=' . $this->getID() : '');
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Users (' . __LINE__ . ')');
+            throw new AppError('Read error on Users (' . __LINE__ . ')');
         }
 
         if ($result->num_rows == 0) return 1;
@@ -41,7 +41,7 @@ class Users extends DBObject {
             try {
                 $this->setLogin($_POST['Login']);
                 $this->setPassword($_POST['Password']);
-            } catch (Error $ex) {
+            } catch (AppError $ex) {
                 return Language::$Users['WrongLoginPassword'];
             }
             $query = "SELECT *
@@ -50,7 +50,7 @@ class Users extends DBObject {
                         AND Password='" . md5($this->getPassword()) . "'";
 
             if (!$result = self::$DB->query($query)) {
-                throw new Error('Read error on Users (' . __LINE__ . ')');
+                throw new AppError('Read error on Users (' . __LINE__ . ')');
             }
             if ($result->num_rows == 0) {
                 return Language::$Users['WrongLoginPassword'];
@@ -109,7 +109,7 @@ class Users extends DBObject {
                  ORDER BY `Status` DESC';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Users (' . __LINE__ . ')');
+            throw new AppError('Read error on Users (' . __LINE__ . ')');
         }
         $Users = array();
 
@@ -151,7 +151,7 @@ class Users extends DBObject {
                    ORDER BY `Login`';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Users (' . __LINE__ . ')');
+            throw new AppError('Read error on Users (' . __LINE__ . ')');
         }
         $users = '';
         while ($row = $result->fetch_assoc()) {
@@ -174,7 +174,7 @@ class Users extends DBObject {
                    ORDER BY `Login`';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Users (' . __LINE__ . ')');
+            throw new AppError('Read error on Users (' . __LINE__ . ')');
         }
         $Users = array();
         while ($row = $result->fetch_assoc()) {
@@ -189,7 +189,7 @@ class Users extends DBObject {
      */
     function Save() {
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if ($this->getID() > 0 && $this->getPassword() == '')
             unset($Err['Password']);
@@ -198,7 +198,7 @@ class Users extends DBObject {
             $Check = $this->checkDuplicates();
             if ($Check != 1) return $Check;
 
-            if ($this->getID() == 0) $this->Add();
+            if ($this->getID() < 1) $this->Add();
             else $this->Update();
 
             if ($_POST['CopyRights'] == 1) {
@@ -234,7 +234,7 @@ class Users extends DBObject {
                          `MultiChange`=' . (int)$this->getMultiChange();
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Users (' . __LINE__ . ') ');
+            throw new AppError('Write error on Users (' . __LINE__ . ') ');
         }
 
         $this->setID(self::$DB->insert_id);
@@ -277,7 +277,7 @@ class Users extends DBObject {
             Rights::addUserToUsers($this->getID());
 
         if (!self::$DB->query($query)) {
-            throw new Error('Update error on Users (' . __LINE__ . ')');
+            throw new AppError('Update error on Users (' . __LINE__ . ')');
         }
     }
 
@@ -293,7 +293,7 @@ class Users extends DBObject {
                             SET `Status`=' . $Status . ' WHERE `ID`=' . $this->getID();
 
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Users (' . __LINE__ . ')');
+            throw new AppError('Delete error on Users (' . __LINE__ . ')');
         }
 
         return 1;
@@ -303,9 +303,9 @@ class Users extends DBObject {
         $query = "SELECT * FROM `Users` WHERE `ID`=" . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Users (' . __LINE__ . ')');
+            throw new AppError('Read error on Users (' . __LINE__ . ')');
         }
-        return self::fetchObject($result, new self);
+        return (new self)->fetchObject($result, new self);
     }
 
     /**
@@ -317,18 +317,18 @@ class Users extends DBObject {
 
         if ($type == 'get') return $this->$key;
         elseif ($type == 'set') $this->$key = $params[0];
-        else throw new Error(get_class($this) . '::' . $method . ' does not exists');
+        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setLogin($value) {
         $value = trim($value);
-        if ($value == '') throw new Error(Language::$Users['SetLogin']);
+        if ($value == '') throw new AppError(Language::$Users['SetLogin']);
         else $this->Login = $value;
     }
 
     function setPassword($value) {
         $value = trim($value);
-        if ($value == '') throw new Error(Language::$Users['SetPassword']);
+        if ($value == '') throw new AppError(Language::$Users['SetPassword']);
         else $this->Password = $value;
     }
 
@@ -336,7 +336,7 @@ class Users extends DBObject {
         $query = "SELECT Name FROM `Users` WHERE `ID`='" . $ID . "'";
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data (' . __LINE__ . ')');
+            throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -354,7 +354,7 @@ SELECT '" . $ID . "', `Type`, `Value`
 FROM   `Rights`
 WHERE IDUser = '" . $FromID . "'";
             if (!self::$DB->query($query)) {
-                throw new Error('Clone Rights error on Users (' . __LINE__ . ')');
+                throw new AppError('Clone Rights error on Users (' . __LINE__ . ')');
             }
 
             $user = $this->GetUserByID($FromID);
@@ -362,7 +362,7 @@ WHERE IDUser = '" . $FromID . "'";
             $query = "UPDATE `Users` SET Phone=CONCAT(Phone, ' +" . $user . "') where `ID` = " . $ID;
 
             if (!self::$DB->query($query)) {
-                throw new Error('Clone LOG error on Users (' . __LINE__ . ')');
+                throw new AppError('Clone LOG error on Users (' . __LINE__ . ')');
             }
         }
     }

@@ -23,7 +23,7 @@ class Types extends DBObject {
                     if ($Type['Status'] > -1) $Type['Deleted'] = 'hide';
                     else $Type['Status'] = 'deleted';
                     $Rights = Rights::getRigthsByType('Type');
-                    if (!$Rights[$Type['ID']]) $Type['Restricted'] = '<b>!</b>';
+                    if (empty($Rights[$Type['ID']])) $Type['Restricted'] = '<b>!</b>';
                     return self::ArrayToJson(array(1, Template::Process('Row', $Type)));
                 } else return $ID;
                 break;
@@ -49,7 +49,7 @@ class Types extends DBObject {
                  ORDER BY `ID` DESC';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Types (' . __LINE__ . ')');
+            throw new AppError('Read error on Types (' . __LINE__ . ')');
         }
 
         $Users = count(Users::getAsArray());
@@ -74,7 +74,7 @@ class Types extends DBObject {
                    WHERE `Status`=1
                    ORDER BY `Code`';
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Users (' . __LINE__ . ')');
+            throw new AppError('Read error on Users (' . __LINE__ . ')');
         }
         $types = '';
         while ($row = $result->fetch_assoc()) {
@@ -91,7 +91,7 @@ class Types extends DBObject {
                    ORDER BY `Code`';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Types (' . __LINE__ . ')');
+            throw new AppError('Read error on Types (' . __LINE__ . ')');
         }
         $Types = array();
         while ($row = $result->fetch_assoc()) {
@@ -106,10 +106,10 @@ class Types extends DBObject {
      */
     function Save() {
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if (empty($Err)) {
-            if ($this->getID() == 0) $this->Add();
+            if ($this->getID() < 1) $this->Add();
             else $this->Update();
 
             return $this->getID();
@@ -127,12 +127,12 @@ class Types extends DBObject {
                          `Status`=1';
 
         if (!self::$DB->query($query)) {
-            if (self::$DB->errno == 1062) throw new Error(Language::$Orders['DuplicateEntry']);
-            throw new Error('Write error on Types (' . __LINE__ . ')');
+            if (self::$DB->errno == 1062) throw new AppError(Language::$Orders['DuplicateEntry']);
+            throw new AppError('Write error on Types (' . __LINE__ . ')');
         }
 
         $this->setID(self::$DB->insert_id);
-        if ($_POST['RightsAdd'] == 1)
+        if (!empty($_POST['RightsAdd']))
             Rights::addRights($this->getID(), 'Type');
 
         return $this->getID();
@@ -144,12 +144,12 @@ class Types extends DBObject {
                          `Description`="' . addslashes($this->getDescription()) . '"
                    WHERE `ID`=' . (int)$this->getID();
 
-        if ($_POST['RightsDel'] == 1)
+        if (!empty($_POST['RightsDel']))
             Rights::DeleteById($this->getID(), 'Type');
-        elseif ($_POST['RightsAdd'] == 1) Rights::addRights($this->getID(), 'Type');
+        elseif (!empty($_POST['RightsAdd'])) Rights::addRights($this->getID(), 'Type');
 
         if (!self::$DB->query($query)) {
-            throw new Error('Update error on Types (' . __LINE__ . ')');
+            throw new AppError('Update error on Types (' . __LINE__ . ')');
         }
     }
 
@@ -164,7 +164,7 @@ class Types extends DBObject {
                             SET `Status`=' . $Status . ' WHERE `ID`=' . $this->getID();
 
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Types (' . __LINE__ . ')');
+            throw new AppError('Delete error on Types (' . __LINE__ . ')');
         }
 
         return 1;
@@ -174,9 +174,9 @@ class Types extends DBObject {
         $query = "SELECT * FROM `Types` WHERE `ID`=" . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Types (' . __LINE__ . ')');
+            throw new AppError('Read error on Types (' . __LINE__ . ')');
         }
-        return self::fetchObject($result, new self);
+        return (new self)->fetchObject($result, new self);
     }
 
     /**
@@ -188,12 +188,12 @@ class Types extends DBObject {
 
         if ($type == 'get') return $this->$key;
         elseif ($type == 'set') $this->$key = $params[0];
-        else throw new Error(get_class($this) . '::' . $method . ' does not exists');
+        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setCode($value) {
         $value = trim($value);
-        if ($value == '') throw new Error(Language::$Types['SetCode']);
+        if ($value == '') throw new AppError(Language::$Types['SetCode']);
         else $this->Code = $value;
     }
 }

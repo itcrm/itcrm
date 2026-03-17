@@ -54,7 +54,7 @@ class Pavadzime extends DBObject {
         $query = 'SELECT ID,IDDoc,Date,Note,PlaceTaken,PlaceDone FROM `Data` WHERE ID = ' . $Data;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
         $Info = array();
 
@@ -76,7 +76,7 @@ class Pavadzime extends DBObject {
         $query1 = 'SELECT ID,DocID,Samaksa,Sanemejs,Atlaide,Izsniedza,SanemejaID FROM `pavadzime` WHERE DocID = ' . $Data;
 
         if (!$result = self::$DB->query($query1)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
 
         $Info['SaveID'] = 0;
@@ -91,7 +91,7 @@ class Pavadzime extends DBObject {
         $query2 = 'SELECT ID,Nosaukums,Artikuls,Daudzums,Mervieniba,Cena FROM `pavadzime_preces` WHERE DocID = ' . $Data;
 
         if (!$result = self::$DB->query($query2)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
 
         $a = 0;
@@ -127,7 +127,7 @@ class Pavadzime extends DBObject {
 
     function Save() {
         $this->fetchObject($_POST);
-        $Err = Error::getErrors(get_class($this));
+        $Err = AppError::getErrors(get_class($this));
 
         if (empty($Err)) {
             $this->Add();
@@ -148,7 +148,7 @@ class Pavadzime extends DBObject {
                           `AddDate`=NOW()';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Info (' . __LINE__ . ')');
+            throw new AppError('Write error on Info (' . __LINE__ . ')');
         }
 
         return 1;
@@ -158,7 +158,7 @@ class Pavadzime extends DBObject {
         $query = 'DELETE FROM `Info` WHERE `IDSupplier`=' . $IDS;
 
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Info (' . __LINE__ . ')');
+            throw new AppError('Delete error on Info (' . __LINE__ . ')');
         }
 
         return 1;
@@ -167,7 +167,7 @@ class Pavadzime extends DBObject {
     function sanemejs($id) {
         $query = "SELECT * FROM `sanemeji` WHERE `ID` = '$id'";
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
         $Sanemeji = array();
         while ($row = $result->fetch_assoc()) {
@@ -188,7 +188,7 @@ WHERE ID >0
 ORDER BY `Nosaukums`';
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
         $Orders = array();
         while ($row = $result->fetch_assoc()) {
@@ -233,7 +233,7 @@ ORDER BY `Nosaukums`';
     );';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
         }
         $this->MakeCont($_POST['Nosaukums'], $_POST['Kods'], $_POST['JurAdrese'], $_POST['Kreditiestade'], $_POST['Konts'], $_POST['Telefons'], $_POST['Epasts']);
         return 1;
@@ -260,7 +260,7 @@ ORDER BY `Nosaukums`';
         $query = "SELECT DocID FROM `pavadzime` WHERE SanemejaID = " . $ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
 
         if ($result->num_rows > 0) {
@@ -286,7 +286,7 @@ ORDER BY `Nosaukums`';
         $query = 'Update `sanemeji` SET `Status`= 1 WHERE `ID`=' . $ID;
 
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Data (' . __LINE__ . ')');
+            throw new AppError('Delete error on Data (' . __LINE__ . ')');
         }
 
         return 1;
@@ -305,7 +305,7 @@ ORDER BY `Nosaukums`';
             WHERE ID = "' . $ID . '"';
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
         }
         $this->MakeCont($_POST['Nosaukums'], $_POST['Kods'], $_POST['JurAdrese'], $_POST['Kreditiestade'], $_POST['Konts'], $_POST['Telefons'], $_POST['Epasts']);
         return 1;
@@ -315,9 +315,9 @@ ORDER BY `Nosaukums`';
         $query = 'SELECT * FROM `sanemeji` WHERE `ID`=' . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Data ' . __LINE__);
+            throw new AppError('Read error on Data ' . __LINE__);
         }
-        return self::fetchObject($result, new self);
+        return (new self)->fetchObject($result, new self);
     }
 
     function izsnigsanastext($datums) {
@@ -381,11 +381,11 @@ WHERE ID = '$ID'";
         $query2 = "Update Data SET `TextOrder` = '" . addslashes(rawurldecode($Sanemejs)) . "' WHERE ID = '$DocID'";
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
         }
 
         if (!self::$DB->query($query2)) {
-            throw new Error('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
         }
 
         return 1;
@@ -427,7 +427,7 @@ WHERE ID = "' . $ID . '"';
         }
 
         if (!self::$DB->query($query)) {
-            throw new Error('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
         }
 
         return 1;
@@ -438,7 +438,7 @@ WHERE ID = "' . $ID . '"';
         $query = 'DELETE FROM `pavadzime_preces` WHERE `ID`=' . $ID;
 
         if (!self::$DB->query($query)) {
-            throw new Error('Delete error on Info (' . __LINE__ . ')');
+            throw new AppError('Delete error on Info (' . __LINE__ . ')');
         }
 
         return 1;
@@ -456,7 +456,7 @@ WHERE ID = "' . $ID . '"';
         elseif ($type == 'set')
             $this->$key = $params[0];
         else
-            throw new Error(get_class($this) . '::' . $method . ' does not exists');
+            throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     /**
@@ -491,7 +491,7 @@ WHERE ID = "' . $ID . '"';
         $query = "SELECT * FROM `sanemeji`";
 
         if (!$result = self::$DB->query($query)) {
-            throw new Error('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
         while ($row = $result->fetch_assoc()) {
             $this->MakeCont(rawurldecode($row['Nosaukums']), rawurldecode($row['Kods']), rawurldecode($row['Adrese']), rawurldecode($row['Banka']), rawurldecode($row['Konts']), rawurldecode($row['Telefons']), rawurldecode($row['Epasts']));

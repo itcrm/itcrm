@@ -83,7 +83,7 @@ class Prints extends TCPDF {
                 $b = "'$Day 21:59:59'";
                 $query = 'SELECT *, Data.ID as TaskID, Data.Changes as izmainas FROM Data LEFT JOIN Orders ON Orders.ID=Data.IDOrder WHERE `RemindDate` between ' . $a . ' and ' . $b . ' and `RemindTo`= ' . $UID . ' ';                                 //and `Date` between '. $a .' and ' . $b .'
                 if (!$result = self::$DB->query($query)) {
-                    throw new Error('Read error on Print Dienaslapa (' . __LINE__ . ')');
+                    throw new AppError('Read error on Print Dienaslapa (' . __LINE__ . ')');
                 }
                 while ($row = $result->fetch_assoc()) {
                     list($sdat, $stime) = explode(" ", $row['RemindDate']);
@@ -118,7 +118,7 @@ class Prints extends TCPDF {
                     $this->MultiCell(80, $platums - 5, $row['TextOrder'] . "\n" . $row['Note'], 0, 'L', 0, 0, $x, $y + 3, false, 0, false, false, $platums - 5, 'T', true);
                 }
             } else {
-                throw new Error('Nav saņemti parametri drukāšanai');
+                throw new AppError('Nav saņemti parametri drukāšanai');
             }
         }
     }
