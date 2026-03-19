@@ -30,6 +30,16 @@ abstract class DBObject {
         else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
+    static function getById($ID) {
+        $table = static::$tableName;
+        $query = "SELECT * FROM `" . $table . "` WHERE `ID`=" . (int)$ID;
+
+        if (!$result = self::$DB->query($query))
+            throw new AppError('Read error on ' . $table . ' (' . __LINE__ . ')');
+
+        return (new static)->fetchObject($result, new static);
+    }
+
     function getFields() {
         return $this->Fields;
     }

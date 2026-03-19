@@ -362,16 +362,6 @@ class Filters extends DBObject {
         }
     }
 
-    static function getById($ID) {
-        $query = 'SELECT *
-                    FROM `Filters` WHERE `ID`=' . (int)$ID;
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Filters ' . __LINE__);
-        }
-        return (new self)->fetchObject($result, new self);
-    }
-
     static function getRow($ID) {
         $query = 'SELECT * FROM `Filters` WHERE ID=' . (int)$ID . ' ORDER BY ID DESC';
 

@@ -130,15 +130,6 @@ class Types extends DBObject {
         }
     }
 
-    static function getById($ID) {
-        $query = "SELECT * FROM `Types` WHERE `ID`=" . (int)$ID;
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Types (' . __LINE__ . ')');
-        }
-        return (new self)->fetchObject($result, new self);
-    }
-
     function setCode($value) {
         $value = trim($value);
         if ($value == '') throw new AppError(Language::$Types['SetCode']);
