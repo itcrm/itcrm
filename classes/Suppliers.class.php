@@ -30,7 +30,7 @@ class Suppliers extends DBObject {
                     $Supp = $this->assignObject();
                     $Supp['IDSupplier'] = $Supp['ID'];
                     $Supp['IDData'] = $_POST['IDData'];
-                    return self::ArrayToJson(array(1, Template::Process('Supplier', $Supp)));
+                    return json_encode(array(1, Template::Process('Supplier', $Supp)));
                 } else return $ID;
                 break;
 
@@ -81,7 +81,7 @@ class Suppliers extends DBObject {
             return $this->getID();
         } else {
             $Err[0] = 0;
-            return self::ArrayToJson($Err);
+            return json_encode($Err);
         }
     }
 

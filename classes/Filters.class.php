@@ -58,7 +58,7 @@ class Filters extends DBObject {
                     if ($v == '0' || $v == '') unset($Filter[$k]);
 
                 $Filter[0] = 1;
-                return self::ArrayToJson($Filter);
+                return json_encode($Filter);
             case 'editRow':
                 return $this->editFilter($_POST['ID']);
             case 'Save':
@@ -66,7 +66,7 @@ class Filters extends DBObject {
                 $ID = $this->Save();
                 if (is_numeric($ID)) {
                     $Data = $this->getRow($ID);
-                    return self::ArrayToJson(array(1, Template::Process('Row', $Data)));
+                    return json_encode(array(1, Template::Process('Row', $Data)));
                 }
                 return $ID;
             case 'Delete':
@@ -306,7 +306,7 @@ class Filters extends DBObject {
                 unset($Err['IDPerson']);
             }
 
-            return self::ArrayToJson($Err);
+            return json_encode($Err);
         }
     }
 

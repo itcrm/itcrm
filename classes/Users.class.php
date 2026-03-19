@@ -64,7 +64,7 @@ class Users extends DBObject {
                 $ID = $this->Save();
                 if (is_numeric($ID)) {
                     $User = $this->fetchRow($this->assignObject($this->getByID($ID)));
-                    return self::ArrayToJson(array(1, Template::Process('Row', $User)));
+                    return json_encode(array(1, Template::Process('Row', $User)));
                 } else return $ID;
                 break;
             case 'Logon':
@@ -160,7 +160,7 @@ class Users extends DBObject {
             return $this->getID();
         } else {
             $Err[0] = 0;
-            return self::ArrayToJson($Err);
+            return json_encode($Err);
         }
     }
 

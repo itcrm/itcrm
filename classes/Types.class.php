@@ -17,7 +17,7 @@ class Types extends DBObject {
                     $Type = $this->assignObject($this->getByID($ID));
                     if ($Type['Status'] > -1) $Type['Deleted'] = 'hide';
                     else $Type['Status'] = 'deleted';
-                    return self::ArrayToJson(array(1, Template::Process('Row', $Type)));
+                    return json_encode(array(1, Template::Process('Row', $Type)));
                 } else return $ID;
                 break;
             case 'Delete':
@@ -98,7 +98,7 @@ class Types extends DBObject {
             return $this->getID();
         } else {
             $Err[0] = 0;
-            return self::ArrayToJson($Err);
+            return json_encode($Err);
         }
     }
 

@@ -103,7 +103,7 @@ function Save(Class) {
     } else {
       Loading(f, 0);
       try {
-        answ = eval("(" + answ + ")");
+        answ = JSON.parse(answ);
       } catch (ex) {
         answ = new Array(answ);
       }
@@ -380,7 +380,7 @@ function showChanges(ID, Class) {
   success = function (answ) {
     Loading(0, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
       if (answ[0] == 1) {
         $("#Changes" + ID).html(answ[1]);
         $("#Changes" + ID).toggle();
@@ -711,7 +711,7 @@ function SaveSupplier() {
   success = function (answ) {
     Loading(f, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -748,7 +748,7 @@ function getSupplier(el) {
   success = function (answ) {
     Loading(0, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -779,7 +779,7 @@ function getPavadzime(el) {
   success = function (answ) {
     Loading(0, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -906,7 +906,7 @@ function GetTpl(ID, t) {
   success = function (answ) {
     Loading(f, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -952,7 +952,7 @@ function getFilterData(id) {
   success = function (answ) {
     Loading(f, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1169,7 +1169,7 @@ function CeckRow(ID) {
 
   success = function (answ) {
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1190,7 +1190,7 @@ function UnCheckRow(ID) {
 
   success = function (answ) {
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1257,7 +1257,7 @@ function getNoliktava(el, type) {
   success = function (answ) {
     Loading(0, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1304,7 +1304,7 @@ function getNolMatreals(el) {
   success = function (answ) {
     Loading(0, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1391,7 +1391,7 @@ function NoliktavaAtlikums(ID) {
     Loading(0, 0);
     //alert(answ);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1439,7 +1439,7 @@ function NoliktavaSave() {
     Loading(0, 0);
 
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1471,7 +1471,7 @@ function NoliktavaDialogSave() {
     Loading(0, 0);
 
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1644,7 +1644,7 @@ function ChangeSelected() {
   success = function (answ) {
     Loading(0, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1664,7 +1664,7 @@ function nolAddDet() {
 
   success = function (answ) {
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1767,7 +1767,7 @@ function SaveForm() {
   success = function (answ) {
     Loading(0, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }
@@ -1784,7 +1784,7 @@ function editfil(ID) {
   success = function (answ) {
     Loading(0, 0);
     try {
-      answ = eval("(" + answ + ")");
+      answ = JSON.parse(answ);
     } catch (ex) {
       answ = new Array(answ);
     }

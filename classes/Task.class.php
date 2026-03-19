@@ -285,7 +285,7 @@ class Task extends DBObject {
                 unset($Err['IDPerson']);
             }
 
-            return self::ArrayToJson($Err);
+            return json_encode($Err);
         }
     }
 
