@@ -18,12 +18,6 @@ class Warehous extends DBObject {
     protected $state;
     protected $used;
 
-    function __construct() {
-        foreach ($this as $k => $v) {
-            if ($k != 'Fields') $this->Fields[] = $k;
-        }
-    }
-
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
             case 'Export':

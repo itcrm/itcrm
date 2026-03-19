@@ -9,12 +9,6 @@ class Suppliers extends DBObject {
     protected $AddDate;
     protected $Status;
 
-    function __construct() {
-        foreach ($this as $k => $v) {
-            if ($k != 'Fields') $this->Fields[] = $k;
-        }
-    }
-
     function checkDuplicates() {
         $query = 'SELECT * FROM `Suppliers`
                        WHERE UPPER(`Name`)="' . addslashes(strtoupper($this->getName())) . '"

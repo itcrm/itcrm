@@ -3,12 +3,6 @@
 date_default_timezone_set('Europe/Riga');
 
 class Task extends DBObject {
-    function __construct() {
-        foreach ($this as $k => $v) {
-            if ($k != 'Fields') $this->Fields[] = $k;
-        }
-    }
-
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
             case 'Josn':

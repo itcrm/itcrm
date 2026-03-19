@@ -1,12 +1,6 @@
 <?php
 
 class Changes extends DBObject {
-    function __construct() {
-        foreach ($this as $k => $v) {
-            if ($k != 'Fields') $this->Fields[] = $k;
-        }
-    }
-
     function Load() {
         $Vars['Content'] = $this->GetChanges(self::$url[2]);
         return Template::Process('index', $Vars);
