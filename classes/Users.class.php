@@ -1,6 +1,8 @@
 <?php
 
 class Users extends DBObject {
+    use SoftDelete;
+    protected static $tableName = 'Users';
     protected $ID;
     protected $Login;
     protected $Password;
@@ -201,21 +203,6 @@ class Users extends DBObject {
         if (!self::$DB->query($query)) {
             throw new AppError('Update error on Users (' . __LINE__ . ')');
         }
-    }
-
-    function Delete() {
-        $Status = self::$url[2] == 'Restore' ? 1 : -1;
-
-        if ($this->getStatus() == -1 && $Status == -1) {
-            $query = 'DELETE FROM `Users` WHERE `ID`=' . $this->getID();
-        } else $query = 'Update `Users`
-                            SET `Status`=' . $Status . ' WHERE `ID`=' . $this->getID();
-
-        if (!self::$DB->query($query)) {
-            throw new AppError('Delete error on Users (' . __LINE__ . ')');
-        }
-
-        return 1;
     }
 
     static function getById($ID) {

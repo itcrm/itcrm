@@ -1,6 +1,8 @@
 <?php
 
 class Filters extends DBObject {
+    use SoftDelete;
+    protected static $tableName = 'Filters';
     protected $ID;
     protected $Name;
     protected $Date;
@@ -364,21 +366,6 @@ class Filters extends DBObject {
         if (!self::$DB->query($query)) {
             throw new AppError('Update error on Filters (' . __LINE__ . ')');
         }
-    }
-
-    function Delete() {
-        $Status = self::$url[2] == 'Restore' ? 1 : -1;
-
-        if ($this->getStatus() == -1 && $Status == -1) {
-            $query = 'DELETE FROM `Filters` WHERE `ID`=' . $this->getID();
-        } else $query = 'Update `Filters`
-                            SET `Status`=' . $Status . ' WHERE `ID`=' . $this->getID();
-
-        if (!self::$DB->query($query)) {
-            throw new AppError('Delete error on Filters (' . __LINE__ . ')');
-        }
-
-        return 1;
     }
 
     static function getById($ID) {
