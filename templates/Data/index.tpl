@@ -270,24 +270,6 @@
     </div>
    </div>
 
-         <div id="Noma" align="center" style="height: auto; left: 16px; position: absolute; top: 35px; width: 98%; display: none;">
-             <a class="extra close" style="float:right; position: absolute; right: 11px; top: 11px;" href="#" onclick="event.returnValue = false;  tinymce.execCommand('mceRemoveControl',true,'elm1'); $('#elm1').val(''); $( '#Noma' ).tabs( 'destroy' ); $('#Noma').hide(); return false;"></a>
-                 <div class="main">
-
-      <div class="clear"><!--  --></div>
-      <div id="Tabs">
-       <ul>
-        <li><a href="/lv/Josn/Pavadzime">Pavadzīme</a></li>
-        <li><a href="/lv/Josn/NomaLigums">Līgums</a></li>
-        <li><a href="/lv/Josn/NomaAkts">Akts</a></li>
-        <li><a href="/lv/Josn/NomaPielikums">Pielikums</a></li>
-        <li><a href="/lv/Josn/NomaOptions">Opcijas</a></li>
-    </ul>
-      </div>
-      <div class="clear"><!--  --></div>
-    </div>
-   </div>
-
     <div id="noliktava" align="center" style="display: none;">
         <div class="main">
 
