@@ -1,6 +1,7 @@
 <?php
 
 class Suppliers extends DBObject {
+    protected static $tableName = 'Suppliers';
     protected $ID;
     protected $IDUser;
     protected $Name;
@@ -124,15 +125,6 @@ class Suppliers extends DBObject {
         Info::Delete($this->getID());
 
         return 1;
-    }
-
-    static function getById($ID) {
-        $query = "SELECT * FROM `Suppliers` WHERE `ID`=" . (int)$ID;
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Suppliers (' . __LINE__ . ')');
-        }
-        return (new self)->fetchObject($result, new self);
     }
 
     function setName($v) {

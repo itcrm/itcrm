@@ -1,6 +1,7 @@
 <?php
 
 class Pavadzime extends DBObject {
+    protected static $tableName = 'sanemeji';
     protected $ID;
     protected $Nosaukums;
     protected $Kods;
@@ -302,15 +303,6 @@ ORDER BY `Nosaukums`';
         }
         $this->MakeCont($_POST['Nosaukums'], $_POST['Kods'], $_POST['JurAdrese'], $_POST['Kreditiestade'], $_POST['Konts'], $_POST['Telefons'], $_POST['Epasts']);
         return 1;
-    }
-
-    static function getById($ID) {
-        $query = 'SELECT * FROM `sanemeji` WHERE `ID`=' . (int)$ID;
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Data ' . __LINE__);
-        }
-        return (new self)->fetchObject($result, new self);
     }
 
     function izsnigsanastext($datums) {
