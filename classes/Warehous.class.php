@@ -1,22 +1,22 @@
 <?php
 
 class Warehous extends DBObject {
-    private $ID;
-    private $rindasID;
-    private $Password;
-    private $detalasID;
-    private $daudzums;
-    private $type;
-    private $Shop;
-    private $ShopCategoryID;
-    private $ShopDescription;
-    private $ShopModelID;
-    private $ShopTitle;
-    private $OrginalCode;
-    private $addition;
-    private $offer;
-    private $state;
-    private $used;
+    protected $ID;
+    protected $rindasID;
+    protected $Password;
+    protected $detalasID;
+    protected $daudzums;
+    protected $type;
+    protected $Shop;
+    protected $ShopCategoryID;
+    protected $ShopDescription;
+    protected $ShopModelID;
+    protected $ShopTitle;
+    protected $OrginalCode;
+    protected $addition;
+    protected $offer;
+    protected $state;
+    protected $used;
 
     function __construct() {
         foreach ($this as $k => $v) {

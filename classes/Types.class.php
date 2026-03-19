@@ -1,11 +1,11 @@
 <?php
 
 class Types extends DBObject {
-    private $ID;
-    private $Code;
-    private $Description;
-    private $AddDate;
-    private $Status;
+    protected $ID;
+    protected $Code;
+    protected $Description;
+    protected $AddDate;
+    protected $Status;
 
     function __construct() {
         foreach ($this as $k => $v) {
@@ -156,18 +156,6 @@ class Types extends DBObject {
             throw new AppError('Read error on Types (' . __LINE__ . ')');
         }
         return (new self)->fetchObject($result, new self);
-    }
-
-    /**
-     * Setters and getters here
-     */
-    function __call($method, $params) {
-        $type = substr($method, 0, 3);
-        $key = substr($method, 3);
-
-        if ($type == 'get') return $this->$key;
-        elseif ($type == 'set') $this->$key = $params[0];
-        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setCode($value) {

@@ -1,13 +1,13 @@
 <?php
 
 class Pavadzime extends DBObject {
-    private $ID;
-    private $Nosaukums;
-    private $Kods;
-    private $Adrese;
-    private $Banka;
-    private $Konts;
-    private $Changes;
+    protected $ID;
+    protected $Nosaukums;
+    protected $Kods;
+    protected $Adrese;
+    protected $Banka;
+    protected $Konts;
+    protected $Changes;
 
     function __construct() {
         foreach ($this as $k => $v) {
@@ -442,21 +442,6 @@ WHERE ID = "' . $ID . '"';
         }
 
         return 1;
-    }
-
-    /**
-     * Setters and getters here
-     */
-    function __call($method, $params) {
-        $type = substr($method, 0, 3);
-        $key = substr($method, 3);
-
-        if ($type == 'get')
-            return $this->$key;
-        elseif ($type == 'set')
-            $this->$key = $params[0];
-        else
-            throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     /**

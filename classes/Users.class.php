@@ -1,14 +1,14 @@
 <?php
 
 class Users extends DBObject {
-    private $ID;
-    private $Login;
-    private $Password;
-    private $Color;
-    private $Name;
-    private $Phone;
-    private $AddDate;
-    private $Status;
+    protected $ID;
+    protected $Login;
+    protected $Password;
+    protected $Color;
+    protected $Name;
+    protected $Phone;
+    protected $AddDate;
+    protected $Status;
 
     function __construct() {
         foreach ($this as $k => $v) {
@@ -225,18 +225,6 @@ class Users extends DBObject {
             throw new AppError('Read error on Users (' . __LINE__ . ')');
         }
         return (new self)->fetchObject($result, new self);
-    }
-
-    /**
-     * Setters and getters here
-     */
-    function __call($method, $params) {
-        $type = substr($method, 0, 3);
-        $key = substr($method, 3);
-
-        if ($type == 'get') return $this->$key;
-        elseif ($type == 'set') $this->$key = $params[0];
-        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setLogin($value) {

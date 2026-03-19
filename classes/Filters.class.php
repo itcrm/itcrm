@@ -1,26 +1,26 @@
 <?php
 
 class Filters extends DBObject {
-    private $ID;
-    private $Name;
-    private $Date;
-    private $DateType;
-    private $IDPerson;
-    private $IDOperator;
-    private $IDOrder;
-    private $TextOrder;
-    private $IDType;
-    private $TextType;
-    private $Sum;
-    private $Hours;
-    private $PlaceTaken;
-    private $PlaceDone;
-    private $Note;
-    private $BookNote;
-    private $AddDate;
-    private $Status;
-    private $Search;
-    private $Supertext;
+    protected $ID;
+    protected $Name;
+    protected $Date;
+    protected $DateType;
+    protected $IDPerson;
+    protected $IDOperator;
+    protected $IDOrder;
+    protected $TextOrder;
+    protected $IDType;
+    protected $TextType;
+    protected $Sum;
+    protected $Hours;
+    protected $PlaceTaken;
+    protected $PlaceDone;
+    protected $Note;
+    protected $BookNote;
+    protected $AddDate;
+    protected $Status;
+    protected $Search;
+    protected $Supertext;
 
     function __construct() {
         foreach ($this as $k => $v) {
@@ -428,18 +428,6 @@ class Filters extends DBObject {
         $row['Sum'] = $row['Sum'] == 0 ? '' : $row['Sum'];
         $row['Hours'] = $row['Hours'] == 0 ? '' : $row['Hours'];
         return $row;
-    }
-
-    /**
-     * Setters and getters here
-     */
-    function __call($method, $params) {
-        $type = substr($method, 0, 3);
-        $key = substr($method, 3);
-
-        if ($type == 'get') return $this->$key;
-        elseif ($type == 'set') $this->$key = $params[0];
-        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setName($v) {
