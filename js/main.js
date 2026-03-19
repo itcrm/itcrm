@@ -1530,13 +1530,13 @@ function AddNoliktavaForm(ID) {
     addNoliktavaAutoComp();
   }
   if (ID == 72) {
-    $("#nomasppr").remove();
-    $("#AddDataForm").append('<div class="noliktava" id="nomasppr"> </div>');
-    $("#nomasppr").append("<span> Pavadzimes Nr:</span>");
-    $("#nomasppr").append(
+    $("#pprForm").remove();
+    $("#AddDataForm").append('<div class="noliktava" id="pprForm"> </div>');
+    $("#pprForm").append("<span> Pavadzimes Nr:</span>");
+    $("#pprForm").append(
       '<input id="pprNr" type="text" name="Nr" onblur="CechNrExist(this)"/>'
     );
-    $("#nomasppr").append("<hr>");
+    $("#pprForm").append("<hr>");
     $("#AddDataForm #pprNr").focus();
   }
 }
