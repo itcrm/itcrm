@@ -1,0 +1,17 @@
+# Third-party PHP libraries
+tcpdf
+
+# Third-party JS libraries
+js/tiny_mce
+js/jquery*
+js/fullcalendar.js
+js/date.format.js
+js/phototagger.jquery.js
+js/calendar.js
+js/colorPicker.js
+
+# Third-party CSS
+css/fullcalendar.css
+css/redmond
+css/task.css
+css/colorPicker.css
