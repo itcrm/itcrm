@@ -92,14 +92,6 @@ function Save(Class) {
     $("input:not(:submit)", f).addClass("light");
   }
 
-  var ppr = $("#AddDataForm [name=TypeSelect]").val();
-  var noma = $("#AddDataForm [name=noma]:checked").val();
-
-  if (ppr == "ppr" && noma == 1) {
-    SaveNomaForm();
-    return false;
-  }
-
   $("input, select", f).removeClass("error");
 
   success = function (answ) {
@@ -1544,28 +1536,9 @@ function AddNoliktavaForm(ID) {
     $("#nomasppr").append(
       '<input id="pprNr" type="text" name="Nr" onblur="CechNrExist(this)"/>'
     );
-    $("#nomasppr").append("<span> Noma:</span>");
-    $("#nomasppr").append(
-      '<input type="checkbox" name="noma" value="1" onclick="showMe(\'Nomasvertibas\', this)"/>'
-    );
-    $("#nomasppr").append("<hr>");
-    $("#nomasppr").append(
-      '<div ID ="Nomasvertibas" class="Noma" style="display:none;"> </div>'
-    );
-    $.ajax({
-      url: "/lv/Josn/NomaForm",
-      success: function (data) {
-        $("#nomasppr .Noma").html(data);
-      },
-    });
     $("#nomasppr").append("<hr>");
     $("#AddDataForm #pprNr").focus();
   }
-}
-
-function showMe(it, box) {
-  var vis = box.checked ? "block" : "none";
-  document.getElementById(it).style.display = vis;
 }
 
 function CechNrExist(Object) {
@@ -1879,12 +1852,6 @@ function DialogSave(Name, ID) {
   if (Name == "NewSanemejs") {
     AddSan();
   }
-  if (Name == "NewAuto") {
-    AddAuto();
-  }
-  if (Name == "ChangeAuto") {
-    ChangeAuto();
-  }
 }
 
 function EditSan() {
@@ -1913,47 +1880,6 @@ function AddSan() {
   };
   Loading(0, 1);
   $.post(URL + "/Pavadzime/SanemejsSave", data, success);
-}
-
-function AddAuto() {
-  var data = $("Form#ChangeAuto").serialize();
-  success = function (answ) {
-    Loading(0, 0);
-  };
-  Loading(0, 1);
-  $.post(URL + "/Noma/AddAuto", data, success);
-}
-
-function ChangeAuto() {
-  var data = $("Form#ChangeAuto").serialize();
-  success = function (answ) {
-    Loading(0, 0);
-    $("DIV#ChangeAuto").remove();
-    $.ajax({
-      type: "POST",
-      cache: false,
-      url: "/lv/Josn/EditAuto",
-      success: function (data) {
-        $("#DialogForm").html(data);
-      },
-    });
-  };
-
-  Loading(0, 1);
-  $.post(URL + "/Noma/ChangeAuto", data, success);
-}
-
-function MakeNoma(el) {
-  ID = el.id.replace(/Data/, "");
-  jQuery("#Noma").tabs({
-    ajaxOptions: {
-      type: "post",
-      data: {
-        ID: ID,
-      },
-    },
-  });
-  jQuery("#Noma").show();
 }
 
 function HTMLFilter(selector, query) {
