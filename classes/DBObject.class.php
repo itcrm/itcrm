@@ -6,6 +6,12 @@ abstract class DBObject {
 
     static public $DB;
 
+    function __construct() {
+        foreach ($this as $k => $v) {
+            if ($k != 'Fields') $this->Fields[] = $k;
+        }
+    }
+
     static function Connect() {
         DBObject::$DB = mysqli_connect(Config::DB_HOST_NAME, Config::DB_USER_NAME, Config::DB_PASSWORD, Config::DB_DATABASE_NAME);
         if (mysqli_connect_errno()) {

@@ -9,13 +9,6 @@ class Pavadzime extends DBObject {
     protected $Konts;
     protected $Changes;
 
-    function __construct() {
-        foreach ($this as $k => $v) {
-            if ($k != 'Fields')
-                $this->Fields[] = $k;
-        }
-    }
-
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
             case 'Sanemejsedit':

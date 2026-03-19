@@ -9,12 +9,6 @@ class Types extends DBObject {
     protected $AddDate;
     protected $Status;
 
-    function __construct() {
-        foreach ($this as $k => $v) {
-            if ($k != 'Fields') $this->Fields[] = $k;
-        }
-    }
-
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
             case 'Save':
