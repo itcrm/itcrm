@@ -1,9 +1,10 @@
-import { Network, GenericContainer, Wait, type StartedTestContainer } from "testcontainers";
+import { Network, GenericContainer, Wait, type StartedTestContainer, type StartedNetwork } from "testcontainers";
 import { MariaDbContainer } from "@testcontainers/mariadb";
 import { Kysely, MysqlDialect, Generated } from "kysely";
 import { createPool } from "mysql2/promise";
 import { readFileSync, mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
+import { randomBytes } from "crypto";
 
 // Minimal DB types — extend as more tables are needed in tests
 interface UsersTable {
@@ -25,15 +26,38 @@ const DB_USER = "itcrm";
 const DB_PASSWORD = "itcrmpass";
 const DB_DATABASE = "itcrm";
 
+// Share a single Docker network across all tests in this worker process.
+// Each test still gets its own DB + PHP containers for full isolation,
+// but reusing the network avoids exhausting Docker's address pool.
+let sharedNetwork: StartedNetwork | null = null;
+let networkRefCount = 0;
+
+async function acquireNetwork(): Promise<StartedNetwork> {
+  if (!sharedNetwork) {
+    sharedNetwork = await new Network().start();
+  }
+  networkRefCount++;
+  return sharedNetwork;
+}
+
+async function releaseNetwork(): Promise<void> {
+  networkRefCount--;
+  if (networkRefCount === 0 && sharedNetwork) {
+    await sharedNetwork.stop();
+    sharedNetwork = null;
+  }
+}
+
 export async function createTestEnv() {
-  const network = await new Network().start();
+  const network = await acquireNetwork();
+  const dbAlias = `db-${randomBytes(4).toString("hex")}`;
 
   const mariadb = await new MariaDbContainer("mariadb:10.11")
     .withDatabase(DB_DATABASE)
     .withUsername(DB_USER)
     .withUserPassword(DB_PASSWORD)
     .withNetwork(network)
-    .withNetworkAliases("db")
+    .withNetworkAliases(dbAlias)
     .start();
 
   await mariadb.copyContentToContainer([
@@ -64,11 +88,11 @@ export async function createTestEnv() {
 
   const coverageEnabled = process.env.COVERAGE === "1";
 
-  // PHP app container — points to MariaDB via Docker network alias "db"
+  // PHP app container — points to MariaDB via its unique network alias
   const container = new GenericContainer("itcrm-php-e2e:latest")
     .withNetwork(network)
     .withEnvironment({
-      DB_HOST: "db",
+      DB_HOST: dbAlias,
       DB_PORT: "3306",
       DB_USER,
       DB_PASSWORD,
@@ -97,7 +121,7 @@ export async function createTestEnv() {
         await copyCoverageFromContainer(php);
       }
       await Promise.allSettled([db.destroy(), php.stop(), mariadb.stop()]);
-      await network.stop();
+      await releaseNetwork();
     },
   };
 }
