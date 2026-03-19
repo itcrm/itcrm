@@ -1,12 +1,12 @@
 <?php
 
 class Info extends DBObject {
-    private $IDData;
-    private $IDSupplier;
-    private $IDUser;
-    private $Info;
-    private $Color;
-    private $AddDate;
+    protected $IDData;
+    protected $IDSupplier;
+    protected $IDUser;
+    protected $Info;
+    protected $Color;
+    protected $AddDate;
 
     function __construct() {
         foreach ($this as $k => $v) {
@@ -91,15 +91,4 @@ class Info extends DBObject {
         return 1;
     }
 
-    /**
-     * Setters and getters here
-     */
-    function __call($method, $params) {
-        $type = substr($method, 0, 3);
-        $key = substr($method, 3);
-
-        if ($type == 'get') return $this->$key;
-        elseif ($type == 'set') $this->$key = $params[0];
-        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
-    }
 }

@@ -1,14 +1,14 @@
 <?php
 
 class Orders extends DBObject {
-    private $ID;
-    private $IDUser;
-    private $Code;
-    private $Color;
-    private $Description;
-    private $AddDate;
-    private $Status;
-    private $Changes;
+    protected $ID;
+    protected $IDUser;
+    protected $Code;
+    protected $Color;
+    protected $Description;
+    protected $AddDate;
+    protected $Status;
+    protected $Changes;
 
     function __construct() {
         foreach ($this as $k => $v) {
@@ -327,18 +327,6 @@ class Orders extends DBObject {
             $results = $row['Code'];
         }
         return $results;
-    }
-
-    /**
-     * Setters and getters here
-     */
-    function __call($method, $params) {
-        $type = substr($method, 0, 3);
-        $key = substr($method, 3);
-
-        if ($type == 'get') return $this->$key;
-        elseif ($type == 'set') $this->$key = $params[0];
-        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setCode($value) {

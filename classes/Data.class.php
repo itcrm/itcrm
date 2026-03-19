@@ -1,32 +1,32 @@
 <?php
 
 class Data extends DBObject {
-    private $ID;
-    private $IDDoc;
-    private $IDUser;
-    private $IDOrder;
-    private $TextOrder;
-    private $IDType;
-    private $TextType;
-    private $Sum;
-    private $Hours;
-    private $PlaceTaken;
-    private $PlaceDone;
-    private $IDPerson;
-    private $Note;
-    private $Date;
-    private $BookNote;
-    private $TotalPrice;
-    private $PriceNote;
-    private $AddDate;
-    private $RemindDate;
-    private $RemindDateEnd;
-    private $RemindTo;
-    private $Status;
-    private $Changes;
-    private $AllDay;
-    private $allDay;
-    private $AllDays;
+    protected $ID;
+    protected $IDDoc;
+    protected $IDUser;
+    protected $IDOrder;
+    protected $TextOrder;
+    protected $IDType;
+    protected $TextType;
+    protected $Sum;
+    protected $Hours;
+    protected $PlaceTaken;
+    protected $PlaceDone;
+    protected $IDPerson;
+    protected $Note;
+    protected $Date;
+    protected $BookNote;
+    protected $TotalPrice;
+    protected $PriceNote;
+    protected $AddDate;
+    protected $RemindDate;
+    protected $RemindDateEnd;
+    protected $RemindTo;
+    protected $Status;
+    protected $Changes;
+    protected $AllDay;
+    protected $allDay;
+    protected $AllDays;
 
     function __construct() {
         foreach ($this as $k => $v) {
@@ -1216,18 +1216,6 @@ class Data extends DBObject {
         }
 
         return $row;
-    }
-
-    /**
-     * Setters and getters here
-     */
-    function __call($method, $params) {
-        $type = substr($method, 0, 3);
-        $key = substr($method, 3);
-
-        if ($type == 'get') return $this->$key;
-        elseif ($type == 'set') $this->$key = $params[0];
-        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setIDDoc($value) {

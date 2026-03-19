@@ -1,13 +1,13 @@
 <?php
 
 class Suppliers extends DBObject {
-    private $ID;
-    private $IDUser;
-    private $Name;
-    private $Description;
-    private $Color;
-    private $AddDate;
-    private $Status;
+    protected $ID;
+    protected $IDUser;
+    protected $Name;
+    protected $Description;
+    protected $Color;
+    protected $AddDate;
+    protected $Status;
 
     function __construct() {
         foreach ($this as $k => $v) {
@@ -139,18 +139,6 @@ class Suppliers extends DBObject {
             throw new AppError('Read error on Suppliers (' . __LINE__ . ')');
         }
         return (new self)->fetchObject($result, new self);
-    }
-
-    /**
-     * Setters and getters here
-     */
-    function __call($method, $params) {
-        $type = substr($method, 0, 3);
-        $key = substr($method, 3);
-
-        if ($type == 'get') return $this->$key;
-        elseif ($type == 'set') $this->$key = $params[0];
-        else throw new AppError(get_class($this) . '::' . $method . ' does not exists');
     }
 
     function setName($v) {
