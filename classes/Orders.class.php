@@ -26,7 +26,7 @@ class Orders extends DBObject {
                 if (is_numeric($ID)) {
                     $Order = $this->fetchRow($this->assignObject($this->getByID($ID)));
                     $Order['User'] = $_SESSION['User']->getLogin();
-                    return self::ArrayToJson(array(1, Template::Process('Row', $Order)));
+                    return json_encode(array(1, Template::Process('Row', $Order)));
                 }
                 return $ID;
             case 'Delete':
@@ -207,7 +207,7 @@ class Orders extends DBObject {
             }
 
         if ($tmp != '') {
-            return self::ArrayToJson(
+            return json_encode(
                 array(
                     1,
                     Template::Process('Changes', array('Changes' => $tmp, 'ID' => $ID))
@@ -248,7 +248,7 @@ class Orders extends DBObject {
             return $this->getID();
         } else {
             $Err[0] = 0;
-            return self::ArrayToJson($Err);
+            return json_encode($Err);
         }
     }
 

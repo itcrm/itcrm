@@ -116,7 +116,7 @@ class Pavadzime extends DBObject {
         $Info['ierakstusk'] = $a;
 
         $Info['__template'] = '/Pavadzime/Supplier';
-        return self::ArrayToJson(array(1, Template::Process($Info)));
+        return json_encode(array(1, Template::Process($Info)));
     }
 
     function Save() {
@@ -128,7 +128,7 @@ class Pavadzime extends DBObject {
             return 1;
         } else {
             $Err[0] = 0;
-            return self::ArrayToJson($Err);
+            return json_encode($Err);
         }
     }
 

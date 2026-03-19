@@ -39,8 +39,8 @@ class Info extends DBObject {
 
         if (!empty($Info)) {
             $Info['__template'] = '/Suppliers/Supplier';
-            return self::ArrayToJson(array(1, Template::Process($Info)));
-        } else return self::ArrayToJson(array(1, ''));
+            return json_encode(array(1, Template::Process($Info)));
+        } else return json_encode(array(1, ''));
     }
 
     /**
@@ -55,7 +55,7 @@ class Info extends DBObject {
             return 1;
         } else {
             $Err[0] = 0;
-            return self::ArrayToJson($Err);
+            return json_encode($Err);
         }
     }
 

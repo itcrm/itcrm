@@ -85,17 +85,6 @@ abstract class DBObject {
         return Config::ROOT_URL . '/' . self::$url[0];
     }
 
-    static function ArrayToJson(array $array) {
-        $out = array();
-        foreach ($array as $key => $val) {
-            if (!is_array($val)) {
-                if (is_string($val) || empty($var)) $val = '"' . addslashes($val) . '"';
-                $out[] = $key . ': ' . $val;
-            } else $out[] = $key . ': ' . self::ArrayToJson($val);
-        }
-        if (is_array($out)) $out = implode(',', $out);
-        return '{' . str_replace(array("\r", "\n"), array('', ''), $out) . '}';
-    }
 
     function makePages($items, $page, $url = '', $perPage = Config::PAGE_LENGTH) {
         $page = intval($page) > 0 ? intval($page) : 1;

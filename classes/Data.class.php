@@ -40,7 +40,7 @@ class Data extends DBObject {
                 $ID =  $this->FormSave();
                 if (is_numeric($ID)) {
                     $Data = $this->getRow($ID);
-                    return self::ArrayToJson(array(1, Template::Process('Row', $Data), $ID));
+                    return json_encode(array(1, Template::Process('Row', $Data), $ID));
                 } else return $ID;
             case 'Pagesk':
                 $_SESSION['pagecount'] = $_POST['sk'];
@@ -64,19 +64,19 @@ class Data extends DBObject {
                 $Data['OrderSelect'] = $Data['Order'];
                 $Data['TypeSelect'] = $Data['Type'];
                 $Data['PersonSelect'] = $Data['Person'];
-                return self::ArrayToJson($Data);
+                return json_encode($Data);
             case 'CeckRow':
                 $this->CeckRow($_POST['row']);
                 $Data = $this->getRow($_POST['row']);
                 $Data['select'] = "selected";
                 $Data['checked'] = "checked";
                 $Data['Function'] = "UnCheckRow";
-                return self::ArrayToJson(array(Template::Process('Row', $Data)));
+                return json_encode(array(Template::Process('Row', $Data)));
             case 'UnCeckRow':
                 $this->UnCeckRow($_POST['row']);
                 $Data = $this->getRow($_POST['row']);
                 $Data['Function'] = "CeckRow";
-                return self::ArrayToJson(array(Template::Process('Row', $Data)));
+                return json_encode(array(Template::Process('Row', $Data)));
             case 'ChangeSelected':
                 return $this->ChangeSelected($_POST);
             case 'photoTagger':
@@ -98,7 +98,7 @@ class Data extends DBObject {
                 $ID = $this->Save();
                 if (is_numeric($ID)) {
                     $Data = $this->getRow($ID);
-                    return self::ArrayToJson(array(1, Template::Process('Row', $Data), $ID));
+                    return json_encode(array(1, Template::Process('Row', $Data), $ID));
                 } else return $ID;
             case 'Delete':
             case 'Restore':
@@ -878,7 +878,7 @@ class Data extends DBObject {
             }
 
         if ($tmp != '') {
-            return self::ArrayToJson(
+            return json_encode(
                 array(
                     1,
                     Template::Process('Changes', array('Changes' => $tmp, 'ID' => $ID))
@@ -1024,7 +1024,7 @@ class Data extends DBObject {
                 unset($Err['IDPerson']);
             }
 
-            return self::ArrayToJson($Err);
+            return json_encode($Err);
         }
     }
 
@@ -1588,7 +1588,7 @@ class Data extends DBObject {
 
         $this->setID(self::$DB->insert_id);
         $Data = $this->getRow($data[rindasID]);
-        return self::ArrayToJson(array(1, Template::Process('Row', $Data)));
+        return json_encode(array(1, Template::Process('Row', $Data)));
     }
 
     function NoliktavaSave($data) {
