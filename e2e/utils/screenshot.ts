@@ -42,8 +42,9 @@ export function standardMasks(page: Page): Locator[] {
     page.locator('input[name="DateTo"]'),
     // DataList rows: Date + AddDate cell (seeded with NOW(), changes every run)
     page.locator("#DataList tr.Data td:nth-child(3)"),
-    // Task/calendar page: FullCalendar month+year title and today-highlighted cell
-    page.locator(".fc-header-title h2"),
-    page.locator(".fc-state-highlight"),
+    // Task/calendar page: FullCalendar month+year title, today-highlighted cell,
+    // and agenda view day column headers (contain date-dependent weekday+day text)
+    page.locator("td.fc-header-center"),
+    page.locator(".fc-content"),
   ];
 }
