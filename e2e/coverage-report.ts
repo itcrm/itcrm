@@ -203,10 +203,57 @@ function generateHtmlReport(merged: CoverageData) {
   return stats;
 }
 
+
+function generateCloverXml(merged: CoverageData) {
+  const ts = Date.now();
+  let totalStatements = 0;
+  let totalCovered = 0;
+  let fileCount = 0;
+
+  let fileBlocks = "";
+
+  for (const [filePath, lines] of Object.entries(merged)) {
+    const relativePath = filePath.replace(SRC_ROOT, "");
+    let fileStatements = 0;
+    let fileCovered = 0;
+    let lineElements = "";
+
+    for (const [line, status] of Object.entries(lines)) {
+      if (status === -2) continue;
+      const count = status === 1 ? 1 : 0;
+      lineElements += `      <line num="${line}" type="stmt" count="${count}"/>\n`;
+      fileStatements++;
+      if (count === 1) fileCovered++;
+    }
+
+    fileBlocks +=
+      `    <file name="${relativePath}">\n` +
+      lineElements +
+      `      <metrics statements="${fileStatements}" coveredstatements="${fileCovered}"/>\n` +
+      `    </file>\n`;
+
+    totalStatements += fileStatements;
+    totalCovered += fileCovered;
+    fileCount++;
+  }
+
+  const xml =
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<coverage generated="${ts}">\n` +
+    `  <project name="itcrm" timestamp="${ts}">\n` +
+    fileBlocks +
+    `    <metrics files="${fileCount}" statements="${totalStatements}" coveredstatements="${totalCovered}"/>\n` +
+    `  </project>\n` +
+    `</coverage>\n`;
+
+  writeFileSync(join(OUT_DIR, "clover.xml"), xml);
+}
+
 // Main
 mkdirSync(OUT_DIR, { recursive: true });
 const merged = mergeCoverage();
 const stats = generateHtmlReport(merged);
+generateCloverXml(merged);
 
 console.log("");
 console.log("Coverage Summary");

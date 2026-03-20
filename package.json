@@ -6,7 +6,9 @@
     "test:ui": "playwright test --ui",
     "coverage": "rm -rf coverage-raw coverage && COVERAGE=1 node node_modules/.bin/playwright test && bun run e2e/coverage-report.ts",
     "show-coverage": "bun run e2e/coverage-report.ts && open coverage/index.html",
-    "scc": "scc"
+    "scc": "scc",
+    "sonar": ".sonar/run_sonar_scanner.sh",
+    "sonar:clean": "docker rm -f sonarqube-server"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
