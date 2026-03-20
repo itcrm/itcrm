@@ -19,13 +19,11 @@ class Types extends DBObject {
                     else $Type['Status'] = 'deleted';
                     return json_encode(array(1, Template::Process('Row', $Type)));
                 } else return $ID;
-                break;
             case 'Delete':
             case 'Restore':
                 $Type = $this->getByID($_POST['ID']);
                 if (!$Type || !$Type->getID()) return Language::$Types['TypeNotFound'];
                 return $Type->Delete();
-                break;
             default:
                 if (!$_SESSION['User']) return;
                 $Vars['Content'] = $this->getTypesList();
