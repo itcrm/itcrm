@@ -24,11 +24,9 @@ class Task extends DBObject {
                 return $ID;
             case 'Changes':
                 return $this->getChangeList($_POST['ID']);
-                break;
             case 'Move':
                 $i = $this->Move($_POST['id']);
                 return  $i;
-                break;
         }
 
         if (isset(self::$url[2])) {

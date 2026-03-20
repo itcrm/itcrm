@@ -22,10 +22,8 @@ class Warehous extends DBObject {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
             case 'Export':
                 return $this->Export();
-                break;
             case 'slieder':
                 return $this->slieder();
-                break;
             default:
                 $Vars['Content'] = $this->ListLimits();
                 break;

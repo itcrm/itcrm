@@ -66,16 +66,13 @@ class Users extends DBObject {
                     $User = $this->fetchRow($this->assignObject($this->getByID($ID)));
                     return json_encode(array(1, Template::Process('Row', $User)));
                 } else return $ID;
-                break;
             case 'Logon':
                 return $this->checkUser();
-                break;
             case 'Delete':
             case 'Restore':
                 $User = $this->getByID($_POST['ID']);
                 if (!$User || !$User->getID()) return Language::$Users['UserNotFound'];
                 return $User->Delete();
-                break;
             default:
                 if (!$_SESSION['User']) return;
                 $Vars['Content'] = $this->getUsersList();

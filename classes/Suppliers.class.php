@@ -33,16 +33,12 @@ class Suppliers extends DBObject {
                     $Supp['IDData'] = $_POST['IDData'];
                     return json_encode(array(1, Template::Process('Supplier', $Supp)));
                 } else return $ID;
-                break;
-
             case 'Delete':
                 $Supp = $this->getByID($_POST['ID']);
                 if (!$Supp || !$Supp->getID()) return Language::$Suppliers['NotFound'];
                 return $Supp->Delete();
-                break;
             default:
                 return;
-                break;
         }
     }
 
