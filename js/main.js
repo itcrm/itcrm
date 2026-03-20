@@ -393,7 +393,6 @@ function showChanges(ID, Class) {
   $.post(URL + "/" + Class + "/Changes", data, success);
 }
 
-
 function EditUser(ID) {
   $(":input:not(:checkbox)", "#AddUsersForm")
     .not(":button, :submit, :reset, :hidden")
