@@ -1366,17 +1366,6 @@ class Data extends DBObject {
         return Template::Process('Form', $Dati);
     }
 
-    function GetUserByName($name) {
-        $query = "SELECT ID FROM `Users` WHERE `Name`='" . $name . "'";
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Data (' . __LINE__ . ')');
-        }
-
-        return $result;
-    }
-
-
     function AutocompliteJosn($text) {
         $vowels = array("ē", "ū", "ī", "ā", "š", "ģ", "ķ", "ļ", "ž", "č", "ņ", "Ē", "Ū", "Ī", "Ā", "Š", "Ģ", "Ķ", "Ļ", "Ž", "Č", "Ņ");
         $text = str_replace($vowels, "%", $text);

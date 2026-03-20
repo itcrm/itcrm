@@ -211,18 +211,4 @@ class Users extends DBObject {
         else $this->Password = $value;
     }
 
-    function GetUserByID($ID) {
-        $query = "SELECT Name FROM `Users` WHERE `ID`='" . $ID . "'";
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Data (' . __LINE__ . ')');
-        }
-
-        while ($row = $result->fetch_assoc()) {
-            $results = $row['Name'];
-        }
-
-        return $results;
-    }
-
 }

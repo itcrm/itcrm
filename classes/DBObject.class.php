@@ -126,17 +126,6 @@ abstract class DBObject {
 </select>  <span  style="float: right;"> Kopā: ' . $sk . ' ieraksti</span> </div> </div>';
     }
 
-    function makeCaptcha() {
-        $str = array_merge(range('A', 'Z'), range(1, 9));
-
-        $_SESSION['Captcha'] = array();
-        for ($i = 0; $i < 8; $i++) $_SESSION['Captcha'][] = $str[rand(0, count($str) - 1)];
-        $Img = new Image();
-        $Captcha = $Img->getCapthca($_SESSION['Captcha']);
-        $_SESSION['Captcha'] = implode($_SESSION['Captcha']);
-        return $Captcha;
-    }
-
     function good_query($string) {
         $result = self::$DB->query($string);
 

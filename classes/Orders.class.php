@@ -288,19 +288,6 @@ class Orders extends DBObject {
         }
     }
 
-    function getCodeById($ID) {
-        $query = "SELECT Code FROM `Orders` WHERE `ID`=" . (int)$ID;
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Data (' . __LINE__ . ')');
-        }
-
-        while ($row = $result->fetch_assoc()) {
-            $results = $row['Code'];
-        }
-        return $results;
-    }
-
     function setCode($value) {
         $value = trim($value);
         if ($value == '') throw new AppError(Language::$Orders['SetCode']);
