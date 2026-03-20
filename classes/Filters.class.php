@@ -91,7 +91,6 @@ class Filters extends DBObject {
         foreach ($Types as $k => $v) $Types[$k] = 'name: "' . $v . '", val:"' . $k . '"';
         $Vars['TypesList'] = '{' . implode('},{', $Types) . '}';
 
-
         if (is_array($_SESSION['Filter']))
             foreach ($_SESSION['Filter'] as $k => $v) {
                 $Vars[$k] = $v;

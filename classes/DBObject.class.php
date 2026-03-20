@@ -85,7 +85,6 @@ abstract class DBObject {
         return Config::ROOT_URL . '/' . self::$url[0];
     }
 
-
     function makePages($items, $page, $url = '', $perPage = Config::PAGE_LENGTH) {
         $page = intval($page) > 0 ? intval($page) : 1;
         $value = '';

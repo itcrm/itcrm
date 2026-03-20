@@ -8,7 +8,6 @@
 class CFileManagerEx {
     static $_orderCache = false;
 
-
     /**
      * Pārbauda vai tekošajam lietotājam ir tiesības piekļūt noteiktajam ceļam
      * @param String $s

@@ -143,7 +143,6 @@
     return color
   }
 
-  
   //public methods
   $.fn.colorPicker.addColors = function(colorArray){
     $.fn.colorPicker.defaultColors = $.fn.colorPicker.defaultColors.concat(colorArray);
@@ -170,5 +169,3 @@
   ]; //defColors;
   
 })(jQuery);
-
-

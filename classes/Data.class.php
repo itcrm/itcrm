@@ -144,7 +144,6 @@ class Data extends DBObject {
         foreach ($Types as $k => $v) $Types[$k] = 'name: "' . $v . '", val:"' . $k . '"';
         $Vars['TypesList'] = '{' . implode('},{', $Types) . '}';
 
-
         if (is_array($_SESSION['Filter']))
             foreach ($_SESSION['Filter'] as $k => $v) {
                 if ($k == 'FindDeleted' && $v == 1) $Vars[$k] = 'checked';
@@ -411,7 +410,6 @@ class Data extends DBObject {
         if (!isset($_SESSION['Filter']['FindDeleted']) || $_SESSION['Filter']['FindDeleted'] != 1) {
             $Filter[] = 'D.`Status`=1';
         }
-
 
         $Sort = $_SESSION['Sort'] . ' DESC';
 
