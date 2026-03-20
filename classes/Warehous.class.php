@@ -86,21 +86,6 @@ class Warehous extends DBObject {
         }
     }
 
-    function ReturnToOrder($ID, $order, $darbiba) {
-        // atgriešanas parbaude -- Jarisina jautajums ko darit ja parbaude izgazas dzest rindu vai mainit statusu, piedavaju atgriest mainigo lai veiktu darbibu.
-        $query = "SELECT Data.ID, Data.IDorder, noliktava.detalasID, noliktava.daudzums FROM Data, noliktava  WHERE noliktava.rindasID = Data.ID and Data.IDorder = " . $order . " AND IDtype = " . Config::ReservNoliktava . " AND noliktava.detalasID =" . $ID;
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
-        }
-        if ($result->num_rows == 0) {
-            return print "Šim pasūtijumam nav rezervētā atlikuma";
-        } else {
-            while ($row = $result->fetch_assoc()) {
-                $results = $row[Hours];
-            }
-            return $results;
-        }
-    }
     function ListLimits() {
         $query = 'SELECT D.*,
                          DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `DateShow`,

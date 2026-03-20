@@ -189,31 +189,6 @@ class Task extends DBObject {
         } else return "";
     }
 
-    function getdata() {
-        if (isset($_POST['user'])) {
-            $UID = $_POST['user'];
-        } else {
-            $UID = $_SESSION['User']->getID();
-        }
-
-        $query = 'SELECT *, Data.ID as TaskID, Data.Changes as izmainas FROM Data LEFT JOIN Orders ON Orders.ID=Data.IDOrder WHERE `RemindDate` IS NOT NULL and `RemindTo`= ' . $UID . ' ';                                 //and `Date` between '. $a .' and ' . $b .'
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Tasks (' . __LINE__ . ')');
-        }
-        while ($row = $result->fetch_assoc()) {
-            $task['end'] = $row['RemindDateEnd'];
-            $task['id'] = $row['TaskID'];
-            $task['title'] = $row['Note'];
-            $task['start'] = $row['RemindDate'];
-            $task['pasutijums'] = $row['Code'];
-            $task['paspiez'] = $row['TextOrder'];
-
-            $Task[] = $task;
-        }
-
-        return json_encode($Task);
-    }
-
     function Move($id) {
         $query = 'SELECT *  , D.ID AS TaskID, D.Changes AS izmainas, U.Login AS Lietotajs, N.Login AS kas, T.Code as tips,O.Code as Pasutijums, O.ID as PasID
           FROM `Data` D
