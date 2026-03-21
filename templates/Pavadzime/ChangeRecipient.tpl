@@ -1,10 +1,10 @@
-<form ID = ChangeSanemejs>
+<form id="ChangeRecipient">
 <table border="0">
 
 <tr>
 <td>Saņēmējs:</td>
 <td>
-    <input type="text" class="hide" value="[:ID:]" ID="sanid" name="ID" />
+    <input type="text" class="hide" value="[:ID:]" name="ID" />
     <input size = "35" value='[:Nosaukums:]' type="text" ID="Nosaukums" name="Nosaukums" /></td>
 </tr>
 <tr>
