@@ -49,4 +49,4 @@
 <a class="menu" href="[:URL:]/Orders">[[:Orders:]]</a>
 <a class="menu"  href="[:URL:]/Filters">[[:Filters:]]</a>
 <a class="menu" href="[:URL:]/Task">[[:Tasks:]]</a>
-<a class="menu" href="[:URL:]/Warehous">[[:Warehous:]]</a>
+<a class="menu" href="[:URL:]/Warehouse">[[:Warehouse:]]</a>

@@ -53,7 +53,7 @@ const authenticatedStates = {
       NAVIGATE_USERS: "users",
       NAVIGATE_ORDERS: "orders",
       NAVIGATE_TASK: "task",
-      NAVIGATE_WAREHOUS: "warehous",
+      NAVIGATE_WAREHOUSE: "warehouse",
       NAVIGATE_FILTERS: "filters",
     },
   },
@@ -505,25 +505,25 @@ const authenticatedStates = {
     },
   },
 
-  warehous: {
+  warehouse: {
     on: {
       /** Click the X inside the slider to hide the selection toolbar (slider open by default) */
-      TOGGLE_WAREHOUS_SLIDER: "warehous_slider_closed",
-      /** Click the Export button — navigates to /Warehous/Export which shows an error when no data matches */
-      EXPORT_WAREHOUS: "warehous_export_empty",
+      TOGGLE_WAREHOUSE_SLIDER: "warehouse_slider_closed",
+      /** Click the Export button — navigates to /Warehouse/Export which shows an error when no data matches */
+      EXPORT_WAREHOUSE: "warehouse_export_empty",
     },
   },
 
-  /** Warehous screen with the selection slider toolbar hidden (closed) */
-  warehous_slider_closed: {
+  /** Warehouse screen with the selection slider toolbar hidden (closed) */
+  warehouse_slider_closed: {
     on: {
       /** Click the SLO button to re-open the selection slider toolbar */
-      OPEN_WAREHOUS_SLIDER: "warehous",
+      OPEN_WAREHOUSE_SLIDER: "warehouse",
     },
   },
 
-  /** Warehous export page — shows "Nav datu eksportēšanai!" when no warehouse data matches the filter */
-  warehous_export_empty: {},
+  /** Warehouse export page — shows "Nav datu eksportēšanai!" when no warehouse data matches the filter */
+  warehouse_export_empty: {},
 };
 
 export type AuthenticatedState = keyof typeof authenticatedStates;

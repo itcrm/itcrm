@@ -94,7 +94,7 @@
             <span class="ui-icon ui-icon-check"> </span>
             <span class="text" style="display: none;">.ui-icon-circle-close</span>
         </li>
-    <input style="width:70px;"  type="button" value="&mdash;" onclick="this.form.reset(); $('#newTplBtn, #editTplBtn').css('color',''); $('input:not(:button,:submit)',this.form).addClass('light'); $('#DataList .onedit').removeClass('onedit'); $('#FilterForm').removeClass('hideFilter'); $('input.active').removeClass('edit'); $('input.disabl').removeClass('edit'); editbox(0,this); $('#ievadeNoliktava').remove();  $('tr.Selected').removeClass('Selected').addClass('selected'); " />
+    <input style="width:70px;"  type="button" value="&mdash;" onclick="this.form.reset(); $('#newTplBtn, #editTplBtn').css('color',''); $('input:not(:button,:submit)',this.form).addClass('light'); $('#DataList .onedit').removeClass('onedit'); $('#FilterForm').removeClass('hideFilter'); $('input.active').removeClass('edit'); $('input.disabl').removeClass('edit'); editbox(0,this); $('#ievadeWarehouse').remove();  $('tr.Selected').removeClass('Selected').addClass('selected'); " />
   <!--  <span style="position:relative; top:0px; left:0px;">
         <a href="javascript:;" onclick="reversEdit()" style="position:absolute; right:-12px; top:0px;">A</a>
   </span> -->
@@ -104,7 +104,7 @@
  </tr>
 </table>
 </form>
-<div onclick="javascript:$('.slieder').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehous/slieder');" class="SLO" title="Aizvērt izvēli" style="width: 20px; background: none repeat scroll 0% 0% rgb(85, 85, 85); margin-top: -5px; position: fixed; height: 20px; cursor: pointer; float: left; display: [:SLO:];"> <span style="margin-top: 2px;" class="ui-icon ui-icon-triangle-1-e"></span> </div>
+<div onclick="javascript:$('.slieder').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehouse/slieder');" class="SLO" title="Aizvērt izvēli" style="width: 20px; background: none repeat scroll 0% 0% rgb(85, 85, 85); margin-top: -5px; position: fixed; height: 20px; cursor: pointer; float: left; display: [:SLO:];"> <span style="margin-top: 2px;" class="ui-icon ui-icon-triangle-1-e"></span> </div>
 <div class="slieder" style="background: none repeat scroll 0% 0% rgb(204, 204, 204); border-bottom: 1px solid; padding-left: 21px; padding-top: 1px; height: 20px; border-top: 1px solid; display: [:slieder:]; margin-top: 2px; margin-bottom: 2px;">
 
 <!-- <div class="TaskUsers" style="float:left; position:relative; top:-18px;"> -->
@@ -114,7 +114,7 @@
 {:/Reminder:}
 
 <!-- </div> -->
-<div title="Aizvērt izvēli" style="width: 20px; float: right; background: none repeat scroll 0% 0% rgb(85, 85, 85); cursor: pointer; height: 21px; margin-top: -1px;" class="ui-widget ui-helper-clearfix" onclick="javascript:$('.slieder').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehous/slieder');"> <span style="margin-top: 2px;" class="ui-icon ui-icon-triangle-1-w"></span> </div>
+<div title="Aizvērt izvēli" style="width: 20px; float: right; background: none repeat scroll 0% 0% rgb(85, 85, 85); cursor: pointer; height: 21px; margin-top: -1px;" class="ui-widget ui-helper-clearfix" onclick="javascript:$('.slieder').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehouse/slieder');"> <span style="margin-top: 2px;" class="ui-icon ui-icon-triangle-1-w"></span> </div>
 </div>
 <!-- onkeydown="return rejectEnter(event)" -->
 <form action="javascript:FilterData()"  id="FilterForm"  style="padding-right:17px;"  class="[:showFilter:]">
@@ -270,10 +270,10 @@
     </div>
    </div>
 
-    <div id="noliktava" align="center" style="display: none;">
+    <div id="warehouse" align="center" style="display: none;">
         <div class="main">
 
-                 <a  href="close" onclick="event.returnValue = false;  $('#noliktava').hide();  clerNoliktava(); return false;">
+                 <a  href="close" onclick="event.returnValue = false;  $('#warehouse').hide();  clearWarehouse(); return false;">
      <li style="float: right; height: 16px;width: 16px;  list-style-type: none; margin: 2px;" title="Aizvērt" class="ui-state-default ui-corner-all">
             <span class= "ui-icon ui-icon-circle-close"> </span>
             <span class="text" style="display: none;">.ui-icon-circle-close</span>
@@ -291,7 +291,7 @@
         </div>
     </div>
 
-<div style="display:none" id="AddNol" title="Pievienot jaunu preci">
+<div style="display:none" id="AddWarehouse" title="Pievienot jaunu preci">
     <form id="NewDetForm"style="width: 275px;">
 
         <table border="0">
@@ -349,7 +349,7 @@
             <span class="text" style="display: none;">.ui-icon-circle-close</span>
         </li></a>
 
-        <a  href="javascript:NoliktavaSave()">
+        <a  href="javascript:WarehouseSave()">
         <li style="float: right;   list-style-type: none; margin: 2px;" title="Saglabāt" class="ui-state-default ui-corner-all">
             <button><span class="ui-icon ui-icon-disk"></span></button>
             <span class="text" style="display: none;">.ui-icon-disk</span>
@@ -534,7 +534,7 @@ $(".add [name=PersonSelect]").autocomplete({
 $(".add [name=TypeSelect]").autocomplete({
     source: "/lv/Josn/Types",
     select: function( event, ui){
-        AddNoliktavaForm(ui.item.ID);
+        AddWarehouseForm(ui.item.ID);
     },
     minLength: 1,
 });

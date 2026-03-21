@@ -23,15 +23,15 @@ class Josn extends DBObject {
             case 'Orders':
                 $this->GetOrders($_GET['term']);
                 die;
-            case 'Noliktava':
-                $this->GetNoliktava($_GET['term']);
+            case 'Warehouse':
+                $this->getWarehouse($_GET['term']);
                 die;
             case 'EditSanemejs':
                 $Data['Dati'] = urldecode(Pavadzime::EditSanList());
                 print Template::Process('/Dialog/EditSanemejs', $Data);
                 die;
             case 'GetVeikals':
-                $Data = Data::noliktavaDialog($_POST['ID']);
+                $Data = Data::warehouseDialog($_POST['ID']);
                 print Template::Process('/Dialog/GetVeikals', $Data);
                 die;
             case 'PrecuGrupas':
@@ -175,18 +175,18 @@ class Josn extends DBObject {
         echo str_replace("Code", "label", $Orders);
     }
 
-    function GetNoliktava($code) {
-        $query = "SELECT ID, PlaceTaken AS label FROM `Data` WHERE IDType='" . Config::Noliktava . "' AND PlaceTaken LIKE '" . $code . "%' AND `Status`=1
+    function getWarehouse($code) {
+        $query = "SELECT ID, PlaceTaken AS label FROM `Data` WHERE IDType='" . Config::WarehouseTypeID . "' AND PlaceTaken LIKE '" . $code . "%' AND `Status`=1
                    ORDER BY `PlaceTaken` LIMIT 0,20";
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Josn (' . __LINE__ . ')');
         }
-        $Noliktava = array();
+        $warehouse = array();
         while ($row = $result->fetch_assoc()) {
-            $Noliktava[] = $row;
+            $warehouse[] = $row;
         }
 
-        $Orders = json_encode($Noliktava);
+        $Orders = json_encode($warehouse);
         echo $Orders;
     }
 

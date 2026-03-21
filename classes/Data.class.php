@@ -49,14 +49,14 @@ class Data extends DBObject {
                 return $this->Open(self::$url[3]);
             case 'AddAllSelected':
                 return $this->AddAllSelected();
-            case 'noliktava':
-                return $this->noliktava_exist($_POST['DetalasID']);
-            case 'NoliktavaAtlikums':
-                return json_encode($this->noliktava_atlikums($_POST['ID']));
+            case 'warehouse':
+                return $this->existsInWarehouse($_POST['DetalasID']);
+            case 'WarehouseBalance':
+                return json_encode($this->warehouseBalance($_POST['ID']));
             case 'SaveDetala':
                 return  $this->SaveDetala($_POST);
-            case 'NoliktavaSave':
-                $this->NoliktavaSave($_POST);
+            case 'WarehouseSave':
+                $this->warehouseSave($_POST);
                 break;
             case 'GetTpl':
                 $Data = $this->getRow($_POST['ID']);
@@ -353,12 +353,12 @@ class Data extends DBObject {
 
             if ($row['IDType'] == 72) $row['dblClick'] = 'getPavadzime(this);';
 
-            if ($row['IDType'] == Config::Noliktava) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
+            if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
-            if ($row['IDType'] == Config::AddNoliktava) $row['dblClick'] = 'getNoliktava(this,1); addNoliktavaAutoComp();';
-            if ($row['IDType'] == Config::DelNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
-            if ($row['IDType'] == Config::ReservNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
-            if ($row['IDType'] == Config::ReturnNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
+            if ($row['IDType'] == Config::AddToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,1); addWarehouseAutoComp();';
+            if ($row['IDType'] == Config::RemoveFromWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
+            if ($row['IDType'] == Config::ReserveFromWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
+            if ($row['IDType'] == Config::ReturnToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
 
             $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
             $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
@@ -515,12 +515,12 @@ class Data extends DBObject {
                 if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
                 if ($row['IDType'] == 72) $row['dblClick'] = 'getPavadzime(this);';
 
-                if ($row['IDType'] == Config::Noliktava) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
+                if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
-                if ($row['IDType'] == Config::AddNoliktava) $row['dblClick'] = 'getNoliktava(this,1); addNoliktavaAutoComp();';
-                if ($row['IDType'] == Config::DelNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
-                if ($row['IDType'] == Config::ReservNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
-                if ($row['IDType'] == Config::ReturnNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
+                if ($row['IDType'] == Config::AddToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,1); addWarehouseAutoComp();';
+                if ($row['IDType'] == Config::RemoveFromWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
+                if ($row['IDType'] == Config::ReserveFromWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
+                if ($row['IDType'] == Config::ReturnToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
 
                 $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
                 $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
@@ -605,12 +605,12 @@ class Data extends DBObject {
             if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
             if ($row['IDType'] == 72) $row['dblClick'] = 'getPavadzime(this);';
 
-            if ($row['IDType'] == Config::Noliktava) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
+            if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
-            if ($row['IDType'] == Config::AddNoliktava) $row['dblClick'] = 'getNoliktava(this,1); addNoliktavaAutoComp();';
-            if ($row['IDType'] == Config::DelNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
-            if ($row['IDType'] == Config::ReservNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
-            if ($row['IDType'] == Config::ReturnNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
+            if ($row['IDType'] == Config::AddToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,1); addWarehouseAutoComp();';
+            if ($row['IDType'] == Config::RemoveFromWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
+            if ($row['IDType'] == Config::ReserveFromWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
+            if ($row['IDType'] == Config::ReturnToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
 
             $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
             $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
@@ -969,7 +969,7 @@ class Data extends DBObject {
     function Save() {
         $_POST = $this->clearDefaultValues($_POST);
 
-        $this->SaveNoliktava($_POST);
+        $this->saveWarehouse($_POST);
 
         $this->fetchObject($_POST);
         if (($this->getRemindDate() != '0000-00-00 00:00:00' && $this->getRemindDate() != '2000-00-00 00:00:00')
@@ -1027,7 +1027,7 @@ class Data extends DBObject {
     }
 
     function Add() {
-        if ($_POST['IDType'] == Config::Noliktava) {
+        if ($_POST['IDType'] == Config::WarehouseTypeID) {
             $res = $this->ceckArtikuls($_POST['PlaceTaken']);
             if ($res == 1) {
                 return print "Vienadi artukuli.";
@@ -1065,16 +1065,16 @@ class Data extends DBObject {
         $this->setID(self::$DB->insert_id);
 
         $type = (int)$this->getIDType();
-        if ($type == Config::Noliktava) {
-            Warehous::AddNew($this->getID(), $this->getSum());
+        if ($type == Config::WarehouseTypeID) {
+            Warehouse::AddNew($this->getID(), $this->getSum());
         }
 
-        if ($type == Config::AddNoliktava || $type == Config::DelNoliktava || $type == Config::ReturnNoliktava || $type == Config::ReservNoliktava) {
-            $NolDat = array(
+        if ($type == Config::AddToWarehouseTypeID || $type == Config::RemoveFromWarehouseTypeID || $type == Config::ReturnToWarehouseTypeID || $type == Config::ReserveFromWarehouseTypeID) {
+            $warehouseData = array(
                 "rindasID" => $this->getID(), "detalasID" => $_POST['detalasID'], "daudzums" => $_POST['daudzums'], "order" => (int)$this->getIDOrder()
             );
 
-            $this->NoliktavaSave($NolDat);
+            $this->warehouseSave($warehouseData);
         }
         return $this->getID();
     }
@@ -1117,10 +1117,10 @@ class Data extends DBObject {
 
         $type = (int)$this->getIDType();
 
-        if ($type == Config::AddNoliktava || $type == Config::DelNoliktava || $type == Config::ReturnNoliktava || $type == Config::ReservNoliktava) {
-            $NolDat = array("rindasID" => $this->getID(), "detalasID" => $_POST['detalasID'], "daudzums" => $_POST['daudzums'], "order" => (int)$this->getIDOrder());
+        if ($type == Config::AddToWarehouseTypeID || $type == Config::RemoveFromWarehouseTypeID || $type == Config::ReturnToWarehouseTypeID || $type == Config::ReserveFromWarehouseTypeID) {
+            $warehouseData = array("rindasID" => $this->getID(), "detalasID" => $_POST['detalasID'], "daudzums" => $_POST['daudzums'], "order" => (int)$this->getIDOrder());
 
-            $this->NoliktavaSave($NolDat);
+            $this->warehouseSave($warehouseData);
         }
     }
 
@@ -1183,12 +1183,12 @@ class Data extends DBObject {
 
         if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
         if ($row['IDType'] == 72) $row['dblClick'] = 'getPavadzime(this);';
-        if ($row['IDType'] == Config::Noliktava) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
+        if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
-        if ($row['IDType'] == Config::AddNoliktava) $row['dblClick'] = 'getNoliktava(this,1); addNoliktavaAutoComp();';
-        if ($row['IDType'] == Config::DelNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
-        if ($row['IDType'] == Config::ReservNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
-        if ($row['IDType'] == Config::ReturnNoliktava) $row['dblClick'] = 'getNoliktava(this,2); addNoliktavaAutoComp();';
+        if ($row['IDType'] == Config::AddToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,1); addWarehouseAutoComp();';
+        if ($row['IDType'] == Config::RemoveFromWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
+        if ($row['IDType'] == Config::ReserveFromWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
+        if ($row['IDType'] == Config::ReturnToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
 
         if (in_array($row['ID'], $_SESSION['CechedRow'])) {
             $row['checked'] = 'checked';
@@ -1442,8 +1442,8 @@ class Data extends DBObject {
         return $results;
     }
 
-    function NolByID($ID, $colum) {
-        $query = "SELECT " . $colum . " FROM `noliktava` WHERE rindasID=" . $ID;
+    function warehouseByID($ID, $colum) {
+        $query = "SELECT " . $colum . " FROM `warehouse` WHERE rindasID=" . $ID;
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
@@ -1454,8 +1454,8 @@ class Data extends DBObject {
         return $results;
     }
 
-    function noliktava_exist($ID) {
-        $query = "SELECT ID AS SuperID, rindasID, detalasID, daudzums, Shop, ShopTitle, ShopDescription, ShopModelID, ShopCategoryID FROM noliktava WHERE rindasID='" . $ID . "'";
+    function existsInWarehouse($ID) {
+        $query = "SELECT ID AS SuperID, rindasID, detalasID, daudzums, Shop, ShopTitle, ShopDescription, ShopModelID, ShopCategoryID FROM warehouse WHERE rindasID='" . $ID . "'";
 
         $result = self::$DB->query($query);
         if ($result->num_rows == 0) {
@@ -1478,8 +1478,8 @@ class Data extends DBObject {
         echo json_encode($results);
     }
 
-    function noliktavaDialog($ID) {
-        $query = "SELECT ID AS SuperID, rindasID, detalasID, daudzums, Shop, ShopTitle, ShopDescription, ShopModelID, ShopCategoryID, OrginalCode, addition, offer, state, used  FROM noliktava WHERE rindasID='" . $ID . "'";
+    function warehouseDialog($ID) {
+        $query = "SELECT ID AS SuperID, rindasID, detalasID, daudzums, Shop, ShopTitle, ShopDescription, ShopModelID, ShopCategoryID, OrginalCode, addition, offer, state, used  FROM warehouse WHERE rindasID='" . $ID . "'";
 
         $result = self::$DB->query($query);
 
@@ -1538,14 +1538,14 @@ class Data extends DBObject {
         return implode("\n", $results);
     }
 
-    function noliktava_atlikums($ID) {
+    function warehouseBalance($ID) {
         $query = "SELECT ID AS detalasID,PlaceTaken AS artikuls, Note AS nosaukums, TotalPrice AS atlikums, PriceNote AS mervieniba, Data.Hours AS rezervets FROM Data WHERE ID=" . $ID;
         $result = self::$DB->query($query);
         return $result->fetch_assoc();
     }
 
     function SaveDetala($data) {
-        $query = 'UPDATE `noliktava` SET
+        $query = 'UPDATE `warehouse` SET
                          `detalasID`="' . $data[detalasID] . '",
                          `daudzums`="' . $data[daudzums] . '",
                          `type`="1",
@@ -1566,7 +1566,7 @@ class Data extends DBObject {
         }
 
         if ($data[SuperID] == 0) {
-            $query = 'INSERT INTO `noliktava` (`rindasID`,`detalasID`,`daudzums`,`type`,`Shop`,`ShopTitle`,`ShopDescription`,`ShopModelID`,`ShopCategoryID`,`OrginalCode`,`addition`,`offer`,`state`,`used`) VALUES (' . $data[rindasID] . ',"' . $data[detalasID] . '","' . $data[daudzums] . '",1,"' . $data[Shop] . '","' . $data[ShopTitle] . '","' . $data[ShopDescription] . '","' . $data[ShopModelID] . '","' . $data[ShopCategoryID] . '","' . $data[OrginalCode] . '","' . $data[addition] . '","' . $data[offer] . '","' . $data[state] . '","' . $data[used] . '")';
+            $query = 'INSERT INTO `warehouse` (`rindasID`,`detalasID`,`daudzums`,`type`,`Shop`,`ShopTitle`,`ShopDescription`,`ShopModelID`,`ShopCategoryID`,`OrginalCode`,`addition`,`offer`,`state`,`used`) VALUES (' . $data[rindasID] . ',"' . $data[detalasID] . '","' . $data[daudzums] . '",1,"' . $data[Shop] . '","' . $data[ShopTitle] . '","' . $data[ShopDescription] . '","' . $data[ShopModelID] . '","' . $data[ShopCategoryID] . '","' . $data[OrginalCode] . '","' . $data[addition] . '","' . $data[offer] . '","' . $data[state] . '","' . $data[used] . '")';
 
             if (!self::$DB->query($query)) {
                 throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
@@ -1578,28 +1578,28 @@ class Data extends DBObject {
         return json_encode(array(1, Template::Process('Row', $Data)));
     }
 
-    function NoliktavaSave($data) {
+    function warehouseSave($data) {
         $type = $this->DataByID($data[rindasID], 'IDType');
         $title = substr($this->DataByID($data[detalasID], 'Note'), 0, 25) . " " . $this->DataByID($data[detalasID], 'PlaceTaken');
         $vienibas = $this->DataByID($data[detalasID], 'PriceNote');
-        $sum = ($this->NolByID($data[detalasID], 'daudzums')) * $data[daudzums];
+        $sum = ($this->warehouseByID($data[detalasID], 'daudzums')) * $data[daudzums];
 
-        $query = "select ID from noliktava where rindasID =" . $data[rindasID];
+        $query = "select ID from warehouse where rindasID =" . $data[rindasID];
         $result = self::$DB->query($query);
         if ($result->num_rows == 0) {
-            $query = "INSERT INTO `noliktava` (`rindasID`, `detalasID`, `daudzums`) VALUES (" . $data[rindasID] . ", " . $data[detalasID] . ", " . $data[daudzums] . ")";
+            $query = "INSERT INTO `warehouse` (`rindasID`, `detalasID`, `daudzums`) VALUES (" . $data[rindasID] . ", " . $data[detalasID] . ", " . $data[daudzums] . ")";
             if (!self::$DB->query($query)) {
                 throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
             }
         } else {
-            $query = "UPDATE `noliktava` SET `rindasID`= " . $data[rindasID] . ", `detalasID`=" . $data[detalasID] . ", `daudzums`=" . $data[daudzums] . " WHERE rindasID =" . $data[rindasID];
+            $query = "UPDATE `warehouse` SET `rindasID`= " . $data[rindasID] . ", `detalasID`=" . $data[detalasID] . ", `daudzums`=" . $data[daudzums] . " WHERE rindasID =" . $data[rindasID];
             if (!self::$DB->query($query)) {
                 throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
             }
         }
 
         //Tiek izdota prece
-        Warehous::izdot($data[detalasID], $data[rindasID], $data[daudzums], $vienibas, $title, $type, $data[order], $sum);
+        Warehouse::izdot($data[detalasID], $data[rindasID], $data[daudzums], $vienibas, $title, $type, $data[order], $sum);
     }
 
     /**
@@ -1609,8 +1609,8 @@ class Data extends DBObject {
      * @param array $Data
      * @author Jānis
      */
-    function SaveNoliktava($Data) {
-        if ($Data['IDType'] == Config::AddNoliktava || $Data['IDType'] == Config::DelNoliktava) {
+    function saveWarehouse($Data) {
+        if ($Data['IDType'] == Config::AddToWarehouseTypeID || $Data['IDType'] == Config::RemoveFromWarehouseTypeID) {
             $value = $Data['detalasID'];
             $value = (int)$value;
             if ($value == 0) throw new AppError(Language::$Data['SetIDDetaļas']);
@@ -1655,7 +1655,7 @@ class Data extends DBObject {
     }
 
     function ceckArtikuls($text) {
-        $query = "SELECT PlaceTaken FROM Data WHERE `IDType`  = " . Config::Noliktava . " AND Status = 1 AND PlaceTaken = '" . $text . "'";
+        $query = "SELECT PlaceTaken FROM Data WHERE `IDType`  = " . Config::WarehouseTypeID . " AND Status = 1 AND PlaceTaken = '" . $text . "'";
         $result = self::$DB->query($query);
         return $result->num_rows == 0 ? 0 : 1;
     }
@@ -1679,7 +1679,7 @@ class Data extends DBObject {
 
         // Ja rinda ir detaļa un viņa ir veikalā tipa piezīmēs ievada V un ja viņai ari ir pievienota rindas bilde B
 
-        if ($Data['IDType'] == 2362) {
+        if ($Data['IDType'] == Config::WarehouseTypeID) {
             if ($Data2['Shop'] == 1) {
                 $TextType = 'V';
                 // add faili image function
