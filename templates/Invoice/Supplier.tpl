@@ -1,4 +1,4 @@
-<div id="PavadzimesD[:IDSupplier:]" class="Pavadzime" >
+<div id="InvoiceD[:IDSupplier:]" class="Invoice" >
     <h2>PREČU PAVADZĪME- RĒĶINS NR. A1-[:IDDoc:] </h2>
 <table border="0">
 <tr>
@@ -51,7 +51,7 @@
                                      <span onclick="OpenForm('EditRecipient','DialogForm','scrollDiv','Labot','1500',0)" class="editbutton">&nbsp</span></td>
 <td>
 <input type="text" class="hide" value="[:SaveID:]" ID="Saveid" />
-<input type="text" class="hide" value="[:ID:]" ID="pavadid" />
+<input type="text" class="hide" value="[:ID:]" ID="invoiceID" />
 <input type="text" class="hide" value="[:recipientID:]" id="recipientID" />
 <input size="35" value='' ID="Recipient" />
 </td>
@@ -184,7 +184,7 @@ function replaceentry(){
         };
 
         Loading(0, 1);
-        $.post(URL + '/Pavadzime/Recipient', data, success);
+        $.post(URL + '/Invoice/Recipient', data, success);
     }
 };
 
@@ -209,7 +209,7 @@ function AutoUiReplace(val){
         };
 
         Loading(0, 1);
-        $.post(URL + '/Pavadzime/Recipient', data, success);
+        $.post(URL + '/Invoice/Recipient', data, success);
     }
 };
 
@@ -239,7 +239,7 @@ function Delete(ID,entry){
     };
 
     Loading(0, 1);
-    $.post(URL + '/Pavadzime/DeleteEntry', data, success);
+    $.post(URL + '/Invoice/DeleteEntry', data, success);
 
     }
 }

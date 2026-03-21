@@ -353,7 +353,7 @@ CREATE TABLE `parameters` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `pavadzime` (
+CREATE TABLE `invoices` (
     `ID` INTEGER NOT NULL AUTO_INCREMENT,
     `DocID` INTEGER NOT NULL,
     `Samaksa` TEXT NOT NULL,
@@ -371,7 +371,7 @@ CREATE TABLE `pavadzime` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `pavadzime_preces` (
+CREATE TABLE `invoice_items` (
     `ID` INTEGER NOT NULL AUTO_INCREMENT,
     `DocID` INTEGER NOT NULL,
     `Nosaukums` TEXT NOT NULL,

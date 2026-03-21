@@ -1,6 +1,6 @@
 <?php
 
-class Pavadzime extends DBObject {
+class Invoice extends DBObject {
     protected static $tableName = 'recipients';
     protected $ID;
     protected $Nosaukums;
@@ -43,29 +43,29 @@ class Pavadzime extends DBObject {
         $query = 'SELECT ID,IDDoc,Date,Note,PlaceTaken,PlaceDone FROM `Data` WHERE ID = ' . $Data;
 
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
         $Info = array();
 
         while ($row = $result->fetch_assoc()) {
             $Info['ID'] = $row['ID'];
             $Info['IDDoc'] = $row['IDDoc'];
-            $Info['Date'] = Pavadzime::date2text($row['Date']);
-            $Info['IzDate'] = Pavadzime::izsnigsanastext($row['Date']);
+            $Info['Date'] = Invoice::date2text($row['Date']);
+            $Info['IzDate'] = Invoice::izsnigsanastext($row['Date']);
             $Info['Note'] = $row['Note'];
             $Info['PlaceTaken'] = $row['PlaceTaken'];
             $Info['PlaceDone'] = $row['PlaceDone'];
         }
 
-        $recipients = Pavadzime::getRecipientsAsArray();
+        $recipients = Invoice::getRecipientsAsArray();
         foreach ($recipients as $k => $v)
             $recipients[$k] = 'name: "' . $v . '", val:"' . $k . '"';
         $Info['recipients'] = '{' . implode('},{', $recipients) . '}';
 
-        $query1 = 'SELECT ID,DocID,Samaksa,recipient,Atlaide,Izsniedza,recipientID FROM `pavadzime` WHERE DocID = ' . $Data;
+        $query1 = 'SELECT ID,DocID,Samaksa,recipient,Atlaide,Izsniedza,recipientID FROM `invoices` WHERE DocID = ' . $Data;
 
         if (!$result = self::$DB->query($query1)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
 
         $Info['SaveID'] = 0;
@@ -77,10 +77,10 @@ class Pavadzime extends DBObject {
             $Info['Izsniedza'] = $row['Izsniedza'];
         }
 
-        $query2 = 'SELECT ID,Nosaukums,Artikuls,Daudzums,Mervieniba,Cena FROM `pavadzime_preces` WHERE DocID = ' . $Data;
+        $query2 = 'SELECT ID,Nosaukums,Artikuls,Daudzums,Mervieniba,Cena FROM `invoice_items` WHERE DocID = ' . $Data;
 
         if (!$result = self::$DB->query($query2)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
 
         $a = 0;
@@ -110,7 +110,7 @@ class Pavadzime extends DBObject {
 
         $Info['ierakstusk'] = $a;
 
-        $Info['__template'] = '/Pavadzime/Supplier';
+        $Info['__template'] = '/Invoice/Supplier';
         return json_encode(array(1, Template::Process($Info)));
     }
 
@@ -156,7 +156,7 @@ class Pavadzime extends DBObject {
     function getRecipient($id) {
         $query = "SELECT * FROM `recipients` WHERE `ID` = '$id'";
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
         $recipients = array();
         while ($row = $result->fetch_assoc()) {
@@ -177,7 +177,7 @@ WHERE ID >0
 ORDER BY `Nosaukums`';
 
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
         $Orders = array();
         while ($row = $result->fetch_assoc()) {
@@ -222,7 +222,7 @@ ORDER BY `Nosaukums`';
     );';
 
         if (!self::$DB->query($query)) {
-            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Invoice (' . __LINE__ . ')');
         }
         $this->MakeCont($_POST['Nosaukums'], $_POST['Kods'], $_POST['JurAdrese'], $_POST['Kreditiestade'], $_POST['Konts'], $_POST['Telefons'], $_POST['Epasts']);
         return 1;
@@ -232,7 +232,7 @@ ORDER BY `Nosaukums`';
         $query = 'SELECT * FROM `recipients` WHERE ID = "' . $ID . '"';
         //ID,Nosaukums, Kods, Adrese, Banka, Konts, Telefons, Epasts
         $Table = $this->good_query_table($query);
-        $Table['__template'] = '/Pavadzime/ChangeRecipient';
+        $Table['__template'] = '/Invoice/ChangeRecipient';
         return $Table;
     }
 
@@ -241,24 +241,24 @@ ORDER BY `Nosaukums`';
 
         $Table = $this->good_query_table($query);
 
-        $Table['__template'] = '/Pavadzime/Table';
+        $Table['__template'] = '/Invoice/Table';
         return Template::Process($Table);
     }
 
     function CechUsage($ID) {
-        $query = "SELECT DocID FROM `pavadzime` WHERE recipientID = " . $ID;
+        $query = "SELECT DocID FROM `invoices` WHERE recipientID = " . $ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
 
         if ($result->num_rows > 0) {
-            $pavadzimes = array();
+            $invoices = array();
             while ($row = $result->fetch_assoc()) {
-                $pavadzimes[] = $row['DocID'];
+                $invoices[] = $row['DocID'];
             }
 
-            return $pavadzimes;
+            return $invoices;
         }
     }
 
@@ -269,7 +269,7 @@ ORDER BY `Nosaukums`';
         $Names = implode(", ", $parbaude);
 
         if ($parbaude > 0) {
-            return "Šis uzņēmums tiek izmantots pavadzīmē: " . $Names . " !";
+            return "Šis uzņēmums tiek izmantots rēķinā: " . $Names . " !";
         }
 
         $query = 'Update `recipients` SET `Status`= 1 WHERE `ID`=' . $ID;
@@ -294,7 +294,7 @@ ORDER BY `Nosaukums`';
             WHERE ID = "' . $ID . '"';
 
         if (!self::$DB->query($query)) {
-            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Invoice (' . __LINE__ . ')');
         }
         $this->MakeCont($_POST['Nosaukums'], $_POST['Kods'], $_POST['JurAdrese'], $_POST['Kreditiestade'], $_POST['Konts'], $_POST['Telefons'], $_POST['Epasts']);
         return 1;
@@ -313,7 +313,7 @@ ORDER BY `Nosaukums`';
 
     function BildSave() {
         $ID = $_POST['ID'];
-        $DocID = $_POST['pavadid'];
+        $DocID = $_POST['invoiceID'];
         $Samaksa = $_POST['samaksaskartiba'];
         $recipient = rawurlencode($_POST['Recipient']);
         $Atlaide = $_POST['Atlaide'];
@@ -326,7 +326,7 @@ ORDER BY `Nosaukums`';
         $recipientID = $_POST['recipientID'];
 
         if ($ID == 0) {
-            $query = "INSERT INTO `pavadzime` (
+            $query = "INSERT INTO `invoices` (
 `DocID` ,
 `Samaksa` ,
 `recipient` ,
@@ -343,7 +343,7 @@ VALUES (
  '$DocID', '$Samaksa', '$recipient', '$Atlaide', '$Izsniedza', '$Kopa', '$atlaidessumma', '$PirmsNodokliem', '$PVN', '$Samaksai','$recipientID'
 );";
         } else {
-            $query = "UPDATE pavadzime
+            $query = "UPDATE invoices
 SET `DocID` = '$DocID',
 `Samaksa` = '$Samaksa' ,
 `recipient` = '$recipient' ,
@@ -361,11 +361,11 @@ WHERE ID = '$ID'";
         $query2 = "Update Data SET `TextOrder` = '" . addslashes(rawurldecode($recipient)) . "' WHERE ID = '$DocID'";
 
         if (!self::$DB->query($query)) {
-            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Invoice (' . __LINE__ . ')');
         }
 
         if (!self::$DB->query($query2)) {
-            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Invoice (' . __LINE__ . ')');
         }
 
         return 1;
@@ -382,7 +382,7 @@ WHERE ID = '$ID'";
         $Summa = $_POST['summa'];
 
         if ($ID == 0) {
-            $query = 'INSERT INTO `pavadzime_preces` (
+            $query = 'INSERT INTO `invoice_items` (
 `DocID` ,
 `Nosaukums` ,
 `Artikuls` ,
@@ -395,7 +395,7 @@ VALUES (
  "' . $DocID . '", "' . $Nosaukums . '", "' . $Artikuls . '", "' . $Daudzums . '", "' . $Mervieniba . '", "' . $Cena . '", "' . $Summa . '"
 );';
         } else {
-            $query = 'UPDATE pavadzime_preces
+            $query = 'UPDATE invoice_items
 SET `DocID` = "' . $DocID . '" ,
 `Nosaukums` = "' . $Nosaukums . '" ,
 `Artikuls` = "' . $Artikuls . '" ,
@@ -407,7 +407,7 @@ WHERE ID = "' . $ID . '"';
         }
 
         if (!self::$DB->query($query)) {
-            throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
+            throw new AppError('Write error on Invoice (' . __LINE__ . ')');
         }
 
         return 1;
@@ -415,7 +415,7 @@ WHERE ID = "' . $ID . '"';
 
     static function DeleteEntry() {
         $ID = $_POST['id'];
-        $query = 'DELETE FROM `pavadzime_preces` WHERE `ID`=' . $ID;
+        $query = 'DELETE FROM `invoice_items` WHERE `ID`=' . $ID;
 
         if (!self::$DB->query($query)) {
             throw new AppError('Delete error on Info (' . __LINE__ . ')');
@@ -425,9 +425,9 @@ WHERE ID = "' . $ID . '"';
     }
 
     /**
-     * Funkcija paredzēta automātiskai jaunu kontaktu izveidei tiek apvienota ar save funkciju lai saglabātu loģiku.
-     * Rindā 234659 tika pieprasits pec izmaiņām rindu veidot no jauna.
-     * Ja kadreiz pardomas un bus nepieciešams apdeitot rindas japievieno Data.ID rinda pie saņēmēju tabulas un jānosūta līdzi uz šeieni.
+     * Automatically creates new contacts, combined with the save function to preserve logic.
+     * In row 234659 it was requested to recreate the row after changes.
+     * If in the future it becomes necessary to update rows, add Data.ID row to the recipients table and pass it here.
      * @return void
      * @author
      */
