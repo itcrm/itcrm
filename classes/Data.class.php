@@ -351,7 +351,7 @@ class Data extends DBObject {
         while ($row = $result->fetch_assoc()) {
             if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
 
-            if ($row['IDType'] == 72) $row['dblClick'] = 'getPavadzime(this);';
+            if ($row['IDType'] == 72) $row['dblClick'] = 'getInvoice(this);';
 
             if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
@@ -513,7 +513,7 @@ class Data extends DBObject {
                 $i++;
 
                 if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
-                if ($row['IDType'] == 72) $row['dblClick'] = 'getPavadzime(this);';
+                if ($row['IDType'] == 72) $row['dblClick'] = 'getInvoice(this);';
 
                 if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
@@ -603,7 +603,7 @@ class Data extends DBObject {
             $i++;
 
             if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
-            if ($row['IDType'] == 72) $row['dblClick'] = 'getPavadzime(this);';
+            if ($row['IDType'] == 72) $row['dblClick'] = 'getInvoice(this);';
 
             if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
@@ -1182,7 +1182,7 @@ class Data extends DBObject {
         $now = strtotime(date('Y-m-d H:i:00'));
 
         if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
-        if ($row['IDType'] == 72) $row['dblClick'] = 'getPavadzime(this);';
+        if ($row['IDType'] == 72) $row['dblClick'] = 'getInvoice(this);';
         if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
         if ($row['IDType'] == Config::AddToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,1); addWarehouseAutoComp();';

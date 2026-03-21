@@ -771,7 +771,7 @@ function getSupplier(el) {
   $.post(URL + "/Info/Get", data, success);
 }
 
-function getPavadzime(el) {
+function getInvoice(el) {
   ID = el.id.replace(/Data/, "");
   var data = "IDData=" + ID;
 
@@ -786,7 +786,7 @@ function getPavadzime(el) {
     if (answ[0] == 1) {
       $("#PDati").html(answ[1]);
       container = $("#scrollDiv");
-      $("#pavadzime").css(
+      $("#invoice").css(
         "top",
         $(el).offset().top -
           container.offset().top +
@@ -794,11 +794,11 @@ function getPavadzime(el) {
           container[0].scrollTop
       );
 
-      $("#pavadzime").show();
+      $("#invoice").show();
     } else alert(answ[0]);
   };
   Loading(0, 1);
-  $.post(URL + "/Pavadzime/Get", data, success);
+  $.post(URL + "/Invoice/Get", data, success);
 }
 
 function deleteRecipient(ID) {
@@ -813,14 +813,14 @@ function deleteRecipient(ID) {
         $("div#EditRecipientList table.AutoTable tbody").html(answ);
       };
       Loading(0, 1);
-      $.post(URL + "/Pavadzime/EditRecipientList", Data, success);
+      $.post(URL + "/Invoice/EditRecipientList", Data, success);
     } else {
       alert(answ);
     }
   };
 
   Loading(0, 1);
-  $.post(URL + "/Pavadzime/DeleteRecipient", data, success);
+  $.post(URL + "/Invoice/DeleteRecipient", data, success);
 }
 
 function saveInfo(IDS, IDD) {
@@ -987,7 +987,7 @@ function savetable() {
       "&entryid=" +
       entry +
       "&id=" +
-      $("input#pavadid").val() +
+      $("input#invoiceID").val() +
       "&nosaukums=" +
       $("tr:last.bordersolidadd>td>input.Precu_nosaukums").val() +
       "&artikuls=" +
@@ -1003,7 +1003,7 @@ function savetable() {
     };
 
     Loading(0, 1);
-    $.post(URL + "/Pavadzime/LineSave", data, success);
+    $.post(URL + "/Invoice/LineSave", data, success);
     $("#Preces tr:last.bordersolidadd").remove();
     if (i == rinda) {
       return 1;
@@ -1026,8 +1026,8 @@ function bildsave(print) {
       $("input.SamKart").val() +
       "&Recipient=" +
       encodeURIComponent($("input#Recipient").val()) +
-      "&pavadid=" +
-      $("input#pavadid").val() +
+      "&invoiceID=" +
+      $("input#invoiceID").val() +
       "&Atlaide=" +
       a +
       "&izsniedza=" +
@@ -1053,7 +1053,7 @@ function bildsave(print) {
     };
 
     Loading(0, 1);
-    $.post(URL + "/Pavadzime/BildSave", data, success);
+    $.post(URL + "/Invoice/BildSave", data, success);
   }
 
   if (print == 1) {
@@ -1064,8 +1064,8 @@ function bildsave(print) {
 function print() {
   // a = bildsave(1);
   //if (a == 1) {
-  var ID = $("input#pavadid").val();
-  window.open(URL + "/PavadzimePrints&ID=" + ID);
+  var ID = $("input#invoiceID").val();
+  window.open(URL + "/PrintInvoice&ID=" + ID);
   //}
 }
 
@@ -1869,7 +1869,7 @@ function editRecipientDialog() {
   };
 
   Loading(0, 1);
-  $.post(URL + "/Pavadzime/EditRecipient", data, success);
+  $.post(URL + "/Invoice/EditRecipient", data, success);
 }
 
 function addRecipientDialog() {
@@ -1878,7 +1878,7 @@ function addRecipientDialog() {
     Loading(0, 0);
   };
   Loading(0, 1);
-  $.post(URL + "/Pavadzime/SaveRecipient", data, success);
+  $.post(URL + "/Invoice/SaveRecipient", data, success);
 }
 
 function HTMLFilter(selector, query) {

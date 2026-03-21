@@ -4,7 +4,7 @@ require_once './tcpdf/config/lang/eng.php';
 require_once './tcpdf/tcpdf.php';
 require_once "classes/number2text.php";
 
-class PavadzimePrints extends TCPDF {
+class PrintInvoice extends TCPDF {
     function Load() {
     }
 
@@ -14,7 +14,7 @@ class PavadzimePrints extends TCPDF {
         $query = 'SELECT ID,IDDoc,Date,Note,PlaceTaken,PlaceDone FROM `Data` WHERE ID = ' . $ID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -37,10 +37,10 @@ class PavadzimePrints extends TCPDF {
 
     public function getInvoiceValue($column, $DocID) {
         $column = self::$DB->real_escape_string($column);
-        $query = 'SELECT `' . $column . '` FROM `pavadzime` WHERE DocID = ' . intval($DocID) . ' LIMIT 1';
+        $query = 'SELECT `' . $column . '` FROM `invoices` WHERE DocID = ' . intval($DocID) . ' LIMIT 1';
 
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
 
         $row = $result->fetch_assoc();
@@ -51,7 +51,7 @@ class PavadzimePrints extends TCPDF {
         $query = 'SELECT Nosaukums, Kods, Adrese, Banka, Konts FROM `recipients` WHERE Nosaukums = "' . $name . '"';
 
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -73,10 +73,10 @@ class PavadzimePrints extends TCPDF {
     }
 
     public function tabula($DocID) {
-        $query = 'SELECT ID,Nosaukums,Artikuls,Daudzums,Mervieniba,Cena,Summa FROM `pavadzime_preces` WHERE DocID = ' . $DocID;
+        $query = 'SELECT ID,Nosaukums,Artikuls,Daudzums,Mervieniba,Cena,Summa FROM `invoice_items` WHERE DocID = ' . $DocID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
+            throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
 
         while ($row = $result->fetch_assoc()) {
@@ -91,7 +91,7 @@ class PavadzimePrints extends TCPDF {
 }
 
 // create new PDF document
-$pdf = new PavadzimePrints(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+$pdf = new PrintInvoice(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
 // set document information
 $pdf->SetCreator(PDF_CREATOR);
@@ -149,7 +149,7 @@ $pdf->Cell(0, 0, '', 0, 1, 'C', 0, '', 0);
 
 $pdf->SetFont('freesans', '', 10);
 
-// Nosūtītājs
+// Sender
 $datums = $pdf->Dataget('Date');
 $datums = $pdf->date2text($datums);
 
@@ -180,7 +180,7 @@ $pdf->Cell(40, 0, $vieta2, 0, 1, 'L', 0, '', 0);
 
 $pdf->line(10, 55.7, 200, 55.7, $LineStyle);
 
-// Saņēmējs
+// Recipient
 $DocID = $pdf->Dataget('ID');
 $recipientName = $pdf->getInvoiceValue('recipient', $DocID);
 $pdf->renderRecipient($recipientName);
@@ -189,7 +189,7 @@ $vieta = $pdf->Dataget('PlaceDone');
 $pdf->Cell(70, 0, 'Saņemšanas vieta:', 0, 0, 'L', 0, '', 0);
 $pdf->Cell(40, 0, $vieta, 0, 1, 'L', 0, '', 0);
 
-// Piezimes
+// Notes
 $pdf->line(10, 78, 200, 78, $LineStyle);
 $piezimes = $pdf->Dataget('Note');
 $pdf->Cell(70, 0, 'Speciālas piez.:', 0, 0, 'L', 0, '', 0);
@@ -203,7 +203,7 @@ $Izsniedza = $pdf->getInvoiceValue('Izsniedza', $DocID);
 $pdf->Cell(70, 0, 'Pakalpojuma sniegšanas laiks:', 0, 0, 'L', 0, '', 0);
 $pdf->Cell(40, 0, $Izsniedza, 0, 1, 'L', 0, '', 0);
 
-// Tabula
+// Table
 $pdf->SetFont('freesans', '', 8);
 $pdf->Cell(70, 0, 'Preču nosaukums', 1, 0, 'C', 1, '', 0);
 $pdf->Cell(40, 0, 'Artikuls', 1, 0, 'C', 1, '', 0);
@@ -212,11 +212,11 @@ $pdf->Cell(20, 0, 'mērv', 1, 0, 'C', 1, '', 0);
 $pdf->Cell(20, 0, 'Cena(eiro)', 1, 0, 'C', 1, '', 0);
 $pdf->Cell(20, 0, 'Summa(eiro)', 1, 1, 'C', 1, '', 0);
 $pdf->SetFont('freesans', '', 10);
-// Rinda(1)
+// Row(1)
 
 $pdf->tabula($DocID);
 
-// footers
+// Totals
 $pdf->Cell(170, 0, 'Kopā izsniegts:', 1, 0, 'L', 0, '', 0);
 $pdf->Cell(20, 0, $pdf->getInvoiceValue('Kopa', $DocID), 1, 1, 'L', 0, '', 0);
 

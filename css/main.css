@@ -519,7 +519,7 @@ a.reminder {
     background: #fff;
 }
 
-#pavadzime {
+#invoice {
     width: 100%;
     position: absolute;
     display: none;
@@ -537,7 +537,7 @@ a.reminder {
     display: none;
     left: 0px;
 }
-#pavadzime .main {
+#invoice .main {
     width: 98%;
     border: 5px solid #ddd;
     background: #fff;
@@ -622,13 +622,13 @@ a.reminder {
     display: block;
 }
 
-#Pavadzime {
+#Invoice {
     width: 100%;
     position: absolute;
     display: none;
     left: 0px;
 }
-#Pavadzime .main {
+#Invoice .main {
     width: 98%;
     border: 5px solid #ddd;
     background: #fff;
