@@ -13,7 +13,7 @@ class Prints extends TCPDF {
         $this->Cell(0, 15, date("Y.m.d H:i"), 0, false, 'R', 0, '', 0, false, 'M', 'M');
     }
 
-    public function addtabless() {
+    public function addTables() {
         $X = 8;
         while ($X <= 21) {
             $this->MultiCell(12, 16, $X . '<sup>00</sup>', 'LTRB', 'R', 1, 0, '', '', 'true', '', 'true');
@@ -188,7 +188,7 @@ $pdf->Ln(1);
 $pdf->SetTextColor(0);
 $pdf->SetLineWidth(0.1);
 
-$pdf->addtabless();
+$pdf->addTables();
 
 $pdf->tasks();
 
