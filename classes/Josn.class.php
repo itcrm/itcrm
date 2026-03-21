@@ -26,9 +26,9 @@ class Josn extends DBObject {
             case 'Warehouse':
                 $this->getWarehouse($_GET['term']);
                 die;
-            case 'EditSanemejs':
-                $Data['Dati'] = urldecode(Pavadzime::EditSanList());
-                print Template::Process('/Dialog/EditSanemejs', $Data);
+            case 'EditRecipient':
+                $Data['Dati'] = urldecode(Pavadzime::editRecipientList());
+                print Template::Process('/Dialog/EditRecipient', $Data);
                 die;
             case 'GetVeikals':
                 $Data = Data::warehouseDialog($_POST['ID']);
@@ -38,12 +38,12 @@ class Josn extends DBObject {
                 $Data['PrecuGrupas'] = Data::PrecuGrupas($_POST['ID']);
                 print Template::Process('/Dialog/PrecuGrupas', $Data);
                 die;
-            case 'AddSanemejs':
-                $Data = Pavadzime::LoadSanemeji($_POST['ID']);
-                print urldecode(Template::Process('/Pavadzime/ChangeSanemejs', $Data));
+            case 'AddRecipient':
+                $Data = Pavadzime::loadRecipient($_POST['ID']);
+                print urldecode(Template::Process('/Pavadzime/ChangeRecipient', $Data));
                 die;
-            case 'NewSanemejs':
-                print urldecode(Template::Process('/Pavadzime/NewSanemejs', $Data));
+            case 'NewRecipient':
+                print urldecode(Template::Process('/Pavadzime/NewRecipient', $Data));
                 die;
             case 'NrExist':
                 echo $this->NrExist($_GET['value']);

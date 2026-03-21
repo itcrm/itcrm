@@ -1367,7 +1367,7 @@ class Data extends DBObject {
     function AutocompliteJosn($text) {
         $vowels = array("ē", "ū", "ī", "ā", "š", "ģ", "ķ", "ļ", "ž", "č", "ņ", "Ē", "Ū", "Ī", "Ā", "Š", "Ģ", "Ķ", "Ļ", "Ž", "Č", "Ņ");
         $text = str_replace($vowels, "%", $text);
-        $query = "select ID, Nosaukums as label from sanemeji WHERE Nosaukums LIKE '%" . $text . "%' AND Status = 0 ";
+        $query = "select ID, Nosaukums as label from recipients WHERE Nosaukums LIKE '%" . $text . "%' AND Status = 0 ";
         if (!$result = self::$DB->query($query))
             throw new AppError('Read error on Data (' . __LINE__ . ')');
 

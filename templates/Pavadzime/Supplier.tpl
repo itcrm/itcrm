@@ -47,13 +47,13 @@
 <table border="0">
 
 <tr>
-<td width="560px"><b></>Saņēmējs:</b><span onclick="OpenForm('NewSanemejs','DialogForm','scrollDiv','Jauns','430',0,1)" class="addbutton">&nbsp;</span>
-                                     <span onclick="OpenForm('EditSanemejs','DialogForm','scrollDiv','Labot','1500',0)" class="editbutton">&nbsp</span></td>
+<td width="560px"><b></>Saņēmējs:</b><span onclick="OpenForm('NewRecipient','DialogForm','scrollDiv','Jauns','430',0,1)" class="addbutton">&nbsp;</span>
+                                     <span onclick="OpenForm('EditRecipient','DialogForm','scrollDiv','Labot','1500',0)" class="editbutton">&nbsp</span></td>
 <td>
 <input type="text" class="hide" value="[:SaveID:]" ID="Saveid" />
 <input type="text" class="hide" value="[:ID:]" ID="pavadid" />
-<input type="text" class="hide" value="[:SanemejsID:]" ID="SanemejsID" />
-<input size="35" value='' ID="Sanemejs" />
+<input type="text" class="hide" value="[:recipientID:]" id="recipientID" />
+<input size="35" value='' ID="Recipient" />
 </td>
 </tr>
 
@@ -149,7 +149,7 @@
 
  <script type="text/javascript">
      $(document).ready(function(){
-    replaceentry($("input#SanemejsID").val());
+    replaceentry($("input#recipientID").val());
     var stop =[:ierakstusk:];
     var i=1;
     for (i = 1; i <= stop; i++) {
@@ -158,7 +158,7 @@
 
     });
 
-$("#Sanemejs").autocomplete({
+$("#Recipient").autocomplete({
     source: "/lv/Data/AutocompliteJosn",
     select: function( event, ui){
         AutoUiReplace(ui.item.ID);
@@ -167,7 +167,7 @@ $("#Sanemejs").autocomplete({
 });
 
 function replaceentry(){
-    var val = $("input#SanemejsID").val();
+    var val = $("input#recipientID").val();
     if (!val) {
     }else{
         var data = 'ID=' + val;
@@ -175,7 +175,7 @@ function replaceentry(){
             Loading(0, 0);
 
                 text  = answ.split('|');
-                $("input#Sanemejs").val(text[1]);
+                $("input#Recipient").val(text[1]);
                 $("td#MaksKods").text(text[2]);
                 $("td#Adrese").text(text[3]);
                 $("td#Banka").text(text[4]);
@@ -184,7 +184,7 @@ function replaceentry(){
         };
 
         Loading(0, 1);
-        $.post(URL + '/Pavadzime/Sanemejs', data, success);
+        $.post(URL + '/Pavadzime/Recipient', data, success);
     }
 };
 
@@ -199,8 +199,8 @@ function AutoUiReplace(val){
             Loading(0, 0);
 
                 text  = answ.split('|');
-                $("input#SanemejsID").val(text[0]);
-                $("input#Sanemejs").val(text[1]);
+                $("input#recipientID").val(text[0]);
+                $("input#Recipient").val(text[1]);
                 $("td#MaksKods").text(text[2]);
                 $("td#Adrese").text(text[3]);
                 $("td#Banka").text(text[4]);
@@ -209,7 +209,7 @@ function AutoUiReplace(val){
         };
 
         Loading(0, 1);
-        $.post(URL + '/Pavadzime/AutoUiReplace', data, success);
+        $.post(URL + '/Pavadzime/Recipient', data, success);
     }
 };
 

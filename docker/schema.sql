@@ -357,7 +357,7 @@ CREATE TABLE `pavadzime` (
     `ID` INTEGER NOT NULL AUTO_INCREMENT,
     `DocID` INTEGER NOT NULL,
     `Samaksa` TEXT NOT NULL,
-    `Sanemejs` TEXT NOT NULL,
+    `recipient` TEXT NOT NULL,
     `Atlaide` INTEGER NOT NULL,
     `Izsniedza` TEXT NOT NULL,
     `Kopa` FLOAT NOT NULL,
@@ -365,7 +365,7 @@ CREATE TABLE `pavadzime` (
     `PirmsNodokliem` FLOAT NOT NULL,
     `PVN` FLOAT NOT NULL,
     `Samaksai` FLOAT NOT NULL,
-    `SanemejaID` INTEGER NOT NULL,
+    `recipientID` INTEGER NOT NULL,
 
     PRIMARY KEY (`ID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -398,7 +398,7 @@ CREATE TABLE `photo_tagger` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `sanemeji` (
+CREATE TABLE `recipients` (
     `ID` INTEGER NOT NULL AUTO_INCREMENT,
     `Nosaukums` VARCHAR(250) NOT NULL DEFAULT '',
     `Kods` VARCHAR(250) NOT NULL DEFAULT '',

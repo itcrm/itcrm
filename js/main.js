@@ -801,7 +801,7 @@ function getPavadzime(el) {
   $.post(URL + "/Pavadzime/Get", data, success);
 }
 
-function DelSan(ID) {
+function deleteRecipient(ID) {
   var data = "ID=" + ID;
   success = function (answ) {
     Loading(0, 0);
@@ -810,17 +810,17 @@ function DelSan(ID) {
       success = function (answ) {
         Loading(0, 0);
         answ = decodeURIComponent(answ);
-        $("div#EditSanList table.AutoTable tbody").html(answ);
+        $("div#EditRecipientList table.AutoTable tbody").html(answ);
       };
       Loading(0, 1);
-      $.post(URL + "/Pavadzime/EditSanList", Data, success);
+      $.post(URL + "/Pavadzime/EditRecipientList", Data, success);
     } else {
       alert(answ);
     }
   };
 
   Loading(0, 1);
-  $.post(URL + "/Pavadzime/DelSan", data, success);
+  $.post(URL + "/Pavadzime/DeleteRecipient", data, success);
 }
 
 function saveInfo(IDS, IDD) {
@@ -1024,8 +1024,8 @@ function bildsave(print) {
       $("input#Saveid").val() +
       "&samaksaskartiba=" +
       $("input.SamKart").val() +
-      "&Sanemejs=" +
-      encodeURIComponent($("input#Sanemejs").val()) +
+      "&Recipient=" +
+      encodeURIComponent($("input#Recipient").val()) +
       "&pavadid=" +
       $("input#pavadid").val() +
       "&Atlaide=" +
@@ -1042,8 +1042,8 @@ function bildsave(print) {
       $("td#PVN").text() +
       "&Samaksai=" +
       $("td#PavisamSamaksai").text() +
-      "&SanemejaID=" +
-      $("input#SanemejsID").val();
+      "&recipientID=" +
+      $("input#recipientID").val();
     success = function (answ) {
       Loading(0, 0);
       if (answ == 1) {
@@ -1845,23 +1845,23 @@ function OpenForm(Name, Blok, ParentBlok, nosaukums, Platums, ID, Save) {
 }
 
 function DialogSave(Name, ID) {
-  if (Name == "AddSanemejs") {
-    EditSan();
+  if (Name == "AddRecipient") {
+    editRecipientDialog();
   }
-  if (Name == "NewSanemejs") {
-    AddSan();
+  if (Name == "NewRecipient") {
+    addRecipientDialog();
   }
 }
 
-function EditSan() {
-  var data = $("Form#ChangeSanemejs").serialize();
+function editRecipientDialog() {
+  var data = $("Form#ChangeRecipient").serialize();
   success = function (answ) {
     Loading(0, 0);
     $("DIV#AddDialog").remove();
     $.ajax({
       type: "POST",
       cache: false,
-      url: "/lv/Josn/EditSanemejs",
+      url: "/lv/Josn/EditRecipient",
       success: function (data) {
         $("#DialogForm").html(data);
       },
@@ -1869,16 +1869,16 @@ function EditSan() {
   };
 
   Loading(0, 1);
-  $.post(URL + "/Pavadzime/Sanemejsedit", data, success);
+  $.post(URL + "/Pavadzime/EditRecipient", data, success);
 }
 
-function AddSan() {
-  var data = $("Form#ChangeSanemejs").serialize();
+function addRecipientDialog() {
+  var data = $("Form#ChangeRecipient").serialize();
   success = function (answ) {
     Loading(0, 0);
   };
   Loading(0, 1);
-  $.post(URL + "/Pavadzime/SanemejsSave", data, success);
+  $.post(URL + "/Pavadzime/SaveRecipient", data, success);
 }
 
 function HTMLFilter(selector, query) {

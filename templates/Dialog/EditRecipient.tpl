@@ -1,4 +1,4 @@
-<div id="EditSanList"  style=" height:500px;" title="Saņēmēji">
+<div id="EditRecipientList"  style=" height:500px;" title="Saņēmēji">
     <table class="AutoTable">
         <thead>
     <tr>

@@ -1,7 +1,7 @@
 <?php
 
 class Pavadzime extends DBObject {
-    protected static $tableName = 'sanemeji';
+    protected static $tableName = 'recipients';
     protected $ID;
     protected $Nosaukums;
     protected $Kods;
@@ -12,31 +12,26 @@ class Pavadzime extends DBObject {
 
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
-            case 'Sanemejsedit':
-                return $this->Sanemejsedit();
-            case 'AutoUiReplace':
-                return $this->sanemejs($_POST['ID']);
+            case 'EditRecipient':
+                return $this->editRecipient();
             case 'DeleteEntry':
                 return $this->DeleteEntry();
             case 'LineSave':
                 return $this->LineSave();
             case 'BildSave':
                 return $this->BildSave();
-            case 'SanemejsSave':
-                return $this->SanemejsSave();
-            case 'Sanemejs':
-                return $this->Sanemejs($_POST['ID']);
+            case 'SaveRecipient':
+                return $this->saveRecipient();
+            case 'Recipient':
+                return $this->getRecipient($_POST['ID']);
             case 'Save':
                 return $this->Save();
             case 'Get':
                 return $this->getList($_POST['IDData']);
-            case 'EditSanList':
-                return $this->EditSanList();
-            case 'DelSan':
-                return $this->DelSan();
-            case 'UpdateCont':
-                $this->UpdateCont();
-                break;
+            case 'EditRecipientList':
+                return $this->editRecipientList();
+            case 'DeleteRecipient':
+                return $this->deleteRecipient();
             default:
                 return;
         }
@@ -62,12 +57,12 @@ class Pavadzime extends DBObject {
             $Info['PlaceDone'] = $row['PlaceDone'];
         }
 
-        $Sanemejs = Pavadzime::SanemejsgetAsArray();
-        foreach ($Sanemejs as $k => $v)
-            $Sanemejs[$k] = 'name: "' . $v . '", val:"' . $k . '"';
-        $Info['Sanemejs'] = '{' . implode('},{', $Sanemejs) . '}';
+        $recipients = Pavadzime::getRecipientsAsArray();
+        foreach ($recipients as $k => $v)
+            $recipients[$k] = 'name: "' . $v . '", val:"' . $k . '"';
+        $Info['recipients'] = '{' . implode('},{', $recipients) . '}';
 
-        $query1 = 'SELECT ID,DocID,Samaksa,Sanemejs,Atlaide,Izsniedza,SanemejaID FROM `pavadzime` WHERE DocID = ' . $Data;
+        $query1 = 'SELECT ID,DocID,Samaksa,recipient,Atlaide,Izsniedza,recipientID FROM `pavadzime` WHERE DocID = ' . $Data;
 
         if (!$result = self::$DB->query($query1)) {
             throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
@@ -77,7 +72,7 @@ class Pavadzime extends DBObject {
         while ($row = $result->fetch_assoc()) {
             $Info['SaveID'] = $row['ID'];
             $Info['Samaksa'] = $row['Samaksa'];
-            $Info['SanemejsID'] = $row['SanemejaID'];
+            $Info['recipientID'] = $row['recipientID'];
             $Info['Atlaide'] = $row['Atlaide'];
             $Info['Izsniedza'] = $row['Izsniedza'];
         }
@@ -158,26 +153,26 @@ class Pavadzime extends DBObject {
         return 1;
     }
 
-    function sanemejs($id) {
-        $query = "SELECT * FROM `sanemeji` WHERE `ID` = '$id'";
+    function getRecipient($id) {
+        $query = "SELECT * FROM `recipients` WHERE `ID` = '$id'";
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
-        $Sanemeji = array();
+        $recipients = array();
         while ($row = $result->fetch_assoc()) {
-            $Sanemeji['ID'] = $row['ID'];
-            $Sanemeji['Nosaukums'] = rawurldecode($row['Nosaukums']);
-            $Sanemeji['Kods'] = $row['Kods'];
-            $Sanemeji['Adrese'] = rawurldecode($row['Adrese']);
-            $Sanemeji['Banka'] = rawurldecode($row['Banka']);
-            $Sanemeji['Konts'] = $row['Konts'];
+            $recipients['ID'] = $row['ID'];
+            $recipients['Nosaukums'] = rawurldecode($row['Nosaukums']);
+            $recipients['Kods'] = $row['Kods'];
+            $recipients['Adrese'] = rawurldecode($row['Adrese']);
+            $recipients['Banka'] = rawurldecode($row['Banka']);
+            $recipients['Konts'] = $row['Konts'];
         }
-        return implode("|", $Sanemeji);
+        return implode("|", $recipients);
     }
 
-    static function SanemejsgetAsArray() {
+    static function getRecipientsAsArray() {
         $query = 'SELECT *
-FROM `sanemeji`
+FROM `recipients`
 WHERE ID >0
 ORDER BY `Nosaukums`';
 
@@ -203,7 +198,7 @@ ORDER BY `Nosaukums`';
         return $textdate;
     }
 
-    function SanemejsSave() {
+    function saveRecipient() {
         $Nosaukums = rawurlencode($_POST['Nosaukums']);
         $Kods = $_POST['Kods'];
         $JurAdrese = rawurlencode($_POST['JurAdrese']);
@@ -212,7 +207,7 @@ ORDER BY `Nosaukums`';
         $Telefons = $_POST['Telefons'];
         $Epasts = $_POST['Epasts'];
 
-        $query = 'INSERT INTO `sanemeji` (
+        $query = 'INSERT INTO `recipients` (
     `ID` ,
     `Nosaukums` ,
     `Kods` ,
@@ -233,16 +228,16 @@ ORDER BY `Nosaukums`';
         return 1;
     }
 
-    function LoadSanemeji($ID) {
-        $query = 'SELECT * FROM `sanemeji` WHERE ID = "' . $ID . '"';
+    function loadRecipient($ID) {
+        $query = 'SELECT * FROM `recipients` WHERE ID = "' . $ID . '"';
         //ID,Nosaukums, Kods, Adrese, Banka, Konts, Telefons, Epasts
         $Table = $this->good_query_table($query);
-        $Table['__template'] = '/Pavadzime/ChangeSanemejs';
+        $Table['__template'] = '/Pavadzime/ChangeRecipient';
         return $Table;
     }
 
-    function EditSanList() {
-        $query = "SELECT * FROM `sanemeji` where Status = 0 ";
+    function editRecipientList() {
+        $query = "SELECT * FROM `recipients` where Status = 0 ";
 
         $Table = $this->good_query_table($query);
 
@@ -251,7 +246,7 @@ ORDER BY `Nosaukums`';
     }
 
     function CechUsage($ID) {
-        $query = "SELECT DocID FROM `pavadzime` WHERE SanemejaID = " . $ID;
+        $query = "SELECT DocID FROM `pavadzime` WHERE recipientID = " . $ID;
 
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
@@ -267,7 +262,7 @@ ORDER BY `Nosaukums`';
         }
     }
 
-    function DelSan() {
+    function deleteRecipient() {
         $ID = $_POST['ID'];
 
         $parbaude = $this->CechUsage($ID);
@@ -277,7 +272,7 @@ ORDER BY `Nosaukums`';
             return "Šis uzņēmums tiek izmantots pavadzīmē: " . $Names . " !";
         }
 
-        $query = 'Update `sanemeji` SET `Status`= 1 WHERE `ID`=' . $ID;
+        $query = 'Update `recipients` SET `Status`= 1 WHERE `ID`=' . $ID;
 
         if (!self::$DB->query($query)) {
             throw new AppError('Delete error on Data (' . __LINE__ . ')');
@@ -286,9 +281,9 @@ ORDER BY `Nosaukums`';
         return 1;
     }
 
-    function Sanemejsedit() {
+    function editRecipient() {
         $ID = $_POST['ID'];
-        $query = 'UPDATE sanemeji
+        $query = 'UPDATE recipients
             SET `Nosaukums` = "' . str_replace("%27%27", "%22", rawurlencode($_POST['Nosaukums'])) . '" ,
                 `Kods` = "' . $_POST['Kods'] . '" ,
                 `Adrese` = "' . str_replace("%27%27", "%22", rawurlencode($_POST['JurAdrese'])) . '" ,
@@ -320,7 +315,7 @@ ORDER BY `Nosaukums`';
         $ID = $_POST['ID'];
         $DocID = $_POST['pavadid'];
         $Samaksa = $_POST['samaksaskartiba'];
-        $Sanemejs = rawurlencode($_POST['Sanemejs']);
+        $recipient = rawurlencode($_POST['Recipient']);
         $Atlaide = $_POST['Atlaide'];
         $Izsniedza = $_POST['izsniedza'];
         $Kopa = $_POST['Kopa'];
@@ -328,13 +323,13 @@ ORDER BY `Nosaukums`';
         $PirmsNodokliem = $_POST['PirmsNodokliem'];
         $PVN = $_POST['PVN'];
         $Samaksai = $_POST['Samaksai'];
-        $SanemejaID = $_POST['SanemejaID'];
+        $recipientID = $_POST['recipientID'];
 
         if ($ID == 0) {
             $query = "INSERT INTO `pavadzime` (
 `DocID` ,
 `Samaksa` ,
-`Sanemejs` ,
+`recipient` ,
 `Atlaide` ,
 `izsniedza`,
 `Kopa` ,
@@ -342,16 +337,16 @@ ORDER BY `Nosaukums`';
 `PirmsNodokliem` ,
 `PVN` ,
 `Samaksai`,
-`SanemejaID`
+`recipientID`
 )
 VALUES (
- '$DocID', '$Samaksa', '$Sanemejs', '$Atlaide', '$Izsniedza', '$Kopa', '$atlaidessumma', '$PirmsNodokliem', '$PVN', '$Samaksai','$SanemejaID'
+ '$DocID', '$Samaksa', '$recipient', '$Atlaide', '$Izsniedza', '$Kopa', '$atlaidessumma', '$PirmsNodokliem', '$PVN', '$Samaksai','$recipientID'
 );";
         } else {
             $query = "UPDATE pavadzime
 SET `DocID` = '$DocID',
 `Samaksa` = '$Samaksa' ,
-`Sanemejs` = '$Sanemejs' ,
+`recipient` = '$recipient' ,
 `Atlaide` =  '$Atlaide',
 `izsniedza` = '$Izsniedza',
 `Kopa` = '$Kopa',
@@ -359,11 +354,11 @@ SET `DocID` = '$DocID',
 `PirmsNodokliem` = '$PirmsNodokliem',
 `PVN` = '$PVN',
 `Samaksai` = '$Samaksai',
-`SanemejaID` = '$SanemejaID'
+`recipientID` = '$recipientID'
 WHERE ID = '$ID'";
         }
 
-        $query2 = "Update Data SET `TextOrder` = '" . addslashes(rawurldecode($Sanemejs)) . "' WHERE ID = '$DocID'";
+        $query2 = "Update Data SET `TextOrder` = '" . addslashes(rawurldecode($recipient)) . "' WHERE ID = '$DocID'";
 
         if (!self::$DB->query($query)) {
             throw new AppError('Write error on Pavadzime (' . __LINE__ . ')');
@@ -451,19 +446,4 @@ WHERE ID = "' . $ID . '"';
         $data->Save();
     }
 
-    /**
-     * Funkcija paredzēta automātiskai jaunu kontaktu izveide kas ir tabulā sanemeji.
-     * @return void
-     * @author
-     */
-    function UpdateCont() {
-        $query = "SELECT * FROM `sanemeji`";
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
-        }
-        while ($row = $result->fetch_assoc()) {
-            $this->MakeCont(rawurldecode($row['Nosaukums']), rawurldecode($row['Kods']), rawurldecode($row['Adrese']), rawurldecode($row['Banka']), rawurldecode($row['Konts']), rawurldecode($row['Telefons']), rawurldecode($row['Epasts']));
-        }
-    }
 }

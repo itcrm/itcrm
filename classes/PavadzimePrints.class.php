@@ -35,21 +35,20 @@ class PavadzimePrints extends TCPDF {
         return $textdate;
     }
 
-    public function pavadzimeget($Object, $DocID) {
-        $query = 'SELECT ID,DocID,Samaksa,Sanemejs,Atlaide,Izsniedza,Kopa,atlaidessumma,PirmsNodokliem,PVN,Samaksai FROM `pavadzime` WHERE DocID = ' . $DocID;
+    public function getInvoiceValue($column, $DocID) {
+        $column = self::$DB->real_escape_string($column);
+        $query = 'SELECT `' . $column . '` FROM `pavadzime` WHERE DocID = ' . intval($DocID) . ' LIMIT 1';
 
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
         }
 
-        while ($row = $result->fetch_assoc()) {
-            $FullObject =  $row[$Object];
-        }
-        return $FullObject;
+        $row = $result->fetch_assoc();
+        return $row ? $row[$column] : null;
     }
 
-    public function sanemejs($sanemejs) {
-        $query = 'SELECT Nosaukums, Kods, Adrese, Banka, Konts FROM `sanemeji` WHERE Nosaukums = "' . $sanemejs . '"';
+    public function renderRecipient($name) {
+        $query = 'SELECT Nosaukums, Kods, Adrese, Banka, Konts FROM `recipients` WHERE Nosaukums = "' . $name . '"';
 
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Read error on Pavadzimes (' . __LINE__ . ')');
@@ -183,8 +182,8 @@ $pdf->line(10, 55.7, 200, 55.7, $LineStyle);
 
 // Saņēmējs
 $DocID = $pdf->Dataget('ID');
-$sanemejs = $pdf->pavadzimeget('Sanemejs', $DocID);
-$pdf->sanemejs($sanemejs);
+$recipientName = $pdf->getInvoiceValue('recipient', $DocID);
+$pdf->renderRecipient($recipientName);
 
 $vieta = $pdf->Dataget('PlaceDone');
 $pdf->Cell(70, 0, 'Saņemšanas vieta:', 0, 0, 'L', 0, '', 0);
@@ -196,11 +195,11 @@ $piezimes = $pdf->Dataget('Note');
 $pdf->Cell(70, 0, 'Speciālas piez.:', 0, 0, 'L', 0, '', 0);
 $pdf->MultiCell(120, 0, $piezimes, 0, 'L', 0, 1, '', '', false);
 
-$samaksa = $pdf->pavadzimeget('Samaksa', $DocID);
+$samaksa = $pdf->getInvoiceValue('Samaksa', $DocID);
 $pdf->Cell(70, 0, 'Samaksas veids un kārtība:', 0, 0, 'L', 0, '', 0);
 $pdf->MultiCell(120, 0, $samaksa, 0, 'L', 0, 1, '', '', false);
 
-$Izsniedza = $samaksa = $pdf->pavadzimeget('Izsniedza', $DocID);
+$Izsniedza = $pdf->getInvoiceValue('Izsniedza', $DocID);
 $pdf->Cell(70, 0, 'Pakalpojuma sniegšanas laiks:', 0, 0, 'L', 0, '', 0);
 $pdf->Cell(40, 0, $Izsniedza, 0, 1, 'L', 0, '', 0);
 
@@ -219,25 +218,25 @@ $pdf->tabula($DocID);
 
 // footers
 $pdf->Cell(170, 0, 'Kopā izsniegts:', 1, 0, 'L', 0, '', 0);
-$pdf->Cell(20, 0, $pdf->pavadzimeget('Kopa', $DocID), 1, 1, 'L', 0, '', 0);
+$pdf->Cell(20, 0, $pdf->getInvoiceValue('Kopa', $DocID), 1, 1, 'L', 0, '', 0);
 
-$atlaide = $pdf->pavadzimeget('Atlaide', $DocID);
+$atlaide = $pdf->getInvoiceValue('Atlaide', $DocID);
 $pdf->Cell(170, 0, 'Atlaide ' . $atlaide . '%', 0, 0, 'L', 0, '', 0);
-$pdf->Cell(20, 0, $pdf->pavadzimeget('atlaidessumma', $DocID), 1, 1, 'L', 0, '', 0);
+$pdf->Cell(20, 0, $pdf->getInvoiceValue('atlaidessumma', $DocID), 1, 1, 'L', 0, '', 0);
 
 $pdf->Cell(170, 0, 'Summa pirms nodokļiem', 0, 0, 'L', 0, '', 0);
-$pdf->Cell(20, 0, $pdf->pavadzimeget('PirmsNodokliem', $DocID), 1, 1, 'L', 0, '', 0);
+$pdf->Cell(20, 0, $pdf->getInvoiceValue('PirmsNodokliem', $DocID), 1, 1, 'L', 0, '', 0);
 
 $pdf->Cell(170, 0, 'Pievienotās vērtības nodoklis 0%:', 0, 0, 'L', 0, '', 0);
-$pdf->Cell(20, 0, $pdf->pavadzimeget('PVN', $DocID), 1, 1, 'L', 0, '', 0);
+$pdf->Cell(20, 0, $pdf->getInvoiceValue('PVN', $DocID), 1, 1, 'L', 0, '', 0);
 
 $pdf->Cell(170, 0, 'Pavisam samaksai:', 0, 0, 'L', 0, '', 0);
 $pdf->SetFont('freesans', '', 12);
-$pdf->Cell(20, 0, $pdf->pavadzimeget('Samaksai', $DocID), 1, 1, 'L', 0, '', 0);
+$pdf->Cell(20, 0, $pdf->getInvoiceValue('Samaksai', $DocID), 1, 1, 'L', 0, '', 0);
 $pdf->SetFont('freesans', '', 10);
 
 $pdf->Cell(20, 0, 'Summa vārdiem:', 0, 0, 'L', 0, '', 0);
-$pdf->Cell(170, 0, amount2words($pdf->pavadzimeget('Samaksai', $DocID)), 0, 1, 'C', 0, '', 0);
+$pdf->Cell(170, 0, amount2words($pdf->getInvoiceValue('Samaksai', $DocID)), 0, 1, 'C', 0, '', 0);
 $pdf->ln();
 
 $pdf->Cell(20, 0, 'Izsniedza:', 0, 0, 'L', 0, '', 0);
