@@ -113,7 +113,7 @@ $(".add [name=PersonSelect]").autocomplete({
 $(".add [name=TypeSelect]").autocomplete({
     source: "/lv/Josn/Types",
     select: function( event, ui){
-        AddNoliktavaForm(ui.item.ID);
+        AddWarehouseForm(ui.item.ID);
     },
     minLength: 1,
 });

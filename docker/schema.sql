@@ -174,7 +174,7 @@ CREATE TABLE `Users` (
     `add_r_bilde` VARCHAR(20) NOT NULL DEFAULT '0',
     `add_files` VARCHAR(20) NOT NULL DEFAULT '0',
     `OneDay` VARCHAR(20) NOT NULL DEFAULT '0',
-    `noliktava` INTEGER NOT NULL DEFAULT 0,
+    `warehouse` INTEGER NOT NULL DEFAULT 0,
     `MultiChange` INTEGER NOT NULL DEFAULT 0,
     `DelFile` INTEGER NOT NULL DEFAULT 0,
 
@@ -285,7 +285,7 @@ CREATE TABLE `groups_linear` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `noliktava` (
+CREATE TABLE `warehouse` (
     `ID` INTEGER NOT NULL AUTO_INCREMENT,
     `rindasID` INTEGER NOT NULL,
     `detalasID` INTEGER NOT NULL,

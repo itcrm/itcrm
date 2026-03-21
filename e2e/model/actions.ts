@@ -61,9 +61,9 @@ export const eventActions: Record<string, ActionFn> = {
     await expect(page.locator("#calendar")).toBeVisible();
   },
 
-  NAVIGATE_WAREHOUS: async (page) => {
-    await page.click('a.menu[href*="/Warehous"]');
-    await page.waitForURL("**/Warehous**");
+  NAVIGATE_WAREHOUSE: async (page) => {
+    await page.click('a.menu[href*="/Warehouse"]');
+    await page.waitForURL("**/Warehouse**");
   },
 
   LOGOUT: async (page) => {
@@ -970,10 +970,10 @@ export const eventActions: Record<string, ActionFn> = {
     await expect(page.locator("#Changes1")).not.toBeEmpty();
   },
 
-  TOGGLE_WAREHOUS_SLIDER: async (page) => {
+  TOGGLE_WAREHOUSE_SLIDER: async (page) => {
     // The slider is open by default; click the X button inside it to close (hide) it
     const sliderResponse = page.waitForResponse((r) =>
-      r.url().includes("/Warehous/slieder")
+      r.url().includes("/Warehouse/slieder")
     );
     // The close button is the right-hand div inside .slieder that has the onclick handler
     await page.locator(".slieder [onclick*='slieder']").last().click();
@@ -1000,19 +1000,19 @@ export const eventActions: Record<string, ActionFn> = {
     await expect(page.locator(".fc-view-month")).toBeVisible();
   },
 
-  OPEN_WAREHOUS_SLIDER: async (page) => {
+  OPEN_WAREHOUSE_SLIDER: async (page) => {
     // Click the SLO div (visible when slider is closed) to re-open the slider
     const sliderResponse = page.waitForResponse((r) =>
-      r.url().includes("/Warehous/slieder")
+      r.url().includes("/Warehouse/slieder")
     );
     await page.locator(".SLO").click();
     await sliderResponse;
     await expect(page.locator(".slieder")).toBeVisible();
   },
 
-  EXPORT_WAREHOUS: async (page, env) => {
+  EXPORT_WAREHOUSE: async (page, env) => {
     // Navigate to the Export URL — shows error message when no warehouse data is available
-    await page.goto(env.url + "/lv/Warehous/Export");
+    await page.goto(env.url + "/lv/Warehouse/Export");
     await expect(page.locator("body")).toContainText("Nav datu");
   },
 
@@ -1200,16 +1200,16 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
     await expect(page.locator(".fc-view-agendaDay")).toBeVisible();
   },
 
-  warehous: async (page) => {
+  warehouse: async (page) => {
     await expect(page.locator("#DataList")).toBeVisible();
   },
 
-  warehous_slider_closed: async (page) => {
+  warehouse_slider_closed: async (page) => {
     // The .slieder selection toolbar is hidden after closing it
     await expect(page.locator(".slieder")).not.toBeVisible();
   },
 
-  warehous_export_empty: async (page) => {
+  warehouse_export_empty: async (page) => {
     // Export page shows "Nav datu eksportēšanai!" when no warehouse items exist
     await expect(page.locator("body")).toContainText("Nav datu");
   },

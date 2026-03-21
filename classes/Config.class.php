@@ -13,9 +13,9 @@ class Config {
     const PAGE_LENGTH = 10000;
 
     // TYPES
-    const Noliktava = 2362; // Noliktavas ID
-    const AddNoliktava = 2366; // Pievienot noliktavā ID
-    const DelNoliktava = 2367; // Noņemt no noliktavas ID
-    const ReservNoliktava = 2369; // Rezervēts no noliktavas ID
-    const ReturnNoliktava = 2370; // Atgriezts noliktavā ID
+    const WarehouseTypeID = 2362;
+    const AddToWarehouseTypeID = 2366;
+    const RemoveFromWarehouseTypeID = 2367;
+    const ReserveFromWarehouseTypeID = 2369;
+    const ReturnToWarehouseTypeID = 2370;
 }

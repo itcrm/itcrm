@@ -16,7 +16,7 @@ class Language {
         'msgConfirmDel' => 'Tiešām izdzēst?',
         'Search' => 'Meklēt',
         'Tasks' => 'Uzdevumi',
-        'Warehous' => 'Noliktava',
+        'Warehouse' => 'Noliktava',
 
         'Today' => 'Šodien',
         'Yesterday' => 'Vakar',

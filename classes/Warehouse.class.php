@@ -1,6 +1,6 @@
 <?php
 
-class Warehous extends DBObject {
+class Warehouse extends DBObject {
     protected $ID;
     protected $rindasID;
     protected $Password;
@@ -36,22 +36,22 @@ class Warehous extends DBObject {
     function izdot($ID, $RID, $daudzums, $vienibas, $title, $type, $order, $sum) {
         //Tiek noteikta atiecigā darbība konkrētajam tipam;
         $TotalPrice = "";
-        if ($type == Config::AddNoliktava) {
+        if ($type == Config::AddToWarehouseTypeID) {
             $TotalPrice = "`TotalPrice` = `TotalPrice`+" . $daudzums;
         }
-        if ($type == Config::DelNoliktava) {
-            $TotalPrice = Warehous::HewOrder($ID, $order) . $daudzums;
+        if ($type == Config::RemoveFromWarehouseTypeID) {
+            $TotalPrice = Warehouse::HewOrder($ID, $order) . $daudzums;
             $RTotalPrice = ", `TotalPrice` = '" . $sum . "'";
         }
 
-        if ($type == Config::ReservNoliktava) {
+        if ($type == Config::ReserveFromWarehouseTypeID) {
             $TotalPrice = "`TotalPrice` = `TotalPrice`-" . $daudzums;
             $Hours =  ", `Hours` = `Hours`+" . $daudzums;
             $RTotalPrice = ", `TotalPrice` = '" . $sum . "'";
         }
 
-        if ($type == Config::ReturnNoliktava) {
-            //$return = Warehous::ReturnToOrder($ID,$order,$daudzums);  //parbaude uz atgriesanu vai nav mazak ka velas atgries, ka ari vai vispar ir ko.
+        if ($type == Config::ReturnToWarehouseTypeID) {
+            //$return = Warehouse::ReturnToOrder($ID,$order,$daudzums);  //parbaude uz atgriesanu vai nav mazak ka velas atgries, ka ari vai vispar ir ko.
             $TotalPrice = "`TotalPrice` = `TotalPrice`+" . $daudzums;
             $Hours =  ", `Hours` = `Hours`-" . $daudzums;
             $RTotalPrice = ", `TotalPrice` = '" . $sum . "'";
@@ -61,21 +61,21 @@ class Warehous extends DBObject {
         //Darbības ar Preci;
         $query = "UPDATE `Data` SET " . $TotalPrice . " " . $Hours . " WHERE `ID`=" . $ID;
         if (!self::$DB->query($query)) {
-            throw new AppError('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Warehouse (' . __LINE__ . ') : ' . self::$DB->error);
         }
         // Rindai tiek pievienots teksts ar detaļas numuru un daudzumu kas tika pievienots;
         //Darbibas ar Rindu;
         $query = "UPDATE `Data` SET
                      `Note` = '" . addslashes(Data::getNote()) . " " . $title . "*" . $daudzums . " " . $vienibas . "' " . $RTotalPrice . " WHERE `ID`=" . $RID;
         if (!self::$DB->query($query)) {
-            throw new AppError('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Warehouse (' . __LINE__ . ') : ' . self::$DB->error);
         }
     }
 
     function HewOrder($ID, $order) {
-        $query = "SELECT Data.ID, Data.IDorder, noliktava.detalasID, noliktava.daudzums FROM Data, noliktava  WHERE noliktava.rindasID = Data.ID and Data.IDorder = " . $order . " AND IDtype = " . Config::ReservNoliktava . " AND noliktava.detalasID =" . $ID;
+        $query = "SELECT Data.ID, Data.IDorder, warehouse.detalasID, warehouse.daudzums FROM Data, warehouse  WHERE warehouse.rindasID = Data.ID and Data.IDorder = " . $order . " AND IDtype = " . Config::ReserveFromWarehouseTypeID . " AND warehouse.detalasID =" . $ID;
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Write error on warehous (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Warehouse (' . __LINE__ . ') : ' . self::$DB->error);
         }
         if ($result->num_rows == 0) {
             return "`TotalPrice` = `TotalPrice`-";
@@ -99,13 +99,13 @@ class Warehous extends DBObject {
                LEFT JOIN Users R ON (R.ID=D.RemindTo)
                LEFT JOIN Orders O ON (O.ID=D.IDOrder)
                LEFT JOIN Types T ON (T.ID=D.IDType)
-               LEFT JOIN noliktava N ON (D.TotalPrice <= N.detalasID)
-WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = 2362';
+               LEFT JOIN warehouse N ON (D.TotalPrice <= N.detalasID)
+WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = ' . Config::WarehouseTypeID;
 
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Warehous (' . __LINE__ . ')');
+            throw new AppError('Read error on Warehouse (' . __LINE__ . ')');
         }
-        $Warehous = array();
+        $warehouse = array();
 
         while ($row = $result->fetch_assoc()) {
             if ($i % 2 == 0) $row['Odd'] = 'Odd';
@@ -123,14 +123,14 @@ WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = 2362';
             $row['Changes'] = $row['Changes'] == '' ? 'hide' : '';
             $row['order_title'] = urlencode($row['Order']);
 
-            if ($row['IDType'] == Config::Noliktava) $row['dblClick'] = 'getNolMatreals(this);';
+            if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = 'getWarehouseMaterials(this);';
 
-            $Warehous[] = $row;
+            $warehouse[] = $row;
         }
 
-        if (!empty($Warehous)) {
-            $Warehous['__template'] = 'Row';
-            return $Warehous;
+        if (!empty($warehouse)) {
+            $warehouse['__template'] = 'Row';
+            return $warehouse;
         } else return '';
     }
 
@@ -162,14 +162,8 @@ WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = 2362';
         }
     }
 
-    /**
-     * Funkcija atgriež visus datus no noliktavas tabulas
-     *
-     * @return array
-     * @author
-     */
     function getRow($ID) {
-        $query = 'SELECT * FROM `noliktava` WHERE `rindasID`=' . (int)$ID;
+        $query = 'SELECT * FROM `warehouse` WHERE `rindasID`=' . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
             throw new AppError('SQL Read error on Class (' . get_class($this) . ') in function (' . __FUNCTION__ . ') on Line (' . __LINE__ . ')');
@@ -182,19 +176,11 @@ WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = 2362';
         return  $results;
     }
 
-    /**
-     * Funkcija izveido tukšu ierakstu noliktavas tabula ja tiek veidota noliktavas tipa prece ar rokam.
-     *
-     * Radās kļūdas kad atverot detaļu nav iespējamp pievienot aprakstus jo datus nevar ielasit un ir redzams tikai [: **** :]
-     *
-     * @return void
-     * @author
-     */
     function AddNew($ID, $Sum) {
-        $query = "INSERT INTO `noliktava` (rindasID, daudzums, type) VALUES('" . $ID . "', '" . $Sum . "', 1)";
+        $query = "INSERT INTO `warehouse` (rindasID, daudzums, type) VALUES('" . $ID . "', '" . $Sum . "', 1)";
 
         if (!self::$DB->query($query)) {
-            throw new AppError('Write error on Warehous (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Warehouse (' . __LINE__ . ') : ' . self::$DB->error);
         }
     }
 }

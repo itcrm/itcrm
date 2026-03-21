@@ -1,7 +1,7 @@
 <div align="center" >
         <div class="main" style="background: none repeat scroll 0% 0% rgb(252, 251, 196);">
 
-        <a class="right button" href="javascript:NoliktavaDialogSave()"><span class="ui-icon ui-icon-disk"> </span>Saglabāt</a>
+        <a class="right button" href="javascript:WarehouseDialogSave()"><span class="ui-icon ui-icon-disk"> </span>Saglabāt</a>
 
         <div class="matrealaapraksts">
                 <h2><span>[:PlaceTaken:]</span> apraksts</h2>

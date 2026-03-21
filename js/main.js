@@ -115,12 +115,12 @@ function Save(Class) {
             if (Class == "Data")
               $("#" + Class + "List tr:first").before(answ[1]);
             else $("#" + Class + "List tr:first").after(answ[1]);
-            $("#ievadeNoliktava").remove();
+            $("#ievadeWarehouse").remove();
           } else {
             //$('#FilterForm').removeClass('hideFilter');
             $("#FilterForm").css("visibility", "visible");
             $("#" + Class + "" + ID).replaceWith(answ[1]);
-            $("#ievadeNoliktava").remove();
+            $("#ievadeWarehouse").remove();
           }
 
         f[0].reset();
@@ -1242,11 +1242,11 @@ function RowEdit(ID) {
   $.post(URL + "/Data/Filter", data, success);
 }
 
-function getNoliktava(el, type) {
+function getWarehouse(el, type) {
   ID = el.id.replace(/Data/, "");
   var data = "DetalasID=" + ID;
   container = $("#scrollDiv");
-  $("#noliktava").css(
+  $("#warehouse").css(
     "top",
     $(el).offset().top -
       container.offset().top +
@@ -1263,7 +1263,7 @@ function getNoliktava(el, type) {
 
     if (answ == 0) {
       $("#DetalasForm #rindasID").val(ID);
-      $("#noliktava").show();
+      $("#warehouse").show();
     } else {
       $.each(answ, function (i, object) {
         $("#DetalasForm #" + i).val(object);
@@ -1278,14 +1278,14 @@ function getNoliktava(el, type) {
         " " +
         answ["mervieniba"];
       $("#DetalasForm #atlikums").html(text);
-      $("#noliktava").show();
+      $("#warehouse").show();
     }
   };
   Loading(0, 1);
-  $.post(URL + "/Data/noliktava", data, success);
+  $.post(URL + "/Data/warehouse", data, success);
 }
 
-function getNolMatreals(el) {
+function getWarehouseMaterials(el) {
   ID = el.id.replace(/Data/, "");
   $("#MatrealsForm #rindasID").val(ID);
   $(el).removeClass("Odd");
@@ -1380,10 +1380,10 @@ function getNolMatreals(el) {
     }
   };
   Loading(0, 1);
-  $.post(URL + "/Data/noliktava", data, success);
+  $.post(URL + "/Data/warehouse", data, success);
 }
 
-function NoliktavaAtlikums(ID) {
+function WarehouseBalance(ID) {
   var data = "ID=" + ID;
 
   success = function (answ) {
@@ -1413,20 +1413,20 @@ function NoliktavaAtlikums(ID) {
     $("#detalasID").val(answ["detalasID"]);
   };
   Loading(0, 1);
-  $.post(URL + "/Data/NoliktavaAtlikums", data, success);
+  $.post(URL + "/Data/WarehouseBalance", data, success);
 }
 
-function addNoliktavaAutoComp() {
+function addWarehouseAutoComp() {
   $("#artikuls").autocomplete({
-    source: "/lv/Josn/Noliktava",
+    source: "/lv/Josn/Warehouse",
     select: function (event, ui) {
-      NoliktavaAtlikums(ui.item.ID);
+      WarehouseBalance(ui.item.ID);
     },
     minLength: 2,
   });
 }
 
-function NoliktavaSave() {
+function WarehouseSave() {
   var dz = $("#MatrealsForm #daudzums").val();
 
   //if(isNaN(dz) == true)
@@ -1457,7 +1457,7 @@ function NoliktavaSave() {
   $.post(URL + "/Data/SaveDetala", data, success);
 }
 
-function NoliktavaDialogSave() {
+function WarehouseDialogSave() {
   var dz = $("#MatrealsDialogForm #daudzums").val();
 
   //if(isNaN(dz) == true)
@@ -1490,47 +1490,47 @@ function NoliktavaDialogSave() {
   $.post(URL + "/Data/SaveDetala", data, success);
 }
 
-function clerNoliktava() {
+function clearWarehouse() {
   document.getElementById("DetalasForm").reset();
-  $("#noliktava #atlikums").html("");
+  $("#warehouse #atlikums").html("");
 }
 
-function AddNoliktavaForm(ID) {
+function AddWarehouseForm(ID) {
   var RowID = $("form#AddDataForm input.hide").val();
 
   if (
-    ID == AddNolTyp ||
-    ID == DelNolTyp ||
-    ID == AtgNolTyp ||
-    ID == RezNolTyp
+    ID == addToWarehouseTypeID ||
+    ID == removeFromWarehouseTypeID ||
+    ID == returnToWarehouseTypeID ||
+    ID == reserveFromWarehouseTypeID
   ) {
-    $("#ievadeNoliktava").remove();
+    $("#ievadeWarehouse").remove();
     $("#AddDataForm").append(
-      '<div class="noliktava" id="ievadeNoliktava"> </div>'
+      '<div class="warehouse" id="ievadeWarehouse"> </div>'
     );
-    $("#ievadeNoliktava").append("<span> Artikuls:</span>");
-    $("#ievadeNoliktava").append('<input id="artikuls" type="text" />');
-    $("#ievadeNoliktava").append(
+    $("#ievadeWarehouse").append("<span> Artikuls:</span>");
+    $("#ievadeWarehouse").append('<input id="artikuls" type="text" />');
+    $("#ievadeWarehouse").append(
       '<input id="detalasID" type="text" value="" name="detalasID" style="display: none">'
     );
-    $("#ievadeNoliktava").append("<span> daudzums:</span>");
-    $("#ievadeNoliktava").append(
+    $("#ievadeWarehouse").append("<span> daudzums:</span>");
+    $("#ievadeWarehouse").append(
       '<input name="daudzums" size="5" id="daudzums" type="text" />'
     );
-    $("#ievadeNoliktava").append(
+    $("#ievadeWarehouse").append(
       '<input style="border:none; width: 30px; background-color: silver;" id="mervieniba"  readonly="readonly" type="text" />'
     );
-    $("#ievadeNoliktava").append(
-      '<a title="Pievienot jaunu preci" class="noliktavaadd" href="javascript:NewPrec();"><span class="ui-icon ui-icon-document"></span></a>'
+    $("#ievadeWarehouse").append(
+      '<a title="Pievienot jaunu preci" class="warehouse-add" href="javascript:NewPrec();"><span class="ui-icon ui-icon-document"></span></a>'
     );
-    $("#ievadeNoliktava").append("<hr>");
-    $("#ievadeNoliktava").append('<span id="atlikums"></span>');
+    $("#ievadeWarehouse").append("<hr>");
+    $("#ievadeWarehouse").append('<span id="atlikums"></span>');
 
-    addNoliktavaAutoComp();
+    addWarehouseAutoComp();
   }
   if (ID == 72) {
     $("#pprForm").remove();
-    $("#AddDataForm").append('<div class="noliktava" id="pprForm"> </div>');
+    $("#AddDataForm").append('<div class="warehouse" id="pprForm"> </div>');
     $("#pprForm").append("<span> Pavadzimes Nr:</span>");
     $("#pprForm").append(
       '<input id="pprNr" type="text" name="Nr" onblur="CechNrExist(this)"/>'
@@ -1658,7 +1658,7 @@ function ChangeSelected() {
   $.post(URL + "/Data/ChangeSelected", data, success);
 }
 
-function nolAddDet() {
+function warehouseAddDet() {
   var data = $("#NewDetForm").serialize();
 
   success = function (answ) {
@@ -1690,7 +1690,7 @@ function nolAddDet() {
 
 function NewPrec() {
   clearNewDet();
-  $("form#NewDetForm #IDType").val(noliktava);
+  $("form#NewDetForm #IDType").val(warehouseTypeID);
   $("form#NewDetForm #OrderSelect").autocomplete({
     source: "/lv/Josn/Orders",
     select: function (event, ui) {
@@ -1699,7 +1699,7 @@ function NewPrec() {
     minLength: 1,
   });
 
-  $("#AddNol").dialog({
+  $("#AddWarehouse").dialog({
     buttons: {
       Saglabāt: function () {
         var novietojums = $("form#NewDetForm #PlaceDone").val();
@@ -1708,7 +1708,7 @@ function NewPrec() {
         $("form#NewDetForm #PlaceDone").val(
           novietojums + " min=" + minAtlik + mervieniba
         );
-        nolAddDet();
+        warehouseAddDet();
 
         $(this).dialog("close");
       },
@@ -1742,7 +1742,7 @@ function CeckAllRow() {
   // });
 }
 
-function NolCeckAllRow() {
+function WarehouseCheckAllRows() {
   $("div#scrollDiv table#DataList tbody tr td:first-child input:checkbox").each(
     function () {
       CeckRow(this.value);

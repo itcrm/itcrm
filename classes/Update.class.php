@@ -5,9 +5,7 @@
  */
 class Update extends DBObject {
     function __construct() {
-        // 2362 Detaļu tipa ID
-
-        $this->GetID(2362);
+        $this->GetID(Config::WarehouseTypeID);
     }
 
     /**
@@ -31,7 +29,7 @@ class Update extends DBObject {
         }
 
         while ($row = $result->fetch_assoc()) {
-            $shop = Warehous::getRow($row['ID']);
+            $shop = Warehouse::getRow($row['ID']);
             $shop['Shop'] == 1 ? $Shop = 'V' : $Shop = '';
             if ($fileFnExists) {
                 $link = _faili_row_file_exists($row['ID']);

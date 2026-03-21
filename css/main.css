@@ -296,7 +296,7 @@ a.icon-expand {
 .hide {
     display: none;
 }
-#ievadeNoliktava {
+#ievadeWarehouse {
     margin-bottom: 5px;
     background-color: silver;
     height: 54px;
@@ -495,13 +495,13 @@ a.reminder {
     margin: 2px;
 }
 
-#noliktava {
+#warehouse {
     width: 100%;
     position: absolute;
     display: none;
     left: 0px;
 }
-#noliktava .main {
+#warehouse .main {
     width: 98%;
     border: 5px solid #ddd;
     background: #fff;
@@ -750,7 +750,7 @@ form.hideFilter table tr td {
     background-color: yellow;
 }
 
-a.noliktavaadd {
+a.warehouse-add {
     background-attachment: scroll;
     background-clip: border-box;
     background-color: #dfeffc;
