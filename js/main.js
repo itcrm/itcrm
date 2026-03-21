@@ -1163,7 +1163,7 @@ function editbox(status, el) {
   }
 }
 
-function CeckRow(ID) {
+function CheckRow(ID) {
   var data = "row=" + ID;
 
   success = function (answ) {
@@ -1181,7 +1181,7 @@ function CeckRow(ID) {
   };
 
   Loading(0, 1);
-  $.post(URL + "/Data/CeckRow", data, success);
+  $.post(URL + "/Data/CheckRow", data, success);
 }
 
 function UnCheckRow(ID) {
@@ -1203,7 +1203,7 @@ function UnCheckRow(ID) {
   };
 
   Loading(0, 1);
-  $.post(URL + "/Data/UnCeckRow", data, success);
+  $.post(URL + "/Data/UnCheckRow", data, success);
 }
 
 function clearForm(form) {
@@ -1732,25 +1732,25 @@ function clearNewDet() {
   $("form#NewDetForm #TotalPrice").val("");
 }
 
-function CeckAllRow() {
+function CheckAllRows() {
   $.get("/lv/Data/AddAllSelected", "", function () {
     location.reload();
   });
   //location.reload();
   //$("div#scrollDiv table#DataList tbody tr td:first-child input:checkbox").each(function() {
-  //CeckRow(this.value);
+  //CheckRow(this.value);
   // });
 }
 
 function WarehouseCheckAllRows() {
   $("div#scrollDiv table#DataList tbody tr td:first-child input:checkbox").each(
     function () {
-      CeckRow(this.value);
+      CheckRow(this.value);
     }
   );
 }
 
-function UnCeckAllRow() {
+function UnCheckAllRows() {
   $("div#scrollDiv table#DataList tbody tr td:first-child input:checkbox").each(
     function () {
       UnCheckRow(this.value);
