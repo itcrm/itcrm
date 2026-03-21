@@ -88,10 +88,10 @@ class Invoice extends DBObject {
             $a++;
 
             $Info['tabula'] .= "<tr class=\"bordersolidadd\" id=\"$a\" name=\"" . $row['ID'] . "\">
-                 <td width=\"40%\"> <input value=\"$row[Nosaukums]\" type=\"text\" class=\"Precu_nosaukums\" size=\"106\"></td>
-                 <td width=\"20%\"> <input value=\"$row[Artikuls]\" type=\"text\" class=\"Artikuls\" size=\"50\"></td>
-                 <td width=\"5%\"> <input value=\"$row[Daudzums]\" type=\"text\" id=\"$a\" class=\"Daudz\" size=\"16\" onblur=\"summ(this.id)\"></td>
-                 <td width=\"5%\"> <input value=\"$row[Mervieniba]\" type=\"text\" class=\"Merv\" size=\"15\"></td>
+                 <td width=\"40%\"> <input value=\"{$row['Nosaukums']}\" type=\"text\" class=\"Precu_nosaukums\" size=\"106\"></td>
+                 <td width=\"20%\"> <input value=\"{$row['Artikuls']}\" type=\"text\" class=\"Artikuls\" size=\"50\"></td>
+                 <td width=\"5%\"> <input value=\"{$row['Daudzums']}\" type=\"text\" id=\"$a\" class=\"Daudz\" size=\"16\" onblur=\"summ(this.id)\"></td>
+                 <td width=\"5%\"> <input value=\"{$row['Mervieniba']}\" type=\"text\" class=\"Merv\" size=\"15\"></td>
                  <td width=\"10%\"> <input value=\"" . $row['Cena'] . "\" type=\"text\" id=\"$a\" class=\"Cena\" size=\"15\" onblur=\"summ(this.id)\"><a style='float:right' href='javascript:Delete(\"$a\"," . $row['ID'] . ");' class='extra delete'></a></td>
                  <td width=\"10%\" id=\"$a\" class=\"Summa\"> </td>
                     </tr>";

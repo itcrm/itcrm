@@ -1465,9 +1465,9 @@ class Data extends DBObject {
             $daudzums = $results['daudzums'];
             $rindasID = $results['rindasID'];
             $detalasID = $results['detalasID'];
-            $results[daudzums] = $daudzums;
-            $results[rindasID] = $rindasID;
-            $results[detalasID] = $detalasID;
+            $results['daudzums'] = $daudzums;
+            $results['rindasID'] = $rindasID;
+            $results['detalasID'] = $detalasID;
         }
 
         $query2 = "SELECT PriceNote as mervieniba, PlaceTaken as nosaukums, Hours, TotalPrice as atlikums, PlaceDone, Note, BookNote FROM Data WHERE ID='" . $detalasID . "'";
@@ -1504,7 +1504,7 @@ class Data extends DBObject {
             $results['piejams']  = $piejams;
 
             $results['rindasID'] = $rindasID;
-            $results['ShopModel'] = Data::HTMLGrupas($results[ShopModelID], $results['SuperID']);
+            $results['ShopModel'] = Data::HTMLGrupas($results['ShopModelID'], $results['SuperID']);
             $results['offer'] == 0 ? $results['offer'] = "" : $results['offer'] = 'checked="yes"';
             $results['used'] == 0 ?  $results['used'] = "" : $results['used'] = 'checked="yes"';
             $results['Shop'] == 0 ?  $results['Shop'] = "" : $results['Shop'] = 'checked="yes"';
@@ -1528,12 +1528,12 @@ class Data extends DBObject {
         $results = array();
         while ($row = $result->fetch_assoc()) {
             $atstarpe = "";
-            for ($i = 1; $i < $row[level]; $i++) {
+            for ($i = 1; $i < $row['level']; $i++) {
                 $atstarpe = "&nbsp; ";
                 $atstarpe = $atstarpe . $atstarpe;
             }
             $row['id'] == $ID ? $selected = 'selected="selected"' : $selected = "";
-            $results[] = '<option ' . $selected . ' value="' . $row['ID'] . '">' . $atstarpe . $row[title] . '</option>';
+            $results[] = '<option ' . $selected . ' value="' . $row['ID'] . '">' . $atstarpe . $row['title'] . '</option>';
         }
         return implode("\n", $results);
     }
@@ -1546,27 +1546,27 @@ class Data extends DBObject {
 
     function SaveDetala($data) {
         $query = 'UPDATE `warehouse` SET
-                         `detalasID`="' . $data[detalasID] . '",
-                         `daudzums`="' . $data[daudzums] . '",
+                         `detalasID`="' . $data['detalasID'] . '",
+                         `daudzums`="' . $data['daudzums'] . '",
                          `type`="1",
-                         `Shop`="' . (int)$data[Shop] . '",
-                         `ShopTitle`="' . $data[ShopTitle] . '",
-                         `ShopDescription`="' . $data[ShopDescription] . '",
-                         `ShopModelID`="' . $data[ShopModelID] . '",
-                         `ShopCategoryID`="' . $data[ShopCategoryID] . '",
-                         `OrginalCode`="' . $data[OrginalCode] . '",
-                         `addition`="' . $data[addition] . '",
-                         `offer`="' . (int)$data[offer] . '",
-                         `state`="' . $data[state] . '",
-                         `used`="' . (int)$data[used] . '"
-                   WHERE `rindasID`=' . $data[rindasID];
+                         `Shop`="' . (int)$data['Shop'] . '",
+                         `ShopTitle`="' . $data['ShopTitle'] . '",
+                         `ShopDescription`="' . $data['ShopDescription'] . '",
+                         `ShopModelID`="' . $data['ShopModelID'] . '",
+                         `ShopCategoryID`="' . $data['ShopCategoryID'] . '",
+                         `OrginalCode`="' . $data['OrginalCode'] . '",
+                         `addition`="' . $data['addition'] . '",
+                         `offer`="' . (int)$data['offer'] . '",
+                         `state`="' . $data['state'] . '",
+                         `used`="' . (int)$data['used'] . '"
+                   WHERE `rindasID`=' . $data['rindasID'];
 
         if (!self::$DB->query($query)) {
             throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
         }
 
-        if ($data[SuperID] == 0) {
-            $query = 'INSERT INTO `warehouse` (`rindasID`,`detalasID`,`daudzums`,`type`,`Shop`,`ShopTitle`,`ShopDescription`,`ShopModelID`,`ShopCategoryID`,`OrginalCode`,`addition`,`offer`,`state`,`used`) VALUES (' . $data[rindasID] . ',"' . $data[detalasID] . '","' . $data[daudzums] . '",1,"' . $data[Shop] . '","' . $data[ShopTitle] . '","' . $data[ShopDescription] . '","' . $data[ShopModelID] . '","' . $data[ShopCategoryID] . '","' . $data[OrginalCode] . '","' . $data[addition] . '","' . $data[offer] . '","' . $data[state] . '","' . $data[used] . '")';
+        if ($data['SuperID'] == 0) {
+            $query = 'INSERT INTO `warehouse` (`rindasID`,`detalasID`,`daudzums`,`type`,`Shop`,`ShopTitle`,`ShopDescription`,`ShopModelID`,`ShopCategoryID`,`OrginalCode`,`addition`,`offer`,`state`,`used`) VALUES (' . $data['rindasID'] . ',"' . $data['detalasID'] . '","' . $data['daudzums'] . '",1,"' . $data['Shop'] . '","' . $data['ShopTitle'] . '","' . $data['ShopDescription'] . '","' . $data['ShopModelID'] . '","' . $data['ShopCategoryID'] . '","' . $data['OrginalCode'] . '","' . $data['addition'] . '","' . $data['offer'] . '","' . $data['state'] . '","' . $data['used'] . '")';
 
             if (!self::$DB->query($query)) {
                 throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
@@ -1574,32 +1574,32 @@ class Data extends DBObject {
         }
 
         $this->setID(self::$DB->insert_id);
-        $Data = $this->getRow($data[rindasID]);
+        $Data = $this->getRow($data['rindasID']);
         return json_encode(array(1, Template::Process('Row', $Data)));
     }
 
     function warehouseSave($data) {
-        $type = $this->DataByID($data[rindasID], 'IDType');
-        $title = substr($this->DataByID($data[detalasID], 'Note'), 0, 25) . " " . $this->DataByID($data[detalasID], 'PlaceTaken');
-        $vienibas = $this->DataByID($data[detalasID], 'PriceNote');
-        $sum = ($this->warehouseByID($data[detalasID], 'daudzums')) * $data[daudzums];
+        $type = $this->DataByID($data['rindasID'], 'IDType');
+        $title = substr($this->DataByID($data['detalasID'], 'Note'), 0, 25) . " " . $this->DataByID($data['detalasID'], 'PlaceTaken');
+        $vienibas = $this->DataByID($data['detalasID'], 'PriceNote');
+        $sum = ($this->warehouseByID($data['detalasID'], 'daudzums')) * $data['daudzums'];
 
-        $query = "select ID from warehouse where rindasID =" . $data[rindasID];
+        $query = "select ID from warehouse where rindasID =" . $data['rindasID'];
         $result = self::$DB->query($query);
         if ($result->num_rows == 0) {
-            $query = "INSERT INTO `warehouse` (`rindasID`, `detalasID`, `daudzums`) VALUES (" . $data[rindasID] . ", " . $data[detalasID] . ", " . $data[daudzums] . ")";
+            $query = "INSERT INTO `warehouse` (`rindasID`, `detalasID`, `daudzums`) VALUES (" . $data['rindasID'] . ", " . $data['detalasID'] . ", " . $data['daudzums'] . ")";
             if (!self::$DB->query($query)) {
                 throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
             }
         } else {
-            $query = "UPDATE `warehouse` SET `rindasID`= " . $data[rindasID] . ", `detalasID`=" . $data[detalasID] . ", `daudzums`=" . $data[daudzums] . " WHERE rindasID =" . $data[rindasID];
+            $query = "UPDATE `warehouse` SET `rindasID`= " . $data['rindasID'] . ", `detalasID`=" . $data['detalasID'] . ", `daudzums`=" . $data['daudzums'] . " WHERE rindasID =" . $data['rindasID'];
             if (!self::$DB->query($query)) {
                 throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
             }
         }
 
         //Tiek izdota prece
-        Warehouse::izdot($data[detalasID], $data[rindasID], $data[daudzums], $vienibas, $title, $type, $data[order], $sum);
+        Warehouse::izdot($data['detalasID'], $data['rindasID'], $data['daudzums'], $vienibas, $title, $type, $data['order'], $sum);
     }
 
     /**
@@ -1661,14 +1661,14 @@ class Data extends DBObject {
     }
 
     function FormSave() {
-        $Data = $this->getRow($_POST[ID]);
+        $Data = $this->getRow($_POST['ID']);
         $Data2 = $_POST;
 
         foreach ($Data as $key => $value) {
             foreach ($Data2 as $key2 => $value2) {
                 if ($key == "IDDoc") {
                     if ($value == "") {
-                        $Data[IDDoc] = "MadeBySystem";
+                        $Data['IDDoc'] = "MadeBySystem";
                     }
                 }
                 if ($key == $key2) {
@@ -1689,7 +1689,7 @@ class Data extends DBObject {
                     $fileFnExists = true;
                 }
 
-                if ($fileFnExists) $link = _faili_row_file_exists($Data[ID]);
+                if ($fileFnExists) $link = _faili_row_file_exists($Data['ID']);
 
                 if ($link != NULL) {
                     $TextType = 'V B';
