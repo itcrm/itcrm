@@ -65,17 +65,17 @@ class Data extends DBObject {
                 $Data['TypeSelect'] = $Data['Type'];
                 $Data['PersonSelect'] = $Data['Person'];
                 return json_encode($Data);
-            case 'CeckRow':
-                $this->CeckRow($_POST['row']);
+            case 'CheckRow':
+                $this->CheckRow($_POST['row']);
                 $Data = $this->getRow($_POST['row']);
                 $Data['select'] = "selected";
                 $Data['checked'] = "checked";
                 $Data['Function'] = "UnCheckRow";
                 return json_encode(array(Template::Process('Row', $Data)));
-            case 'UnCeckRow':
-                $this->UnCeckRow($_POST['row']);
+            case 'UnCheckRow':
+                $this->UnCheckRow($_POST['row']);
                 $Data = $this->getRow($_POST['row']);
-                $Data['Function'] = "CeckRow";
+                $Data['Function'] = "CheckRow";
                 return json_encode(array(Template::Process('Row', $Data)));
             case 'ChangeSelected':
                 return $this->ChangeSelected($_POST);
@@ -122,7 +122,7 @@ class Data extends DBObject {
                 break;
         }
 
-        $Vars['Function'] = "CeckRow";
+        $Vars['Function'] = "CheckRow";
 
         $Vars['TplList'] = $this->getTplAsOpt();
 
@@ -482,13 +482,13 @@ class Data extends DBObject {
                LEFT JOIN Users R ON (R.ID=D.RemindTo)
                LEFT JOIN Orders O ON (O.ID=D.IDOrder)
                LEFT JOIN Types T ON (T.ID=D.IDType)';
-        $_SESSION['CechedRow']['0'] = '0';
+        $_SESSION['CheckedRow']['0'] = '0';
 
-        if (!empty($_SESSION['CechedRow'])) {
-            $CechedRow = ' (' . implode(',', $_SESSION['CechedRow']) . ')';
+        if (!empty($_SESSION['CheckedRow'])) {
+            $CheckedRow = ' (' . implode(',', $_SESSION['CheckedRow']) . ')';
 
-            $query3 .= "WHERE D.ID IN" . $CechedRow . ' ORDER BY ' . $Sort;
-            $query4 .= " WHERE D.ID IN" . $CechedRow;
+            $query3 .= "WHERE D.ID IN" . $CheckedRow . ' ORDER BY ' . $Sort;
+            $query4 .= " WHERE D.ID IN" . $CheckedRow;
 
             if (!$result = self::$DB->query($query4)) {
                 throw new AppError('Read error on Data (' . __LINE__ . ')');
@@ -570,7 +570,7 @@ class Data extends DBObject {
         LEFT JOIN Types T ON (T.ID=D.IDType)';
 
         $query2 .= $where;
-        $query2 .= ' and D.ID NOT IN' . $CechedRow;
+        $query2 .= ' and D.ID NOT IN' . $CheckedRow;
 
         if (!$result = self::$DB->query($query2)) {
             throw new AppError('Read error on Data (' . __LINE__ . ')');
@@ -586,7 +586,7 @@ class Data extends DBObject {
             $pagestart = 0;
         }
 
-        $query .= ' and D.ID NOT IN' . $CechedRow;
+        $query .= ' and D.ID NOT IN' . $CheckedRow;
         $query .= ' ORDER BY ' . $Sort;
         $query .= ' LIMIT ' . $pagestart . ', ' . $page;
 
@@ -1028,7 +1028,7 @@ class Data extends DBObject {
 
     function Add() {
         if ($_POST['IDType'] == Config::WarehouseTypeID) {
-            $res = $this->ceckArtikuls($_POST['PlaceTaken']);
+            $res = $this->checkArtikuls($_POST['PlaceTaken']);
             if ($res == 1) {
                 return print "Vienadi artukuli.";
             }
@@ -1190,12 +1190,12 @@ class Data extends DBObject {
         if ($row['IDType'] == Config::ReserveFromWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
         if ($row['IDType'] == Config::ReturnToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,2); addWarehouseAutoComp();';
 
-        if (in_array($row['ID'], $_SESSION['CechedRow'])) {
+        if (in_array($row['ID'], $_SESSION['CheckedRow'])) {
             $row['checked'] = 'checked';
             $row['Function'] = "UnCheckRow";
             $row['select'] = "selected";
         }
-        $row['Function'] = "CeckRow";
+        $row['Function'] = "CheckRow";
         $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
         $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
         $row['Changes'] = $row['Changes'] == '' ? 'hide' : '';
@@ -1382,12 +1382,12 @@ class Data extends DBObject {
         echo $rez;
     }
 
-    function CeckRow($ID) {
-        $_SESSION['CechedRow'][$ID] = $ID;
+    function CheckRow($ID) {
+        $_SESSION['CheckedRow'][$ID] = $ID;
     }
 
-    function UnCeckRow($ID) {
-        unset($_SESSION['CechedRow'][$ID]);
+    function UnCheckRow($ID) {
+        unset($_SESSION['CheckedRow'][$ID]);
     }
 
     function photoTagger($ID) {
@@ -1622,7 +1622,7 @@ class Data extends DBObject {
     }
 
     function ChangeSelected($data) {
-        foreach ($_SESSION['CechedRow'] as $k => $v) {
+        foreach ($_SESSION['CheckedRow'] as $k => $v) {
             $OldID = $k;
             $ID = $OldID;
             if ($data['copy'] == 1) {
@@ -1635,8 +1635,8 @@ class Data extends DBObject {
                     $_POST = $dati;
                     $ID = $this->Save();
 
-                    unset($_SESSION['CechedRow'][$OldID]);
-                    $_SESSION['CechedRow'][$ID] = $ID;
+                    unset($_SESSION['CheckedRow'][$OldID]);
+                    $_SESSION['CheckedRow'][$ID] = $ID;
                 }
             } else {
                 if ($k > 0) {
@@ -1654,7 +1654,7 @@ class Data extends DBObject {
         return  1;
     }
 
-    function ceckArtikuls($text) {
+    function checkArtikuls($text) {
         $query = "SELECT PlaceTaken FROM Data WHERE `IDType`  = " . Config::WarehouseTypeID . " AND Status = 1 AND PlaceTaken = '" . $text . "'";
         $result = self::$DB->query($query);
         return $result->num_rows == 0 ? 0 : 1;
@@ -1747,9 +1747,9 @@ class Data extends DBObject {
                 $where .= ' AND ' . $str;
         }
 
-        if (!empty($_SESSION['CechedRow'])) {
-            $CechedRow = ' (' . implode(',', $_SESSION['CechedRow']) . ')';
-            $where .= " AND D.ID NOT IN" . $CechedRow;
+        if (!empty($_SESSION['CheckedRow'])) {
+            $CheckedRow = ' (' . implode(',', $_SESSION['CheckedRow']) . ')';
+            $where .= " AND D.ID NOT IN" . $CheckedRow;
         }
 
         $query .= $where;
@@ -1758,7 +1758,7 @@ class Data extends DBObject {
             throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
         while ($row = $result->fetch_assoc()) {
-            $_SESSION['CechedRow'][$row['ID']] = $row['ID'];
+            $_SESSION['CheckedRow'][$row['ID']] = $row['ID'];
         }
 
         return print $query;

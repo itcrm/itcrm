@@ -121,8 +121,8 @@
 <table cellpadding="0" cellspacing="0" width="98%" border="1" align="center">
  <tr class="title">
       <td width="21">
-        <input type="button" value="+"  OnClick="CeckAllRow()">
-        <input type="button" value="--" OnClick="UnCeckAllRow()">
+        <input type="button" value="+"  OnClick="CheckAllRows()">
+        <input type="button" value="--" OnClick="UnCheckAllRows()">
 
     </td>
     <td width="81">

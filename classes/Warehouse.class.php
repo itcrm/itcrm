@@ -111,12 +111,12 @@ WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = ' . Config::WarehouseTypeI
             if ($i % 2 == 0) $row['Odd'] = 'Odd';
             $i++;
 
-            if (in_array($row['ID'], $_SESSION['CechedRow'])) {
+            if (in_array($row['ID'], $_SESSION['CheckedRow'])) {
                 $row['checked'] = 'checked';
                 $row['Function'] = "UnCheckRow";
                 $row['select'] = "selected";
             }
-            $row['Function'] = "CeckRow";
+            $row['Function'] = "CheckRow";
 
             $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
             $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
