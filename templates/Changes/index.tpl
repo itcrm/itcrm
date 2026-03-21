@@ -104,7 +104,7 @@ $("form.SelectChange input:checkbox").change(function(){
             }
        });
 
-// Add Autocomplite
+// Add Autocomplete
 $(".add [name=PersonSelect]").autocomplete({
     source: "/lv/Josn/Persons",
     minLength: 2,
@@ -123,7 +123,7 @@ $(".add [name=OrderSelect]").autocomplete({
     minLength: 1,
 });
 
-// Filter Autocomplite
+// Filter Autocomplete
   $("#FilterForm [name=OrderFilterSelect]").bind( "keydown", function( event ) {
                 if ( event.keyCode === $.ui.keyCode.TAB &&
                         $( this ).data( "autocomplete" ).menu.active ) {

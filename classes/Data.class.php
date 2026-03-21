@@ -30,8 +30,8 @@ class Data extends DBObject {
 
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
-            case 'AutocompliteJosn':
-                echo $this->AutocompliteJosn($_GET['term']);
+            case 'AutocompleteJosn':
+                echo $this->AutocompleteJosn($_GET['term']);
                 die;
             case 'Page':
                 $_SESSION['page'] = $_POST['lapa'];
@@ -1364,7 +1364,7 @@ class Data extends DBObject {
         return Template::Process('Form', $Dati);
     }
 
-    function AutocompliteJosn($text) {
+    function AutocompleteJosn($text) {
         $vowels = array("ē", "ū", "ī", "ā", "š", "ģ", "ķ", "ļ", "ž", "č", "ņ", "Ē", "Ū", "Ī", "Ā", "Š", "Ģ", "Ķ", "Ļ", "Ž", "Č", "Ņ");
         $text = str_replace($vowels, "%", $text);
         $query = "select ID, Nosaukums as label from recipients WHERE Nosaukums LIKE '%" . $text . "%' AND Status = 0 ";

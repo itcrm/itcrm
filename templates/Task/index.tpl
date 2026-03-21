@@ -205,7 +205,7 @@
 
         }
 
-        function SaveAutocomplite(){
+        function SaveAutocomplete(){
         //$('#AddTaskForm input[name=IDPerson]').val(User);
 
         var ID = $('#AddTaskForm input[name=PersonSelect]').val();
@@ -298,7 +298,7 @@
         if (object.name == ID){$('#AddTaskForm input[name=RemindTo]').val(object.val);}
         });
 
-        SaveAutocomplite();
+        SaveAutocomplete();
 
         Save('Task');
         $(".ac_results").remove()
