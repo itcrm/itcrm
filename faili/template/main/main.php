@@ -22,7 +22,7 @@
 
 <body>
     <div id="contentMain">
-        {{E:element_fm_header}}
+        {{ELEMENT_FM_HEADER}}
         <div id="filelist">
             {{CONTENTS}}
         </div>
