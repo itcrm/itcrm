@@ -1764,7 +1764,7 @@ class Data extends DBObject {
         return print $query;
     }
 
-    function PrecuGrupas($ID) {
+    function ProductGroups($ID) {
         $IDD = $ID . '0';
         $ID = explode(",", $IDD);
         $query = "SELECT * FROM groups_linear ORDER BY FIELD(id, " . $IDD . ") DESC";
@@ -1790,7 +1790,7 @@ class Data extends DBObject {
 
             $rows[] = $row;
         }
-        return Template::Process('/Dialog/PrecuGrupasRow', $rows);
+        return Template::Process('/Dialog/ProductGroupsRow', $rows);
     }
 
     function HTMLGrupas($ID, $form) {
@@ -1805,7 +1805,7 @@ class Data extends DBObject {
         if ($ID == "") {
             $ID = 0;
         }
-        return "<span onclick=\"Javasript:OpenForm('PrecuGrupas','GrupasMenu" . $form . "','DialogForm','Grupas','530','" . $ID . "')\"><span style=\"text-decoration: underline; cursor: pointer; color: blue;\">Modeļi:</span> " . $rows . "</span>";
+        return "<span onclick=\"Javasript:OpenForm('ProductGroups','GrupasMenu" . $form . "','DialogForm','Grupas','530','" . $ID . "')\"><span style=\"text-decoration: underline; cursor: pointer; color: blue;\">Modeļi:</span> " . $rows . "</span>";
     }
 
     function TrimDate($date) {

@@ -976,10 +976,10 @@ function getFilterData(id) {
 }
 
 function savetable() {
-  var rinda = $("#Preces tr:last.bordersolidadd").attr("id");
+  var rinda = $("#Products tr:last.bordersolidadd").attr("id");
   var i = 1;
   for (i = 1; i <= rinda; i++) {
-    var entry = $("#Preces tr:last.bordersolidadd").attr("name");
+    var entry = $("#Products tr:last.bordersolidadd").attr("name");
 
     var data =
       "summa=" +
@@ -989,7 +989,7 @@ function savetable() {
       "&id=" +
       $("input#invoiceID").val() +
       "&nosaukums=" +
-      $("tr:last.bordersolidadd>td>input.Precu_nosaukums").val() +
+      $("tr:last.bordersolidadd>td>input.Product_name").val() +
       "&artikuls=" +
       $("tr:last.bordersolidadd>td>input.Artikuls").val() +
       "&daudzums=" +
@@ -1004,7 +1004,7 @@ function savetable() {
 
     Loading(0, 1);
     $.post(URL + "/Invoice/LineSave", data, success);
-    $("#Preces tr:last.bordersolidadd").remove();
+    $("#Products tr:last.bordersolidadd").remove();
     if (i == rinda) {
       return 1;
     }
@@ -1092,37 +1092,37 @@ function InPage(sk) {
 }
 
 function summ(a) {
-  var celuzDaudz = "#Preces tbody>tr#" + a + ".bordersolidadd>td>input.Daudz";
-  var celuzCena = "#Preces tbody>tr#" + a + ".bordersolidadd>td>input.Cena";
-  var celuzSumma = "#Preces tbody>tr#" + a + ".bordersolidadd>td.Summa";
+  var celuzDaudz = "#Products tbody>tr#" + a + ".bordersolidadd>td>input.Daudz";
+  var celuzCena = "#Products tbody>tr#" + a + ".bordersolidadd>td>input.Cena";
+  var celuzSumma = "#Products tbody>tr#" + a + ".bordersolidadd>td.Summa";
   var Daudz = $(celuzDaudz).val();
   var Cena = $(celuzCena).val();
   var summa = r4(Cena * Daudz);
-  var atlaide1 = $("#Preces tbody>tr>td>input.atlaidenr").val();
+  var atlaide1 = $("#Products tbody>tr>td>input.atlaidenr").val();
   var atlaide = "0." + atlaide1 + "";
   $(celuzSumma).html(summa);
-  $("#Preces tbody>tr.bordersolid>td#Kop").html(
-    r4(sumOfColumns("Preces", 6, true))
+  $("#Products tbody>tr.bordersolid>td#Kop").html(
+    r4(sumOfColumns("Products", 6, true))
   );
 
-  $("#Preces tbody>tr>td#atlaide.bordersolid").html(
-    r2(sumOfColumns("Preces", 6, true) * atlaide)
+  $("#Products tbody>tr>td#atlaide.bordersolid").html(
+    r2(sumOfColumns("Products", 6, true) * atlaide)
   );
 
-  $("#Preces tbody>tr>td#sumaatlaide.bordersolid").html(
+  $("#Products tbody>tr>td#sumaatlaide.bordersolid").html(
     r2(
-      sumOfColumns("Preces", 6, true) -
-        sumOfColumns("Preces", 6, true) * atlaide
+      sumOfColumns("Products", 6, true) -
+        sumOfColumns("Products", 6, true) * atlaide
     )
   );
-  $("#Preces tbody>tr>td#PVN.bordersolid").html(
-    r2(sumOfColumns("Preces", 6, true) * 0.0)
+  $("#Products tbody>tr>td#PVN.bordersolid").html(
+    r2(sumOfColumns("Products", 6, true) * 0.0)
   );
-  $("#Preces tbody>tr>td#PavisamSamaksai.bordersolid").html(
+  $("#Products tbody>tr>td#PavisamSamaksai.bordersolid").html(
     r2(
-      sumOfColumns("Preces", 6, true) -
-        sumOfColumns("Preces", 6, true) * atlaide +
-        sumOfColumns("Preces", 6, true) * 0.0
+      sumOfColumns("Products", 6, true) -
+        sumOfColumns("Products", 6, true) * atlaide +
+        sumOfColumns("Products", 6, true) * 0.0
     )
   );
 }
