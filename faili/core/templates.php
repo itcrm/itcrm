@@ -8,10 +8,12 @@ function processCommand($cmd, $params) {
             }
         case 'B':
             return C('base-url');
-        case 'E': {
-                require_once $GLOBALS['_IDC_ENGINE_ROOT'] . 'elements/' . $params . '.php';
-                return eval("return $params();");
-            }
+        case 'ELEMENT_FM_HEADER':
+            require_once $GLOBALS['_IDC_ENGINE_ROOT'] . 'elements/element_fm_header.php';
+            return element_fm_header();
+        case 'ELEMENT_FM_COMMANDS':
+            require_once $GLOBALS['_IDC_ENGINE_ROOT'] . 'elements/element_fm_commands.php';
+            return element_fm_commands();
         case 'SCRIPTS': {
                 return get_script_list();
             }

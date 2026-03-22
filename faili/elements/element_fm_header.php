@@ -30,7 +30,7 @@ function element_fm_header() {
 
     $out .= '</table>';
 
-    $out .= '<div id="commands">{{E:element_fm_commands}}</div>';
+    $out .= '<div id="commands">{{ELEMENT_FM_COMMANDS}}</div>';
 
     $out .= '</div>';
 
