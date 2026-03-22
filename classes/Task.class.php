@@ -5,8 +5,8 @@ date_default_timezone_set('Europe/Riga');
 class Task extends DBObject {
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
-            case 'Josn':
-                echo $this->Josn();
+            case 'Json':
+                echo $this->Json();
                 break;
             case 'TaskUser':
                 $_SESSION['TaskUser'] = $_POST['id'];
@@ -93,7 +93,7 @@ class Task extends DBObject {
 
             <input type=\"text\" name=\"PriceNote\" value=\"" . $row['PriceNote'] . "\" class=\"hide\"/>
 
-            <input type=\"text\" name=\"Statuss\" value=\"" . $row['Status'] . "\" class=\"hide\"/>
+            <input type=\"text\" name=\"Status\" value=\"" . $row['Status'] . "\" class=\"hide\"/>
 </span>
 
 <span> No:  <span>" . $row['kas'] . "</span>
@@ -200,7 +200,7 @@ class Task extends DBObject {
         }
 
         while ($row = $result->fetch_assoc()) {
-            $Data = "&Tpl=0&ID=" . $row['TaskID'] . "&Sum=" . $row['Sum'] . "&Hours=" . $row['Hours'] . "&Date=" . $row['Date'] . "&TotalPrice=" . $row['TotalPrice'] . "&IDPerson=" . $row['IDPerson'] . "&PlaceTaken=" . $row['PlaceTaken'] . "&IDDoc=" . $row['IDDoc'] . "&TextOrder=" . $row['TextOrder'] . "&PlaceDone=" . $row['PlaceDone'] . "&TextType=" . $row['TextType'] . "&PriceNote=" . $row['PriceNote'] . "&Statuss=" . $row['Status'] . "&IDType=" . $row['IDType'] . "&TypeSelect=" . $row['tips'] . "&OrderSelect=" . $row['Pasutijums'] . "&Note=" . $row['Note'] . "&BookNote=" . $row['BookNote'] . "&RemindTo=" . $row['RemindTo'] . "&PersonSelect=" . $row['RemindTo'] . "&IDOrder=" . $row['IDOrder'] . "&AllDay=" . $row['allDay'];
+            $Data = "&Tpl=0&ID=" . $row['TaskID'] . "&Sum=" . $row['Sum'] . "&Hours=" . $row['Hours'] . "&Date=" . $row['Date'] . "&TotalPrice=" . $row['TotalPrice'] . "&IDPerson=" . $row['IDPerson'] . "&PlaceTaken=" . $row['PlaceTaken'] . "&IDDoc=" . $row['IDDoc'] . "&TextOrder=" . $row['TextOrder'] . "&PlaceDone=" . $row['PlaceDone'] . "&TextType=" . $row['TextType'] . "&PriceNote=" . $row['PriceNote'] . "&Status=" . $row['Status'] . "&IDType=" . $row['IDType'] . "&TypeSelect=" . $row['tips'] . "&OrderSelect=" . $row['Pasutijums'] . "&Note=" . $row['Note'] . "&BookNote=" . $row['BookNote'] . "&RemindTo=" . $row['RemindTo'] . "&PersonSelect=" . $row['RemindTo'] . "&IDOrder=" . $row['IDOrder'] . "&AllDay=" . $row['allDay'];
         }
 
         return $Data;
@@ -261,7 +261,7 @@ class Task extends DBObject {
         }
     }
 
-    function Josn() {
+    function Json() {
         switch (isset($_GET['Type']) ? $_GET['Type'] : '') {
             case 'Data':
                 $ID = $_GET["ID"];

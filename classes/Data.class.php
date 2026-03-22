@@ -30,8 +30,8 @@ class Data extends DBObject {
 
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
-            case 'AutocompleteJosn':
-                echo $this->AutocompleteJosn($_GET['term']);
+            case 'AutocompleteJson':
+                echo $this->AutocompleteJson($_GET['term']);
                 die;
             case 'Page':
                 $_SESSION['page'] = $_POST['lapa'];
@@ -154,7 +154,7 @@ class Data extends DBObject {
         $Vars['DateSort'] = $_SESSION['Sort'] == '`ID`' ? Language::$Data['AddDate'] : Language::$Data['Date'];
         $Vars['Login'] = $_SESSION['User']->getLogin();
         $Vars['UserID'] = $_SESSION['User']->getID();
-        $Vars['slieder'] = !isset($_SESSION['menu']) || $_SESSION['menu'] == 0 ? "none" : "block";
+        $Vars['slider'] = !isset($_SESSION['menu']) || $_SESSION['menu'] == 0 ? "none" : "block";
         $Vars['SLO'] = !isset($_SESSION['menu']) || $_SESSION['menu'] == 0 ? "blok" : "none";
 
         return Template::Process('index', $Vars);
@@ -1364,7 +1364,7 @@ class Data extends DBObject {
         return Template::Process('Form', $Dati);
     }
 
-    function AutocompleteJosn($text) {
+    function AutocompleteJson($text) {
         $vowels = array("ē", "ū", "ī", "ā", "š", "ģ", "ķ", "ļ", "ž", "č", "ņ", "Ē", "Ū", "Ī", "Ā", "Š", "Ģ", "Ķ", "Ļ", "Ž", "Č", "Ņ");
         $text = str_replace($vowels, "%", $text);
         $query = "select ID, Nosaukums as label from recipients WHERE Nosaukums LIKE '%" . $text . "%' AND Status = 0 ";
@@ -1479,7 +1479,7 @@ class Data extends DBObject {
     }
 
     function warehouseDialog($ID) {
-        $query = "SELECT ID AS SuperID, rindasID, partID, daudzums, Shop, ShopTitle, ShopDescription, ShopModelID, ShopCategoryID, OrginalCode, addition, offer, state, used  FROM warehouse WHERE rindasID='" . $ID . "'";
+        $query = "SELECT ID AS SuperID, rindasID, partID, daudzums, Shop, ShopTitle, ShopDescription, ShopModelID, ShopCategoryID, OriginalCode, addition, offer, state, used  FROM warehouse WHERE rindasID='" . $ID . "'";
 
         $result = self::$DB->query($query);
 
@@ -1554,7 +1554,7 @@ class Data extends DBObject {
                          `ShopDescription`="' . $data['ShopDescription'] . '",
                          `ShopModelID`="' . $data['ShopModelID'] . '",
                          `ShopCategoryID`="' . $data['ShopCategoryID'] . '",
-                         `OrginalCode`="' . $data['OrginalCode'] . '",
+                         `OriginalCode`="' . $data['OriginalCode'] . '",
                          `addition`="' . $data['addition'] . '",
                          `offer`="' . (int)$data['offer'] . '",
                          `state`="' . $data['state'] . '",
@@ -1566,7 +1566,7 @@ class Data extends DBObject {
         }
 
         if ($data['SuperID'] == 0) {
-            $query = 'INSERT INTO `warehouse` (`rindasID`,`partID`,`daudzums`,`type`,`Shop`,`ShopTitle`,`ShopDescription`,`ShopModelID`,`ShopCategoryID`,`OrginalCode`,`addition`,`offer`,`state`,`used`) VALUES (' . $data['rindasID'] . ',"' . $data['partID'] . '","' . $data['daudzums'] . '",1,"' . $data['Shop'] . '","' . $data['ShopTitle'] . '","' . $data['ShopDescription'] . '","' . $data['ShopModelID'] . '","' . $data['ShopCategoryID'] . '","' . $data['OrginalCode'] . '","' . $data['addition'] . '","' . $data['offer'] . '","' . $data['state'] . '","' . $data['used'] . '")';
+            $query = 'INSERT INTO `warehouse` (`rindasID`,`partID`,`daudzums`,`type`,`Shop`,`ShopTitle`,`ShopDescription`,`ShopModelID`,`ShopCategoryID`,`OriginalCode`,`addition`,`offer`,`state`,`used`) VALUES (' . $data['rindasID'] . ',"' . $data['partID'] . '","' . $data['daudzums'] . '",1,"' . $data['Shop'] . '","' . $data['ShopTitle'] . '","' . $data['ShopDescription'] . '","' . $data['ShopModelID'] . '","' . $data['ShopCategoryID'] . '","' . $data['OriginalCode'] . '","' . $data['addition'] . '","' . $data['offer'] . '","' . $data['state'] . '","' . $data['used'] . '")';
 
             if (!self::$DB->query($query)) {
                 throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);

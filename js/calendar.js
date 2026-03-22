@@ -347,7 +347,7 @@ function Calendar(opts) {
   };
 
   $("#RemindPerson").autocomplete({
-    source: "/lv/Josn/Persons",
+    source: "/lv/Json/Persons",
     select: function () {
       $("#RemindPerson").focus();
     },

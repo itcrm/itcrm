@@ -35,7 +35,7 @@
 
     var xmlDoc= '&line='+line+'&url='+url+'&message='+message;
 
-    xmlHttpRequest.open("post", "/lv/Josn/ErrorLogger", bHookTheEventHandler);
+    xmlHttpRequest.open("post", "/lv/Json/ErrorLogger", bHookTheEventHandler);
     xmlHttpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xmlHttpRequest.send( xmlDoc );

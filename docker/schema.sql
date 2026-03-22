@@ -260,7 +260,7 @@ CREATE TABLE `warehouse` (
     `ShopDescription` VARCHAR(255) NOT NULL,
     `ShopModelID` VARCHAR(255) NOT NULL,
     `ShopTitle` VARCHAR(255) NOT NULL,
-    `OrginalCode` VARCHAR(255) NOT NULL,
+    `OriginalCode` VARCHAR(255) NOT NULL,
     `addition` INTEGER NOT NULL DEFAULT 100,
     `offer` INTEGER NOT NULL DEFAULT 0,
     `state` INTEGER NOT NULL DEFAULT 0,

@@ -55,7 +55,7 @@
 <table border="1"  style="width: 32%;">
 <tr style="background-color: yellow;">
 <td><span>Nosaukums: <input type="text" value="[:ShopTitle:]" size="32" ID="ShopTitle" name="ShopTitle"></span></span></td>
-<td><span>Orģinālkods: <input type="text" value="[:OrginalCode:]" size="42" ID="OrginalCode" name="OrginalCode"></span></td>
+<td><span>Orģinālkods: <input type="text" value="[:OriginalCode:]" size="42" ID="OriginalCode" name="OriginalCode"></span></td>
 </tr>
 <tr style="background-color: yellow;">
 <td><span>Cenas %: <input type="text" size="5" value="100" ID="addition" name="addition"></span>&nbsp;&nbsp; <span><input type="checkbox" [:offer:] ID="offer" name="offer"value="1">:Akcija</span></td>
@@ -88,7 +88,7 @@ $("#MatrealsDialogForm #ShopModel").bind( "keydown", function( event ) {
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/Groups",
+    source: "/lv/Json/Groups",
     focus: function() {
                     return false;},
     select: function( event, ui ) {

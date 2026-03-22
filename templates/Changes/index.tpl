@@ -106,12 +106,12 @@ $("form.SelectChange input:checkbox").change(function(){
 
 // Add Autocomplete
 $(".add [name=PersonSelect]").autocomplete({
-    source: "/lv/Josn/Persons",
+    source: "/lv/Json/Persons",
     minLength: 2,
 });
 
 $(".add [name=TypeSelect]").autocomplete({
-    source: "/lv/Josn/Types",
+    source: "/lv/Json/Types",
     select: function( event, ui){
         AddWarehouseForm(ui.item.ID);
     },
@@ -119,7 +119,7 @@ $(".add [name=TypeSelect]").autocomplete({
 });
 
 $(".add [name=OrderSelect]").autocomplete({
-    source: "/lv/Josn/Orders",
+    source: "/lv/Json/Orders",
     minLength: 1,
 });
 
@@ -130,7 +130,7 @@ $(".add [name=OrderSelect]").autocomplete({
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/FilterOrders",
+    source: "/lv/Json/FilterOrders",
     focus: function() {
                     return false;},
     select: function( event, ui ) {
@@ -150,7 +150,7 @@ $(".add [name=OrderSelect]").autocomplete({
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/FilterPersons",
+    source: "/lv/Json/FilterPersons",
     focus: function() {
                     return false;},
     select: function( event, ui ) {
@@ -170,7 +170,7 @@ $("#FilterForm [name=TypeFilterSelect]").bind( "keydown", function( event ) {
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/FilterTypes",
+    source: "/lv/Json/FilterTypes",
     focus: function() {
                     return false;},
     select: function( event, ui ) {
@@ -190,7 +190,7 @@ $("#FilterForm [name=OperatorFilterSelect]").bind( "keydown", function( event ) 
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/FilterPersons",
+    source: "/lv/Json/FilterPersons",
     focus: function() {
                     return false;},
     select: function( event, ui ) {

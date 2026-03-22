@@ -1053,7 +1053,7 @@ function bildsave(print) {
     };
 
     Loading(0, 1);
-    $.post(URL + "/Invoice/BildSave", data, success);
+    $.post(URL + "/Invoice/ImageSave", data, success);
   }
 
   if (print == 1) {
@@ -1345,7 +1345,7 @@ function getWarehouseMaterials(el) {
           }
         })
         .autocomplete({
-          source: "/lv/Josn/FilterTypes",
+          source: "/lv/Json/FilterTypes",
           focus: function () {
             return false;
           },
@@ -1369,7 +1369,7 @@ function getWarehouseMaterials(el) {
         });
 
       $("#MatrealsForm #ShopCategory").autocomplete({
-        source: "/lv/Josn/Orders",
+        source: "/lv/Json/Orders",
         select: function (event, ui) {
           var ID = $("#MatrealsForm input#ShopCategoryID");
           ID.val(ui.item.ID);
@@ -1418,7 +1418,7 @@ function WarehouseBalance(ID) {
 
 function addWarehouseAutoComp() {
   $("#artikuls").autocomplete({
-    source: "/lv/Josn/Warehouse",
+    source: "/lv/Json/Warehouse",
     select: function (event, ui) {
       WarehouseBalance(ui.item.ID);
     },
@@ -1550,7 +1550,7 @@ function CechNrExist(Object) {
     return false;
   }
   $.ajax({
-    url: "/lv/Josn/NrExist",
+    url: "/lv/Json/NrExist",
     data: {
       value: value,
     },
@@ -1599,7 +1599,7 @@ function ChangeField() {
     $("form.SelectChange input:checkbox").attr("disabled", true);
 
     $(".SelectChange [name=values]").autocomplete({
-      source: "/lv/Josn/" + val + "s",
+      source: "/lv/Json/" + val + "s",
       select: function (event, ui) {
         $(".SelectChange #ID").val(ui.item.ID);
       },
@@ -1692,7 +1692,7 @@ function NewPrec() {
   clearNewPart();
   $("form#NewPartForm #IDType").val(warehouseTypeID);
   $("form#NewPartForm #OrderSelect").autocomplete({
-    source: "/lv/Josn/Orders",
+    source: "/lv/Json/Orders",
     select: function (event, ui) {
       $("form#NewPartForm #IDOrder").val(ui.item.ID);
     },
@@ -1803,7 +1803,7 @@ function OpenForm(Name, Blok, ParentBlok, nosaukums, Platums, ID, Save) {
   $.ajax({
     type: "POST",
     cache: false,
-    url: "/lv/Josn/" + Name,
+    url: "/lv/Json/" + Name,
     data: {
       ID: ID,
     },
@@ -1861,7 +1861,7 @@ function editRecipientDialog() {
     $.ajax({
       type: "POST",
       cache: false,
-      url: "/lv/Josn/EditRecipient",
+      url: "/lv/Json/EditRecipient",
       success: function (data) {
         $("#DialogForm").html(data);
       },

@@ -12,7 +12,7 @@ class Warehouse extends DBObject {
     protected $ShopDescription;
     protected $ShopModelID;
     protected $ShopTitle;
-    protected $OrginalCode;
+    protected $OriginalCode;
     protected $addition;
     protected $offer;
     protected $state;
@@ -22,13 +22,13 @@ class Warehouse extends DBObject {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
             case 'Export':
                 return $this->Export();
-            case 'slieder':
-                return $this->slieder();
+            case 'slider':
+                return $this->slider();
             default:
                 $Vars['Content'] = $this->ListLimits();
                 break;
         }
-        $Vars['slieder'] = isset($_SESSION['menu']) && $_SESSION['menu'] == 0 ? "none" : "block";
+        $Vars['slider'] = isset($_SESSION['menu']) && $_SESSION['menu'] == 0 ? "none" : "block";
         $Vars['SLO'] = isset($_SESSION['menu']) && $_SESSION['menu'] == 0 ? "blok" : "none";
         return Template::Process('index', $Vars);
     }
@@ -40,7 +40,7 @@ class Warehouse extends DBObject {
             $TotalPrice = "`TotalPrice` = `TotalPrice`+" . $daudzums;
         }
         if ($type == Config::RemoveFromWarehouseTypeID) {
-            $TotalPrice = Warehouse::HewOrder($ID, $order) . $daudzums;
+            $TotalPrice = Warehouse::NewOrder($ID, $order) . $daudzums;
             $RTotalPrice = ", `TotalPrice` = '" . $sum . "'";
         }
 
@@ -72,7 +72,7 @@ class Warehouse extends DBObject {
         }
     }
 
-    function HewOrder($ID, $order) {
+    function NewOrder($ID, $order) {
         $query = "SELECT Data.ID, Data.IDorder, warehouse.partID, warehouse.daudzums FROM Data, warehouse  WHERE warehouse.rindasID = Data.ID and Data.IDorder = " . $order . " AND IDtype = " . Config::ReserveFromWarehouseTypeID . " AND warehouse.partID =" . $ID;
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Write error on Warehouse (' . __LINE__ . ') : ' . self::$DB->error);
@@ -154,7 +154,7 @@ WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = ' . Config::WarehouseTypeI
         exit();
     }
 
-    function slieder() {
+    function slider() {
         if ($_SESSION['menu'] == 1) {
             $_SESSION['menu'] = 0;
         } else {

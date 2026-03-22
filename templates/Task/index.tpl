@@ -27,7 +27,7 @@
         editable: true,
         selectable: false,
         selectHelper: true,
-        events: 'Task/Josn',
+        events: 'Task/Json',
 
         select: function(start, end) {
         var pasutijums = "aa";
@@ -90,7 +90,7 @@
         },
 
         eventClick: function (event) {
-        var scr = "Task/Josn?Type=Data&ID=" + event.id;
+        var scr = "Task/Json?Type=Data&ID=" + event.id;
 
         var data = 'Type=Data&ID=' + event.id;
         success = function(answ){
@@ -101,7 +101,7 @@
         };
 
         Loading(0, 1);
-        $.get(URL + '/Task/Josn', data, success);
+        $.get(URL + '/Task/Json', data, success);
 
         Dialog(event);
 
