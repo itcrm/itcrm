@@ -50,11 +50,11 @@ class Data extends DBObject {
             case 'AddAllSelected':
                 return $this->AddAllSelected();
             case 'warehouse':
-                return $this->existsInWarehouse($_POST['DetalasID']);
+                return $this->existsInWarehouse($_POST['PartID']);
             case 'WarehouseBalance':
                 return json_encode($this->warehouseBalance($_POST['ID']));
-            case 'SaveDetala':
-                return  $this->SaveDetala($_POST);
+            case 'SavePart':
+                return  $this->SavePart($_POST);
             case 'WarehouseSave':
                 $this->warehouseSave($_POST);
                 break;
@@ -1071,7 +1071,7 @@ class Data extends DBObject {
 
         if ($type == Config::AddToWarehouseTypeID || $type == Config::RemoveFromWarehouseTypeID || $type == Config::ReturnToWarehouseTypeID || $type == Config::ReserveFromWarehouseTypeID) {
             $warehouseData = array(
-                "rindasID" => $this->getID(), "detalasID" => $_POST['detalasID'], "daudzums" => $_POST['daudzums'], "order" => (int)$this->getIDOrder()
+                "rindasID" => $this->getID(), "partID" => $_POST['partID'], "daudzums" => $_POST['daudzums'], "order" => (int)$this->getIDOrder()
             );
 
             $this->warehouseSave($warehouseData);
@@ -1118,7 +1118,7 @@ class Data extends DBObject {
         $type = (int)$this->getIDType();
 
         if ($type == Config::AddToWarehouseTypeID || $type == Config::RemoveFromWarehouseTypeID || $type == Config::ReturnToWarehouseTypeID || $type == Config::ReserveFromWarehouseTypeID) {
-            $warehouseData = array("rindasID" => $this->getID(), "detalasID" => $_POST['detalasID'], "daudzums" => $_POST['daudzums'], "order" => (int)$this->getIDOrder());
+            $warehouseData = array("rindasID" => $this->getID(), "partID" => $_POST['partID'], "daudzums" => $_POST['daudzums'], "order" => (int)$this->getIDOrder());
 
             $this->warehouseSave($warehouseData);
         }
@@ -1455,7 +1455,7 @@ class Data extends DBObject {
     }
 
     function existsInWarehouse($ID) {
-        $query = "SELECT ID AS SuperID, rindasID, detalasID, daudzums, Shop, ShopTitle, ShopDescription, ShopModelID, ShopCategoryID FROM warehouse WHERE rindasID='" . $ID . "'";
+        $query = "SELECT ID AS SuperID, rindasID, partID, daudzums, Shop, ShopTitle, ShopDescription, ShopModelID, ShopCategoryID FROM warehouse WHERE rindasID='" . $ID . "'";
 
         $result = self::$DB->query($query);
         if ($result->num_rows == 0) {
@@ -1464,13 +1464,13 @@ class Data extends DBObject {
             $results = $result->fetch_assoc();
             $daudzums = $results['daudzums'];
             $rindasID = $results['rindasID'];
-            $detalasID = $results['detalasID'];
+            $partID = $results['partID'];
             $results['daudzums'] = $daudzums;
             $results['rindasID'] = $rindasID;
-            $results['detalasID'] = $detalasID;
+            $results['partID'] = $partID;
         }
 
-        $query2 = "SELECT PriceNote as mervieniba, PlaceTaken as nosaukums, Hours, TotalPrice as atlikums, PlaceDone, Note, BookNote FROM Data WHERE ID='" . $detalasID . "'";
+        $query2 = "SELECT PriceNote as mervieniba, PlaceTaken as nosaukums, Hours, TotalPrice as atlikums, PlaceDone, Note, BookNote FROM Data WHERE ID='" . $partID . "'";
         $result2 = self::$DB->query($query2);
         $results2 = $result2->fetch_assoc();
 
@@ -1479,7 +1479,7 @@ class Data extends DBObject {
     }
 
     function warehouseDialog($ID) {
-        $query = "SELECT ID AS SuperID, rindasID, detalasID, daudzums, Shop, ShopTitle, ShopDescription, ShopModelID, ShopCategoryID, OrginalCode, addition, offer, state, used  FROM warehouse WHERE rindasID='" . $ID . "'";
+        $query = "SELECT ID AS SuperID, rindasID, partID, daudzums, Shop, ShopTitle, ShopDescription, ShopModelID, ShopCategoryID, OrginalCode, addition, offer, state, used  FROM warehouse WHERE rindasID='" . $ID . "'";
 
         $result = self::$DB->query($query);
 
@@ -1489,7 +1489,7 @@ class Data extends DBObject {
             $results = $result->fetch_assoc();
             $daudzums = $results['daudzums'];
             $rindasID = $results['rindasID'];
-            $detalasID = $results['detalasID'];
+            $partID = $results['partID'];
             $results['daudzums'] = $daudzums;
             $results['Kategorijas'] = Data::categoryMaker($results['ShopCategoryID']);
 
@@ -1508,7 +1508,7 @@ class Data extends DBObject {
             $results['offer'] == 0 ? $results['offer'] = "" : $results['offer'] = 'checked="yes"';
             $results['used'] == 0 ?  $results['used'] = "" : $results['used'] = 'checked="yes"';
             $results['Shop'] == 0 ?  $results['Shop'] = "" : $results['Shop'] = 'checked="yes"';
-            $results['detalasID'] = $detalasID;
+            $results['partID'] = $partID;
         }
 
         $query2 = "SELECT PriceNote, PlaceTaken, Hours, TotalPrice, PlaceDone, Note, BookNote FROM Data WHERE ID='" . $ID . "'";
@@ -1539,14 +1539,14 @@ class Data extends DBObject {
     }
 
     function warehouseBalance($ID) {
-        $query = "SELECT ID AS detalasID,PlaceTaken AS artikuls, Note AS nosaukums, TotalPrice AS atlikums, PriceNote AS mervieniba, Data.Hours AS rezervets FROM Data WHERE ID=" . $ID;
+        $query = "SELECT ID AS partID,PlaceTaken AS artikuls, Note AS nosaukums, TotalPrice AS atlikums, PriceNote AS mervieniba, Data.Hours AS rezervets FROM Data WHERE ID=" . $ID;
         $result = self::$DB->query($query);
         return $result->fetch_assoc();
     }
 
-    function SaveDetala($data) {
+    function SavePart($data) {
         $query = 'UPDATE `warehouse` SET
-                         `detalasID`="' . $data['detalasID'] . '",
+                         `partID`="' . $data['partID'] . '",
                          `daudzums`="' . $data['daudzums'] . '",
                          `type`="1",
                          `Shop`="' . (int)$data['Shop'] . '",
@@ -1566,7 +1566,7 @@ class Data extends DBObject {
         }
 
         if ($data['SuperID'] == 0) {
-            $query = 'INSERT INTO `warehouse` (`rindasID`,`detalasID`,`daudzums`,`type`,`Shop`,`ShopTitle`,`ShopDescription`,`ShopModelID`,`ShopCategoryID`,`OrginalCode`,`addition`,`offer`,`state`,`used`) VALUES (' . $data['rindasID'] . ',"' . $data['detalasID'] . '","' . $data['daudzums'] . '",1,"' . $data['Shop'] . '","' . $data['ShopTitle'] . '","' . $data['ShopDescription'] . '","' . $data['ShopModelID'] . '","' . $data['ShopCategoryID'] . '","' . $data['OrginalCode'] . '","' . $data['addition'] . '","' . $data['offer'] . '","' . $data['state'] . '","' . $data['used'] . '")';
+            $query = 'INSERT INTO `warehouse` (`rindasID`,`partID`,`daudzums`,`type`,`Shop`,`ShopTitle`,`ShopDescription`,`ShopModelID`,`ShopCategoryID`,`OrginalCode`,`addition`,`offer`,`state`,`used`) VALUES (' . $data['rindasID'] . ',"' . $data['partID'] . '","' . $data['daudzums'] . '",1,"' . $data['Shop'] . '","' . $data['ShopTitle'] . '","' . $data['ShopDescription'] . '","' . $data['ShopModelID'] . '","' . $data['ShopCategoryID'] . '","' . $data['OrginalCode'] . '","' . $data['addition'] . '","' . $data['offer'] . '","' . $data['state'] . '","' . $data['used'] . '")';
 
             if (!self::$DB->query($query)) {
                 throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
@@ -1580,26 +1580,26 @@ class Data extends DBObject {
 
     function warehouseSave($data) {
         $type = $this->DataByID($data['rindasID'], 'IDType');
-        $title = substr($this->DataByID($data['detalasID'], 'Note'), 0, 25) . " " . $this->DataByID($data['detalasID'], 'PlaceTaken');
-        $vienibas = $this->DataByID($data['detalasID'], 'PriceNote');
-        $sum = ($this->warehouseByID($data['detalasID'], 'daudzums')) * $data['daudzums'];
+        $title = substr($this->DataByID($data['partID'], 'Note'), 0, 25) . " " . $this->DataByID($data['partID'], 'PlaceTaken');
+        $vienibas = $this->DataByID($data['partID'], 'PriceNote');
+        $sum = ($this->warehouseByID($data['partID'], 'daudzums')) * $data['daudzums'];
 
         $query = "select ID from warehouse where rindasID =" . $data['rindasID'];
         $result = self::$DB->query($query);
         if ($result->num_rows == 0) {
-            $query = "INSERT INTO `warehouse` (`rindasID`, `detalasID`, `daudzums`) VALUES (" . $data['rindasID'] . ", " . $data['detalasID'] . ", " . $data['daudzums'] . ")";
+            $query = "INSERT INTO `warehouse` (`rindasID`, `partID`, `daudzums`) VALUES (" . $data['rindasID'] . ", " . $data['partID'] . ", " . $data['daudzums'] . ")";
             if (!self::$DB->query($query)) {
                 throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
             }
         } else {
-            $query = "UPDATE `warehouse` SET `rindasID`= " . $data['rindasID'] . ", `detalasID`=" . $data['detalasID'] . ", `daudzums`=" . $data['daudzums'] . " WHERE rindasID =" . $data['rindasID'];
+            $query = "UPDATE `warehouse` SET `rindasID`= " . $data['rindasID'] . ", `partID`=" . $data['partID'] . ", `daudzums`=" . $data['daudzums'] . " WHERE rindasID =" . $data['rindasID'];
             if (!self::$DB->query($query)) {
                 throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
             }
         }
 
         //Tiek izdota prece
-        Warehouse::izdot($data['detalasID'], $data['rindasID'], $data['daudzums'], $vienibas, $title, $type, $data['order'], $sum);
+        Warehouse::izdot($data['partID'], $data['rindasID'], $data['daudzums'], $vienibas, $title, $type, $data['order'], $sum);
     }
 
     /**
@@ -1611,13 +1611,13 @@ class Data extends DBObject {
      */
     function saveWarehouse($Data) {
         if ($Data['IDType'] == Config::AddToWarehouseTypeID || $Data['IDType'] == Config::RemoveFromWarehouseTypeID) {
-            $value = $Data['detalasID'];
+            $value = $Data['partID'];
             $value = (int)$value;
-            if ($value == 0) throw new AppError(Language::$Data['SetIDDetaļas']);
+            if ($value == 0) throw new AppError(Language::$Data['SetPartID']);
 
             $value2 = $Data['daudzums'];
             $value2 = (int)$value2;
-            if ($value2 == 0) throw new AppError(Language::$Data['SetSkaits']);
+            if ($value2 == 0) throw new AppError(Language::$Data['SetAmount']);
         }
     }
 

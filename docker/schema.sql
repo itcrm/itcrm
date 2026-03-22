@@ -252,7 +252,7 @@ CREATE TABLE `groups_linear` (
 CREATE TABLE `warehouse` (
     `ID` INTEGER NOT NULL AUTO_INCREMENT,
     `rindasID` INTEGER NOT NULL,
-    `detalasID` INTEGER NOT NULL,
+    `partID` INTEGER NOT NULL,
     `daudzums` FLOAT NOT NULL DEFAULT 0.00,
     `type` INTEGER NOT NULL DEFAULT 0,
     `Shop` INTEGER NOT NULL DEFAULT 0,

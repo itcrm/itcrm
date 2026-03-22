@@ -138,6 +138,8 @@ class Language {
         'SetIDPerson' => 'Norādiet ievādītāju',
         'SetIDOrder' => 'Norādiet pasūtījumu',
         'SetIDType' => 'Norādiet tipu',
+        'SetPartID' => 'Norādiet detaļu',
+        'SetAmount' => 'Norādiet daudzumu',
         'NoChanges' => 'Izmaiņu nav!',
         'NoDataToExport' => '<div align="center">Nav datu eksportēšanai!</div>',
 

@@ -4,7 +4,7 @@ class Warehouse extends DBObject {
     protected $ID;
     protected $rindasID;
     protected $Password;
-    protected $detalasID;
+    protected $partID;
     protected $daudzums;
     protected $type;
     protected $Shop;
@@ -73,7 +73,7 @@ class Warehouse extends DBObject {
     }
 
     function HewOrder($ID, $order) {
-        $query = "SELECT Data.ID, Data.IDorder, warehouse.detalasID, warehouse.daudzums FROM Data, warehouse  WHERE warehouse.rindasID = Data.ID and Data.IDorder = " . $order . " AND IDtype = " . Config::ReserveFromWarehouseTypeID . " AND warehouse.detalasID =" . $ID;
+        $query = "SELECT Data.ID, Data.IDorder, warehouse.partID, warehouse.daudzums FROM Data, warehouse  WHERE warehouse.rindasID = Data.ID and Data.IDorder = " . $order . " AND IDtype = " . Config::ReserveFromWarehouseTypeID . " AND warehouse.partID =" . $ID;
         if (!$result = self::$DB->query($query)) {
             throw new AppError('Write error on Warehouse (' . __LINE__ . ') : ' . self::$DB->error);
         }
@@ -99,7 +99,7 @@ class Warehouse extends DBObject {
                LEFT JOIN Users R ON (R.ID=D.RemindTo)
                LEFT JOIN Orders O ON (O.ID=D.IDOrder)
                LEFT JOIN Types T ON (T.ID=D.IDType)
-               LEFT JOIN warehouse N ON (D.TotalPrice <= N.detalasID)
+               LEFT JOIN warehouse N ON (D.TotalPrice <= N.partID)
 WHERE N.rindasID = D.ID AND N.type = 1 AND D.IDType = ' . Config::WarehouseTypeID;
 
         if (!$result = self::$DB->query($query)) {
