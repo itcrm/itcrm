@@ -133,19 +133,6 @@ class Orders extends DBObject {
         return $row;
     }
 
-    static function getOptionsList() {
-        $query = 'SELECT * FROM `Orders` WHERE `Status`=1 ORDER BY `Code`';
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Orders (' . __LINE__ . ')');
-        }
-        $orders = '';
-        while ($row = $result->fetch_assoc()) {
-            $orders .= '<option value="' . $row['ID'] . '">' . $row['Code'] . '</option>' . "\n";
-        }
-
-        return $orders;
-    }
-
     static function getAsArray() {
         $query = 'SELECT * FROM `Orders` WHERE `Status`=1
                    ORDER BY `Code`';

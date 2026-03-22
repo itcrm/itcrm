@@ -40,10 +40,6 @@ abstract class DBObject {
         return (new static)->fetchObject($result, new static);
     }
 
-    function getFields() {
-        return $this->Fields;
-    }
-
     function fetchObject($vals, $Object = '') {
         if ($vals instanceof mysqli_result) $vals = $vals->fetch_assoc();
 

@@ -107,21 +107,6 @@ class Users extends DBObject {
         return $row;
     }
 
-    static function getOptionsList() {
-        $query = 'SELECT * FROM `Users` WHERE `Status`>-2
-                   ORDER BY `Login`';
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Users (' . __LINE__ . ')');
-        }
-        $users = '';
-        while ($row = $result->fetch_assoc()) {
-            $users .= '<option value="' . $row['ID'] . '">' . $row['Login'] . '</option>' . "\n";
-        }
-
-        return $users;
-    }
-
     static function getAsArray() {
         $query = 'SELECT * FROM `Users` WHERE `Status`>-2
                    ORDER BY `Login`';

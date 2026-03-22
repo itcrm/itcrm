@@ -182,14 +182,3 @@ function amount2words($num) {
         }
     }
 }
-
-function date2text($datums) {
-    $menesis = array("", "janvārī", "februārī", "martā", "aprīlī", "maijā", "jūnijā", "jūlijā", "augustā", "septembrī", "oktobrī", "novembrī", "decembrī");
-
-    list($dat) = explode(" ", $datums);
-    list($yehr, $month, $day) = explode("-", $dat);
-
-    $textdate = $yehr . ".gada " . $day . "." . $menesis[ltrim($month, '0')];
-
-    return $textdate;
-}
