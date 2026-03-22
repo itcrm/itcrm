@@ -1,6 +1,6 @@
 <div id="matreals" align="center" style="display: none;">
   <div class="main">
-    <a  href="close" onclick="event.returnValue = false;  $('#matreals').hide(); clerDetalas();  return false;">
+    <a  href="close" onclick="event.returnValue = false;  $('#matreals').hide(); clearParts();  return false;">
       <li style="float: right; height: 16px;width: 16px;  list-style-type: none; margin: 2px;" title="Aizvērt" class="ui-state-default ui-corner-all">
         <span class="ui-icon ui-icon-circle-close">
         </span>
@@ -19,7 +19,7 @@
         <h2>Detaļas apraksts</h2>
       <form id="MatrealsForm">
         <input style="display: none" id="rindasID" name="rindasID" type="text" value=""/>
-        <div id="detview">
+        <div>
           <table  style="width: 27%;" border="0">
             <tr><td>
                 <span>Pārdošanas cena:
@@ -27,7 +27,7 @@
                 <input id="daudzums"  name="daudzums" value="" size="10" type="number"/></td><td>
                 <span>Minimālais atlikums:
                 </span></td><td>
-                <input id="detalasID" name="detalasID" value="" size="10" type="number"/></td>
+                <input id="partID" name="partID" value="" size="10" type="number"/></td>
             </tr>
             <tr><td>
                 <span>Rezervets:

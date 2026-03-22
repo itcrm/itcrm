@@ -1244,7 +1244,7 @@ function RowEdit(ID) {
 
 function getWarehouse(el, type) {
   ID = el.id.replace(/Data/, "");
-  var data = "DetalasID=" + ID;
+  var data = "PartID=" + ID;
   container = $("#scrollDiv");
   $("#warehouse").css(
     "top",
@@ -1262,22 +1262,22 @@ function getWarehouse(el, type) {
     }
 
     if (answ == 0) {
-      $("#DetalasForm #rindasID").val(ID);
+      $("#PartForm #rindasID").val(ID);
       $("#warehouse").show();
     } else {
       $.each(answ, function (i, object) {
-        $("#DetalasForm #" + i).val(object);
+        $("#PartForm #" + i).val(object);
       });
       var text =
         '<a href="javascript:RowEdit(' +
-        answ["detalasID"] +
+        answ["partID"] +
         ');" >' +
         answ["nosaukums"] +
         "</a> uz doto brīdi noliktavā atlicis " +
         answ["atlikums"] +
         " " +
         answ["mervieniba"];
-      $("#DetalasForm #atlikums").html(text);
+      $("#PartForm #atlikums").html(text);
       $("#warehouse").show();
     }
   };
@@ -1291,7 +1291,7 @@ function getWarehouseMaterials(el) {
   $(el).removeClass("Odd");
   $(el).toggleClass("formback");
 
-  var data = "DetalasID=" + ID;
+  var data = "PartID=" + ID;
   container = $("#scrollDiv");
   $("#matreals").css(
     "top",
@@ -1322,7 +1322,7 @@ function getWarehouseMaterials(el) {
       });
       var text =
         '<a href="javascript:RowEdit(' +
-        answ["detalasID"] +
+        answ["partID"] +
         ');" >' +
         answ["nosaukums"] +
         "</a> uz doto brīdi noliktavā atlicis " +
@@ -1397,7 +1397,7 @@ function WarehouseBalance(ID) {
 
     var text =
       '<a href="javascript:RowEdit(' +
-      answ["detalasID"] +
+      answ["partID"] +
       ');" >' +
       answ["nosaukums"] +
       "</a> uz doto brīdi noliktavā atlicis " +
@@ -1410,7 +1410,7 @@ function WarehouseBalance(ID) {
       answ["mervieniba"];
     $("#atlikums").html(text);
     $("#mervieniba").val(answ["mervieniba"]);
-    $("#detalasID").val(answ["detalasID"]);
+    $("#partID").val(answ["partID"]);
   };
   Loading(0, 1);
   $.post(URL + "/Data/WarehouseBalance", data, success);
@@ -1447,14 +1447,14 @@ function WarehouseSave() {
       //$('#Data'+ID).replaceWith(answ[1]);
       SaveForm();
       $("#matreals").hide();
-      clerDetalas();
+      clearParts();
     } else {
       alert(answ);
     }
   };
 
   Loading(0, 1);
-  $.post(URL + "/Data/SaveDetala", data, success);
+  $.post(URL + "/Data/SavePart", data, success);
 }
 
 function WarehouseDialogSave() {
@@ -1487,11 +1487,11 @@ function WarehouseDialogSave() {
   };
 
   Loading(0, 1);
-  $.post(URL + "/Data/SaveDetala", data, success);
+  $.post(URL + "/Data/SavePart", data, success);
 }
 
 function clearWarehouse() {
-  document.getElementById("DetalasForm").reset();
+  document.getElementById("PartForm").reset();
   $("#warehouse #atlikums").html("");
 }
 
@@ -1511,7 +1511,7 @@ function AddWarehouseForm(ID) {
     $("#ievadeWarehouse").append("<span> Artikuls:</span>");
     $("#ievadeWarehouse").append('<input id="artikuls" type="text" />');
     $("#ievadeWarehouse").append(
-      '<input id="detalasID" type="text" value="" name="detalasID" style="display: none">'
+      '<input id="partID" type="text" value="" name="partID" style="display: none">'
     );
     $("#ievadeWarehouse").append("<span> daudzums:</span>");
     $("#ievadeWarehouse").append(
@@ -1570,7 +1570,7 @@ function CechNrExist(Object) {
   });
 }
 
-function clerDetalas() {
+function clearParts() {
   var ID = $("#MatrealsForm #rindasID").val();
   var Obj = $("tr#Data" + ID + ".Data");
   $(Obj).removeClass("formback");
@@ -1658,8 +1658,8 @@ function ChangeSelected() {
   $.post(URL + "/Data/ChangeSelected", data, success);
 }
 
-function warehouseAddDet() {
-  var data = $("#NewDetForm").serialize();
+function warehouseAddPart() {
+  var data = $("#NewPartForm").serialize();
 
   success = function (answ) {
     try {
@@ -1668,18 +1668,18 @@ function warehouseAddDet() {
       answ = new Array(answ);
     }
     var rindasID = answ[2];
-    var daudzums = $("form#NewDetForm #daudzums").val();
-    var detalasID = $("form#NewDetForm #detalasID").val();
+    var daudzums = $("form#NewPartForm #daudzums").val();
+    var partID = $("form#NewPartForm #partID").val();
 
     data =
       "rindasID=" +
       rindasID +
       "&daudzums=" +
       daudzums +
-      "&detalasID=" +
-      detalasID;
+      "&partID=" +
+      partID;
 
-    $.post(URL + "/Data/SaveDetala", data);
+    $.post(URL + "/Data/SavePart", data);
 
     Loading(0, 0);
   };
@@ -1689,12 +1689,12 @@ function warehouseAddDet() {
 }
 
 function NewPrec() {
-  clearNewDet();
-  $("form#NewDetForm #IDType").val(warehouseTypeID);
-  $("form#NewDetForm #OrderSelect").autocomplete({
+  clearNewPart();
+  $("form#NewPartForm #IDType").val(warehouseTypeID);
+  $("form#NewPartForm #OrderSelect").autocomplete({
     source: "/lv/Josn/Orders",
     select: function (event, ui) {
-      $("form#NewDetForm #IDOrder").val(ui.item.ID);
+      $("form#NewPartForm #IDOrder").val(ui.item.ID);
     },
     minLength: 1,
   });
@@ -1702,13 +1702,13 @@ function NewPrec() {
   $("#AddWarehouse").dialog({
     buttons: {
       Saglabāt: function () {
-        var novietojums = $("form#NewDetForm #PlaceDone").val();
-        var mervieniba = $("form#NewDetForm #PriceNote").val();
-        var minAtlik = $("form#NewDetForm #detalasID").val();
-        $("form#NewDetForm #PlaceDone").val(
+        var novietojums = $("form#NewPartForm #PlaceDone").val();
+        var mervieniba = $("form#NewPartForm #PriceNote").val();
+        var minAtlik = $("form#NewPartForm #partID").val();
+        $("form#NewPartForm #PlaceDone").val(
           novietojums + " min=" + minAtlik + mervieniba
         );
-        warehouseAddDet();
+        warehouseAddPart();
 
         $(this).dialog("close");
       },
@@ -1719,17 +1719,17 @@ function NewPrec() {
   });
 }
 
-function clearNewDet() {
-  $("form#NewDetForm #OrderSelect").val("");
-  $("form#NewDetForm #PlaceTaken").val("");
-  $("form#NewDetForm #IDOrder").val("");
-  $("form#NewDetForm #Note").val("");
-  $("form#NewDetForm #PriceNote").val("");
-  $("form#NewDetForm #daudzums").val("");
-  $("form#NewDetForm #PlaceDone").val("");
-  $("form#NewDetForm #detalasID").val("");
-  $("form#NewDetForm #BookNote").val("");
-  $("form#NewDetForm #TotalPrice").val("");
+function clearNewPart() {
+  $("form#NewPartForm #OrderSelect").val("");
+  $("form#NewPartForm #PlaceTaken").val("");
+  $("form#NewPartForm #IDOrder").val("");
+  $("form#NewPartForm #Note").val("");
+  $("form#NewPartForm #PriceNote").val("");
+  $("form#NewPartForm #daudzums").val("");
+  $("form#NewPartForm #PlaceDone").val("");
+  $("form#NewPartForm #partID").val("");
+  $("form#NewPartForm #BookNote").val("");
+  $("form#NewPartForm #TotalPrice").val("");
 }
 
 function CheckAllRows() {

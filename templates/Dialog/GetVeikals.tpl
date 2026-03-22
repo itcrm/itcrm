@@ -15,7 +15,7 @@
 <td><span>Pārdošanas cena:</span></td>
 <td><input id="daudzums"  name="daudzums" value="[:daudzums:]" size="10" type="number"/></td>
 <td><span>Minimālais atlikums:</span></td>
-<td><input id="detalasID" name="detalasID" value="[:detalasID:]" size="10" type="number"/></td>
+<td><input id="partID" name="partID" value="[:partID:]" size="10" type="number"/></td>
 </tr>
 <tr>
 <td><span>Rezervēts:</span></td>

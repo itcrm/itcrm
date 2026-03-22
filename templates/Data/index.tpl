@@ -279,10 +279,10 @@
             <span class="text" style="display: none;">.ui-icon-circle-close</span>
         </li></a>
 
-        <div class="DetDat">
+        <div>
                 <h2>Detaļas apraksts</h2>
-                <form id="DetalasForm">
-<label for="artikuls" title="Detaļas artikuls">Artikuls:</label><input style="display: none" id="rindasID" name="rindasID" type="text" value=""/><input style="display: none" id="detalasID" name="detalasID" type="text" value=""/><input id="artikuls" type="text" value=""/> <label for="daudzums" name="daudzums" title="Daudzums">Daudzums:</label><input id="daudzums" name="daudzums" value="" size="5" type="number"/> :<input  style="border:none;"  ID="mervieniba" type="text" value="" readonly="readonly" />
+                <form id="PartForm">
+<label for="artikuls" title="Detaļas artikuls">Artikuls:</label><input style="display: none" id="rindasID" name="rindasID" type="text" value=""/><input style="display: none" id="partID" name="partID" type="text" value=""/><input id="artikuls" type="text" value=""/> <label for="daudzums" name="daudzums" title="Daudzums">Daudzums:</label><input id="daudzums" name="daudzums" value="" size="5" type="number"/> :<input  style="border:none;"  ID="mervieniba" type="text" value="" readonly="readonly" />
                     <hr>
                         <span id="atlikums"></span>
                             <div  style="height: 20px;"></div>
@@ -292,7 +292,7 @@
     </div>
 
 <div style="display:none" id="AddWarehouse" title="Pievienot jaunu preci">
-    <form id="NewDetForm"style="width: 275px;">
+    <form id="NewPartForm"style="width: 275px;">
 
         <table border="0">
         <tr>
@@ -328,8 +328,8 @@
         <td><input id="PlaceDone" type="text" name="PlaceDone"></td>
         </tr>
         <tr>
-        <td><label for="detalasID" title="Min atlikums">Min atlikums:</label></td>
-        <td><input id="detalasID" type="text" name="detalasID"></td>
+        <td><label for="partID" title="Min atlikums">Min atlikums:</label></td>
+        <td><input id="partID" type="text" name="partID"></td>
         </tr>
         <tr>
         <td><label for="BookNote" title="Pielietojums">Pielietojums:</label></td>
@@ -343,7 +343,7 @@
 <div id="matreals" align="center" style="display: none;">
         <div class="main" style="background: none repeat scroll 0% 0% rgb(252, 251, 196);">
 
-                 <a  href="close" onclick="event.returnValue = false;  $('#matreals').hide(); clerDetalas();   return false;">
+                 <a  href="close" onclick="event.returnValue = false;  $('#matreals').hide(); clearParts();   return false;">
      <li style="float: right;   list-style-type: none; margin: 2px;" title="Aizvērt" class="ui-state-default ui-corner-all">
             <button><span class="ui-icon ui-icon-circle-close"></span></button>
             <span class="text" style="display: none;">.ui-icon-circle-close</span>
@@ -364,13 +364,13 @@
 
                             <!-- <div  style="height: 20px;"></div> -->
 
-<div id="detview">
+<div>
 <table  style="width: 27%;" border="0">
 <tr>
 <td><span>Pārdošanas cena:</span></td>
 <td><input id="daudzums"  name="daudzums" value="" size="10" type="number"/></td>
 <td><span>Minimālais atlikums:</span></td>
-<td><input id="detalasID" name="detalasID" value="" size="10" type="number"/></td>
+<td><input id="partID" name="partID" value="" size="10" type="number"/></td>
 </tr>
 <tr>
 <td><span>Rezervēts:</span></td>
