@@ -159,7 +159,7 @@
     });
 
 $("#Recipient").autocomplete({
-    source: "/lv/Data/AutocompleteJosn",
+    source: "/lv/Data/AutocompleteJson",
     select: function( event, ui){
         AutoUiReplace(ui.item.ID);
     },

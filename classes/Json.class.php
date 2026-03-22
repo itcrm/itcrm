@@ -1,5 +1,5 @@
 <?php
-class Josn extends DBObject {
+class Json extends DBObject {
     function Load() {
         switch (@self::$url[2]) {
             case 'FilterOrders':
@@ -68,7 +68,7 @@ class Josn extends DBObject {
         $query = "SELECT ID,Code FROM `Orders` WHERE Code LIKE '" . $code . "%'
                    ORDER BY `Code` LIMIT 0,20";
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Josn (' . __LINE__ . ')');
+            throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Orders = array();
         while ($row = $result->fetch_assoc()) {
@@ -84,7 +84,7 @@ class Josn extends DBObject {
         $query = "SELECT ID, Login FROM `Users` WHERE Login LIKE '%" . $code . "%' AND `Status` >-3
     ORDER BY `Login` LIMIT 0,30";
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Josn (' . __LINE__ . ')');
+            throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Users = array();
         while ($row = $result->fetch_assoc()) {
@@ -100,7 +100,7 @@ class Josn extends DBObject {
         $query = "SELECT ID, Code FROM `Types` WHERE Code LIKE '" . $code . "%'
                    ORDER BY `Code` LIMIT 0,30";
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Josn (' . __LINE__ . ')');
+            throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Type = array();
         while ($row = $result->fetch_assoc()) {
@@ -116,7 +116,7 @@ class Josn extends DBObject {
         $query = "SELECT id as ID, title as label FROM `groups_linear` WHERE title LIKE '%" . $code . "%'
                    ORDER BY `iorder` LIMIT 0,30";
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Josn (' . __LINE__ . ')');
+            throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Type = array();
         while ($row = $result->fetch_assoc()) {
@@ -132,7 +132,7 @@ class Josn extends DBObject {
         $query = "SELECT ID, Login FROM `Users` WHERE Login LIKE '" . $code . "%' AND `Status` > 0
                    ORDER BY `Login` LIMIT 0,30";
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Josn (' . __LINE__ . ')');
+            throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Users = array();
         while ($row = $result->fetch_assoc()) {
@@ -148,7 +148,7 @@ class Josn extends DBObject {
         $query = "SELECT ID, Code FROM `Types` WHERE Code LIKE '" . $code . "%' AND `Status`=1
                    ORDER BY `Code` LIMIT 0,30";
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Josn (' . __LINE__ . ')');
+            throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Type = array();
         while ($row = $result->fetch_assoc()) {
@@ -164,7 +164,7 @@ class Josn extends DBObject {
         $query = "SELECT ID,Code FROM `Orders` WHERE Code LIKE '" . $code . "%' AND `Status`=1
                    ORDER BY `Code` LIMIT 0,20";
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Josn (' . __LINE__ . ')');
+            throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Orders = array();
         while ($row = $result->fetch_assoc()) {
@@ -179,7 +179,7 @@ class Josn extends DBObject {
         $query = "SELECT ID, PlaceTaken AS label FROM `Data` WHERE IDType='" . Config::WarehouseTypeID . "' AND PlaceTaken LIKE '" . $code . "%' AND `Status`=1
                    ORDER BY `PlaceTaken` LIMIT 0,20";
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Josn (' . __LINE__ . ')');
+            throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $warehouse = array();
         while ($row = $result->fetch_assoc()) {
@@ -194,7 +194,7 @@ class Josn extends DBObject {
         $query = "SELECT * FROM `Data` WHERE IDType='72' AND IDDoc = '" . $value . "'";
 
         if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Josn (' . __LINE__ . ')');
+            throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
 
         if ($result->num_rows > 0) {
@@ -219,7 +219,7 @@ class Josn extends DBObject {
                          `Message`="' . $data['message'] . '"';
 
         if (!self::$DB->query($query)) {
-            throw new AppError('Write error on Josn (' . __LINE__ . ') : ' . self::$DB->error);
+            throw new AppError('Write error on Json (' . __LINE__ . ') : ' . self::$DB->error);
         }
         return 'Kļūda failā: ' . $data['url'] . ' līnijā:' . $data['line'] . ' ar paziņojumu:' . $data['message'];
     }

@@ -91,7 +91,7 @@ var users = [ [:UsersList:] ];
       );
 
 $(".add [name=OrderSelect]").autocomplete({
-    source: "/lv/Josn/Orders",
+    source: "/lv/Json/Orders",
     minLength: 1,
 });
 
@@ -103,7 +103,7 @@ $(".add [name=OrderSelect]").bind( "keydown", function( event ) {
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/FilterOrders",
+    source: "/lv/Json/FilterOrders",
     focus: function() {
                     return false;},
     select: function( event, ui ) {
@@ -139,7 +139,7 @@ $(".add [name=OrderSelect]").bind( "keydown", function( event ) {
       );
 
           $(".add [name=PersonSelect]").autocomplete({
-    source: "/lv/Josn/Persons",
+    source: "/lv/Json/Persons",
     minLength: 2,
 });*/
 
@@ -149,7 +149,7 @@ $(".add [name=PersonSelect]").bind( "keydown", function( event ) {
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/Persons",
+    source: "/lv/Json/Persons",
     focus: function() {
                     return false;},
     select: function( event, ui ) {
@@ -185,7 +185,7 @@ $(".add [name=PersonSelect]").bind( "keydown", function( event ) {
       );
 
     $(".add [name=OperatorSelect]").autocomplete({
-    source: "/lv/Josn/Persons",
+    source: "/lv/Json/Persons",
     minLength: 2,
 })*/
 
@@ -195,7 +195,7 @@ $(".add [name=OperatorSelect]").bind( "keydown", function( event ) {
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/Persons",
+    source: "/lv/Json/Persons",
     focus: function() {
                     return false;},
     select: function( event, ui ) {
@@ -231,7 +231,7 @@ $(".add [name=OperatorSelect]").bind( "keydown", function( event ) {
       );
 
      $(".add [name=TypeSelect]").autocomplete({
-    source: "/lv/Josn/Types",
+    source: "/lv/Json/Types",
     minLength: 1,
 });*/
 
@@ -241,7 +241,7 @@ $(".add [name=TypeSelect]").bind( "keydown", function( event ) {
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/Types",
+    source: "/lv/Json/Types",
     focus: function() {
                     return false;},
     select: function( event, ui ) {

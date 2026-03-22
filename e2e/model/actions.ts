@@ -973,12 +973,12 @@ export const eventActions: Record<string, ActionFn> = {
   TOGGLE_WAREHOUSE_SLIDER: async (page) => {
     // The slider is open by default; click the X button inside it to close (hide) it
     const sliderResponse = page.waitForResponse((r) =>
-      r.url().includes("/Warehouse/slieder")
+      r.url().includes("/Warehouse/slider")
     );
-    // The close button is the right-hand div inside .slieder that has the onclick handler
-    await page.locator(".slieder [onclick*='slieder']").last().click();
+    // The close button is the right-hand div inside .slider that has the onclick handler
+    await page.locator(".slider [onclick*='slider']").last().click();
     await sliderResponse;
-    await expect(page.locator(".slieder")).not.toBeVisible();
+    await expect(page.locator(".slider")).not.toBeVisible();
   },
 
   SWITCH_TASK_WEEK_VIEW: async (page) => {
@@ -1003,11 +1003,11 @@ export const eventActions: Record<string, ActionFn> = {
   OPEN_WAREHOUSE_SLIDER: async (page) => {
     // Click the SLO div (visible when slider is closed) to re-open the slider
     const sliderResponse = page.waitForResponse((r) =>
-      r.url().includes("/Warehouse/slieder")
+      r.url().includes("/Warehouse/slider")
     );
     await page.locator(".SLO").click();
     await sliderResponse;
-    await expect(page.locator(".slieder")).toBeVisible();
+    await expect(page.locator(".slider")).toBeVisible();
   },
 
   EXPORT_WAREHOUSE: async (page, env) => {
@@ -1205,8 +1205,8 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   },
 
   warehouse_slider_closed: async (page) => {
-    // The .slieder selection toolbar is hidden after closing it
-    await expect(page.locator(".slieder")).not.toBeVisible();
+    // The .slider selection toolbar is hidden after closing it
+    await expect(page.locator(".slider")).not.toBeVisible();
   },
 
   warehouse_export_empty: async (page) => {

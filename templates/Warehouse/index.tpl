@@ -1,10 +1,10 @@
-<div onclick="javascript:$('.slieder').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehouse/slieder');" class="SLO" title="Aizvērt izvēli" style="width: 20px; background: none repeat scroll 0% 0% rgb(85, 85, 85); margin-top: -5px; height: 35px; cursor: pointer; float: left; display: [:SLO:];"> <span style= "margin-top: 8px;" class="ui-icon ui-icon-triangle-1-e"> </span> </div>
+<div onclick="javascript:$('.slider').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehouse/slider');" class="SLO" title="Aizvērt izvēli" style="width: 20px; background: none repeat scroll 0% 0% rgb(85, 85, 85); margin-top: -5px; height: 35px; cursor: pointer; float: left; display: [:SLO:];"> <span style= "margin-top: 8px;" class="ui-icon ui-icon-triangle-1-e"> </span> </div>
 
-<div class="slieder" style="background: none repeat scroll 0% 0% rgb(204, 204, 204); margin-top: -5px; border-bottom: 1px solid; height: 30px; padding-top: 5px; padding-left: 21px; display: [:slieder:];">
+<div class="slider" style="background: none repeat scroll 0% 0% rgb(204, 204, 204); margin-top: -5px; border-bottom: 1px solid; height: 30px; padding-top: 5px; padding-left: 21px; display: [:slider:];">
 <button onclick="javascript:WarehouseCheckAllRows()" title="Iezīmēt visus" class="ui-widget"><span class="ui-icon ui-icon-plusthick"> </span></button>
 <button onclick="javascript:UnCheckAllRows()" title="Atcelt iezīmētos" class="ui-widget"><span class="ui-icon ui-icon-minusthick"> </span></button>
 <button onclick="window.location = '/lv/Warehouse/Export'" title="Eksportēt uz Excel" class="ui-widget"><span class="ui-icon ui-icon-script"> </span></button>
-<div title="Aizvērt izvēli" style=" width: 20px; float: right; background: none repeat scroll 0% 0% rgb(85, 85, 85); margin-top: -5px; height: 35px; cursor: pointer;" class="ui-widget ui-helper-clearfix" onclick="javascript:$('.slieder').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehouse/slieder');"> <span style="margin-top: 8px;" class="ui-icon ui-icon-triangle-1-w"> </span> </div>
+<div title="Aizvērt izvēli" style=" width: 20px; float: right; background: none repeat scroll 0% 0% rgb(85, 85, 85); margin-top: -5px; height: 35px; cursor: pointer;" class="ui-widget ui-helper-clearfix" onclick="javascript:$('.slider').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehouse/slider');"> <span style="margin-top: 8px;" class="ui-icon ui-icon-triangle-1-w"> </span> </div>
 </div>
 
 <h2 align="center">Noliktava</h2>

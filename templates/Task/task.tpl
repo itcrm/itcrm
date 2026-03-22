@@ -28,17 +28,17 @@ $(this).addClass("OnEditBox");
 }});
 
 $(".add [name=PersonSelect]").autocomplete({
-    source: "/lv/Josn/Persons",
+    source: "/lv/Json/Persons",
     minLength: 2,
 });
 
 $(".add [name=TypeSelect]").autocomplete({
-    source: "/lv/Josn/Types",
+    source: "/lv/Json/Types",
     minLength: 1,
 });
 
 $(".add [name=OrderSelect]").autocomplete({
-    source: "/lv/Josn/Orders",
+    source: "/lv/Json/Orders",
     minLength: 1,
 });
 

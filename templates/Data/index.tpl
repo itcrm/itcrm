@@ -104,8 +104,8 @@
  </tr>
 </table>
 </form>
-<div onclick="javascript:$('.slieder').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehouse/slieder');" class="SLO" title="Aizvērt izvēli" style="width: 20px; background: none repeat scroll 0% 0% rgb(85, 85, 85); margin-top: -5px; position: fixed; height: 20px; cursor: pointer; float: left; display: [:SLO:];"> <span style="margin-top: 2px;" class="ui-icon ui-icon-triangle-1-e"></span> </div>
-<div class="slieder" style="background: none repeat scroll 0% 0% rgb(204, 204, 204); border-bottom: 1px solid; padding-left: 21px; padding-top: 1px; height: 20px; border-top: 1px solid; display: [:slieder:]; margin-top: 2px; margin-bottom: 2px;">
+<div onclick="javascript:$('.slider').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehouse/slider');" class="SLO" title="Aizvērt izvēli" style="width: 20px; background: none repeat scroll 0% 0% rgb(85, 85, 85); margin-top: -5px; position: fixed; height: 20px; cursor: pointer; float: left; display: [:SLO:];"> <span style="margin-top: 2px;" class="ui-icon ui-icon-triangle-1-e"></span> </div>
+<div class="slider" style="background: none repeat scroll 0% 0% rgb(204, 204, 204); border-bottom: 1px solid; padding-left: 21px; padding-top: 1px; height: 20px; border-top: 1px solid; display: [:slider:]; margin-top: 2px; margin-bottom: 2px;">
 
 <!-- <div class="TaskUsers" style="float:left; position:relative; top:-18px;"> -->
 
@@ -114,7 +114,7 @@
 {:/Reminder:}
 
 <!-- </div> -->
-<div title="Aizvērt izvēli" style="width: 20px; float: right; background: none repeat scroll 0% 0% rgb(85, 85, 85); cursor: pointer; height: 21px; margin-top: -1px;" class="ui-widget ui-helper-clearfix" onclick="javascript:$('.slieder').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehouse/slieder');"> <span style="margin-top: 2px;" class="ui-icon ui-icon-triangle-1-w"></span> </div>
+<div title="Aizvērt izvēli" style="width: 20px; float: right; background: none repeat scroll 0% 0% rgb(85, 85, 85); cursor: pointer; height: 21px; margin-top: -1px;" class="ui-widget ui-helper-clearfix" onclick="javascript:$('.slider').toggle('slow'); $('.SLO').toggle(); $.post('/lv/Warehouse/slider');"> <span style="margin-top: 2px;" class="ui-icon ui-icon-triangle-1-w"></span> </div>
 </div>
 <!-- onkeydown="return rejectEnter(event)" -->
 <form action="javascript:FilterData()"  id="FilterForm"  style="padding-right:17px;"  class="[:showFilter:]">
@@ -410,7 +410,7 @@
 <table border="1"  style="width: 32%;">
 <tr style="background-color: yellow;">
 <td><span>Nosaukums: <input type="text" size="32" ID="ShopTitle" name="ShopTitle"></span></span></td>
-<td><span>Orģinālkods: <input type="text" size="42" ID="OrginalCode" name="OrginalCode"></span></td>
+<td><span>Orģinālkods: <input type="text" size="42" ID="OriginalCode" name="OriginalCode"></span></td>
 </tr>
 <tr style="background-color: yellow;">
 <td><span>Cenas %: <input type="text" size="5" value="100" ID="addition" name="addition"></span>&nbsp;&nbsp; <span><input type="checkbox" ID="offer" name="offer"value="1">:Akcija</span></td>
@@ -527,12 +527,12 @@ $("form.SelectChange input:checkbox").change(function(){
 // Add Autocomplete
 
 $(".add [name=PersonSelect]").autocomplete({
-    source: "/lv/Josn/Persons",
+    source: "/lv/Json/Persons",
     minLength: 2,
 });
 
 $(".add [name=TypeSelect]").autocomplete({
-    source: "/lv/Josn/Types",
+    source: "/lv/Json/Types",
     select: function( event, ui){
         AddWarehouseForm(ui.item.ID);
     },
@@ -540,7 +540,7 @@ $(".add [name=TypeSelect]").autocomplete({
 });
 
 $(".add [name=OrderSelect]").autocomplete({
-    source: "/lv/Josn/Orders",
+    source: "/lv/Json/Orders",
     minLength: 1,
 });
 
@@ -551,7 +551,7 @@ $(".add [name=OrderSelect]").autocomplete({
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/FilterOrders",
+    source: "/lv/Json/FilterOrders",
     focus: function() {
                     return false;},
     select: function( event, ui ) {
@@ -571,7 +571,7 @@ $(".add [name=OrderSelect]").autocomplete({
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/FilterPersons",
+    source: "/lv/Json/FilterPersons",
     focus: function() {
                     return false;},
     select: function( event, ui ) {
@@ -591,7 +591,7 @@ $("#FilterForm [name=TypeFilterSelect]").bind( "keydown", function( event ) {
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/FilterTypes",
+    source: "/lv/Json/FilterTypes",
     focus: function() {
                     return false;},
     select: function( event, ui ) {
@@ -611,7 +611,7 @@ $("#FilterForm [name=OperatorFilterSelect]").bind( "keydown", function( event ) 
                     event.preventDefault();
                 }
             }).autocomplete({
-    source: "/lv/Josn/FilterPersons",
+    source: "/lv/Json/FilterPersons",
     focus: function() {
                     return false;},
     select: function( event, ui ) {

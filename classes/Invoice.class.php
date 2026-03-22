@@ -18,8 +18,8 @@ class Invoice extends DBObject {
                 return $this->DeleteEntry();
             case 'LineSave':
                 return $this->LineSave();
-            case 'BildSave':
-                return $this->BildSave();
+            case 'ImageSave':
+                return $this->ImageSave();
             case 'SaveRecipient':
                 return $this->saveRecipient();
             case 'Recipient':
@@ -245,7 +245,7 @@ ORDER BY `Nosaukums`';
         return Template::Process($Table);
     }
 
-    function CechUsage($ID) {
+    function CheckUsage($ID) {
         $query = "SELECT DocID FROM `invoices` WHERE recipientID = " . $ID;
 
         if (!$result = self::$DB->query($query)) {
@@ -265,7 +265,7 @@ ORDER BY `Nosaukums`';
     function deleteRecipient() {
         $ID = $_POST['ID'];
 
-        $parbaude = $this->CechUsage($ID);
+        $parbaude = $this->CheckUsage($ID);
         $Names = implode(", ", $parbaude);
 
         if ($parbaude > 0) {
@@ -311,7 +311,7 @@ ORDER BY `Nosaukums`';
         return $textdate;
     }
 
-    function BildSave() {
+    function ImageSave() {
         $ID = $_POST['ID'];
         $DocID = $_POST['invoiceID'];
         $Samaksa = $_POST['samaksaskartiba'];
@@ -431,7 +431,7 @@ WHERE ID = "' . $ID . '"';
      * @return void
      * @author
      */
-    function MakeCont($Title, $Code, $Adress, $Bank, $Account, $Phone, $Mail) {
+    function MakeCont($Title, $Code, $Address, $Bank, $Account, $Phone, $Mail) {
         $Phone == 0 ? $Phone = '' : $Phone = $Phone;
         $Cont['IDDoc'] = 'Sistēmas ';
         $Cont['IDOrder'] = '1627';
@@ -439,7 +439,7 @@ WHERE ID = "' . $ID . '"';
         $Cont['PlaceTaken'] = 'srv';
         $Cont['IDPerson'] = '36';
         $Cont['RemindDate'] = '';
-        $Cont['Note'] = $Title . '; ' . $Code . '; ' . $Adress . '; ' . $Bank . '; ' . $Account . '; ' . $Phone . '; ' . $Mail;
+        $Cont['Note'] = $Title . '; ' . $Code . '; ' . $Address . '; ' . $Bank . '; ' . $Account . '; ' . $Phone . '; ' . $Mail;
         $Cont['Date'] = date('Y-m-d H:i:s');
         $_POST = $Cont;
         $data = new Data;
