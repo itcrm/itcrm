@@ -105,8 +105,8 @@
 </tr>
 </table>
 <br>
-<span  onclick="addprece()" class="addbutton">&nbsp;</span>
-<table ID="Preces">
+<span  onclick="addProduct()" class="addbutton">&nbsp;</span>
+<table ID="Products">
 
 <tr>
 <th>Preču nosaukums:</td>
@@ -213,11 +213,11 @@ function AutoUiReplace(val){
     }
 };
 
-function addprece(){
-    var id = $('#Preces tbody>tr:last.bordersolidadd').attr("ID");
+function addProduct(){
+    var id = $('#Products tbody>tr:last.bordersolidadd').attr("ID");
     id++;
 
-$('#Preces tr:last.bordersolidadd').after("<tr class='bordersolidadd' id='"+id+"' name='0'> <td width='40%'> <input type='text' class='Precu_nosaukums' size='106'></td> <td width='20%'> <input type='text' class='Artikuls' size='50'></td> <td width='5%'> <input type='text' id='"+id+"' class='Daudz' size='16' onblur='summ(this.id)'></td> <td width='5%'> <input type='text' class='Merv' size='15'></td> <td width='10%'> <input type='text' id='"+id+"' class='Cena' size='15'  onblur='summ(this.id)'><a style='float:right' href='javascript:Delete("+id+",0);' class='extra delete'></a></td></td> <td width='10%' id='"+id+"' class='Summa'> </td></tr>")
+$('#Products tr:last.bordersolidadd').after("<tr class='bordersolidadd' id='"+id+"' name='0'> <td width='40%'> <input type='text' class='Product_name' size='106'></td> <td width='20%'> <input type='text' class='Artikuls' size='50'></td> <td width='5%'> <input type='text' id='"+id+"' class='Daudz' size='16' onblur='summ(this.id)'></td> <td width='5%'> <input type='text' class='Merv' size='15'></td> <td width='10%'> <input type='text' id='"+id+"' class='Cena' size='15'  onblur='summ(this.id)'><a style='float:right' href='javascript:Delete("+id+",0);' class='extra delete'></a></td></td> <td width='10%' id='"+id+"' class='Summa'> </td></tr>")
 
 }
 
@@ -225,12 +225,12 @@ function Delete(ID,entry){
     var ID,entry;
 
     if (entry == 0){
-        $('#Preces tr#'+ID+'.bordersolidadd').remove()
+        $('#Products tr#'+ID+'.bordersolidadd').remove()
     }else{
             var data = 'id='+entry;
     success = function(answ){
         Loading(0, 0);
-        if (answ == 1){$('#Preces tr#'+ID+'.bordersolidadd').remove();    var stop =[:ierakstusk:];
+        if (answ == 1){$('#Products tr#'+ID+'.bordersolidadd').remove();    var stop =[:ierakstusk:];
     var i=1;
     for (i = 1; i <= stop; i++) {
         summ(i);

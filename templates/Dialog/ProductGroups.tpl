@@ -6,4 +6,4 @@
 <br>
 <form class="GrupasDialogs" ID="Grupas" style="height: 450px; overflow: auto;">
 
-    [:PrecuGrupas:]</form>
+    [:ProductGroups:]</form>

@@ -34,9 +34,9 @@ class Json extends DBObject {
                 $Data = Data::warehouseDialog($_POST['ID']);
                 print Template::Process('/Dialog/GetVeikals', $Data);
                 die;
-            case 'PrecuGrupas':
-                $Data['PrecuGrupas'] = Data::PrecuGrupas($_POST['ID']);
-                print Template::Process('/Dialog/PrecuGrupas', $Data);
+            case 'ProductGroups':
+                $Data['ProductGroups'] = Data::ProductGroups($_POST['ID']);
+                print Template::Process('/Dialog/ProductGroups', $Data);
                 die;
             case 'AddRecipient':
                 $Data = Invoice::loadRecipient($_POST['ID']);

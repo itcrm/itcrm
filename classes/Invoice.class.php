@@ -88,7 +88,7 @@ class Invoice extends DBObject {
             $a++;
 
             $Info['tabula'] .= "<tr class=\"bordersolidadd\" id=\"$a\" name=\"" . $row['ID'] . "\">
-                 <td width=\"40%\"> <input value=\"{$row['Nosaukums']}\" type=\"text\" class=\"Precu_nosaukums\" size=\"106\"></td>
+                 <td width=\"40%\"> <input value=\"{$row['Nosaukums']}\" type=\"text\" class=\"Product_name\" size=\"106\"></td>
                  <td width=\"20%\"> <input value=\"{$row['Artikuls']}\" type=\"text\" class=\"Artikuls\" size=\"50\"></td>
                  <td width=\"5%\"> <input value=\"{$row['Daudzums']}\" type=\"text\" id=\"$a\" class=\"Daudz\" size=\"16\" onblur=\"summ(this.id)\"></td>
                  <td width=\"5%\"> <input value=\"{$row['Mervieniba']}\" type=\"text\" class=\"Merv\" size=\"15\"></td>
@@ -99,7 +99,7 @@ class Invoice extends DBObject {
 
         if ($a == 0) {
             $Info['tabula'] = "<tr ID=\"1\" class=\"bordersolidadd\" name=\"0\">
-      <td width = \"40%\"> <input size = \"106\" type=\"text\" class=\"Precu_nosaukums\" /></td>
+      <td width = \"40%\"> <input size = \"106\" type=\"text\" class=\"Product_name\" /></td>
       <td width = \"20%\"> <input size = \"50\" type=\"text\" class=\"Artikuls\" /></td>
       <td width = \"5%\"> <input onblur=\"summ(this.id)\" size = \"16\" type=\"text\" class=\"Daudz\" id=\"1\"/></td>
       <td width = \"5%\"> <input size = \"15\" type=\"text\" class=\"Merv\" /></td>
