@@ -42,24 +42,6 @@ class Suppliers extends DBObject {
         }
     }
 
-    static function getList() {
-        $query = 'SELECT * FROM `Suppliers`
-                 ORDER BY `ID` DESC';
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Users (' . __LINE__ . ')');
-        }
-        $Supp = array();
-
-        while ($row = $result->fetch_assoc()) {
-            $Supp[] = $row;
-        }
-
-        if (!empty($Supp)) {
-            $Supp['__template'] = '/Suppliers/Supplier';
-            return $Supp;
-        } else return '';
-    }
     /**
      * DB functions
      */

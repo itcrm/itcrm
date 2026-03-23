@@ -53,20 +53,6 @@ class Types extends DBObject {
         } else return '';
     }
 
-    static function getOptionsList() {
-        $query = 'SELECT * FROM `Types`
-                   WHERE `Status`=1
-                   ORDER BY `Code`';
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError('Read error on Users (' . __LINE__ . ')');
-        }
-        $types = '';
-        while ($row = $result->fetch_assoc()) {
-            $types .= '<option value="' . $row['ID'] . '">' . $row['Code'] . '</option>' . "\n";
-        }
-        return $types;
-    }
-
     static function getAsArray() {
         $query = 'SELECT * FROM `Types` WHERE `Status`=1
                    ORDER BY `Code`';
