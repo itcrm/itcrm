@@ -58,7 +58,7 @@ const authenticatedStates = {
     },
   },
 
-  /** Data reminder view — /Data/Reminder/1 shows rows with RemindTo=testadmin */
+  /** Data reminder view — /Data/Reminder/1 shows rows with RemindTo=Alice */
   data_reminder_view: {},
 
   /** Data screen after a failed save — required fields have the `error` class */
@@ -330,7 +330,7 @@ const authenticatedStates = {
       SUBMIT_EMPTY_USER: "users_validation_error",
       /** Submitting with unique login/password adds a row to the list */
       SUBMIT_VALID_USER: "users_saved",
-      /** Clicking edit on the seeded testadmin row pre-fills the form */
+      /** Clicking edit on the seeded Alice row pre-fills the form */
       EDIT_USER_ROW: "users_edit_form",
     },
   },
@@ -389,13 +389,13 @@ const authenticatedStates = {
       SUBMIT_EMPTY_ORDER: "orders_validation_error",
       /** Submitting with a valid code adds a row to the list */
       SUBMIT_VALID_ORDER: "orders_saved",
-      /** Seeded TEST-ORDER is always present so edit is available immediately */
+      /** Seeded SPRING-GALA is always present so edit is available immediately */
       EDIT_ORDER_ROW: "orders_row_edit",
       /** Filter the list by code — reloads /Orders with filtered results */
       APPLY_ORDERS_FILTER: "orders_filtered",
       /** Filter orders by description text — reloads with description-matched results */
       APPLY_ORDERS_DESCRIPTION_FILTER: "orders_description_filtered",
-      /** TEST-ORDER is seeded with change history — changes panel always available */
+      /** SPRING-GALA is seeded with change history — changes panel always available */
       SHOW_ORDER_CHANGES: "orders_changes_panel",
       /** Toggle the orders sort between ID DESC (default) and Code ASC */
       SORT_ORDERS: "orders_sort_toggled",
@@ -417,7 +417,7 @@ const authenticatedStates = {
     },
   },
 
-  /** Orders screen with a description filter applied — matches "Test Order" seed text */
+  /** Orders screen with a description filter applied — matches "Spring Gala" seed text */
   orders_description_filtered: {
     on: {
       CLEAR_ORDERS_FILTER: "orders",
@@ -564,37 +564,37 @@ const dataFiltersStates = {
       on: {
         /** Apply a text search filter — reloads page with filtered results */
         APPLY_DATA_FILTER: "data_filtered",
-        /** Filter by IDDoc="DOC-1" — matches the test row created by SUBMIT_DATA_ROW */
+        /** Filter by IDDoc="gala-client-meeting" — matches the test row created by SUBMIT_DATA_ROW */
         APPLY_DOC_FILTER: "data_filtered_by_doc",
-        /** Filter by OrderFilterSelect="TEST-ORDER" — matches the test row's order */
+        /** Filter by OrderFilterSelect="SPRING-GALA" — matches the test row's order */
         APPLY_ORDER_FILTER: "data_filtered_by_order",
-        /** Filter by PersonFilterSelect="testadmin" — matches the test row's person */
+        /** Filter by PersonFilterSelect="Alice" — matches the test row's person */
         APPLY_PERSON_FILTER: "data_filtered_by_person",
-        /** Filter by TypeFilterSelect="TEST" — matches the test row's type */
+        /** Filter by TypeFilterSelect="BOUQUET" — matches the test row's type */
         APPLY_TYPE_FILTER: "data_filtered_by_type",
-        /** Filter by OperatorFilterSelect="testadmin" — matches the test row's operator (who created it) */
+        /** Filter by OperatorFilterSelect="Alice" — matches the test row's operator (who created it) */
         APPLY_OPERATOR_FILTER: "data_filtered_by_operator",
         /** Filter by Note text — matches the test row's note field */
         APPLY_NOTE_FILTER: "data_filtered_by_note",
         /** Filter by exact row ID — the ID field sends D.ID="n" (exact match) */
         APPLY_ID_FILTER: "data_filtered_by_id",
-        /** Filter by PlaceTaken text — matches the seeded row with PlaceTaken="model-place" */
+        /** Filter by PlaceTaken text — matches the seeded row with PlaceTaken="shop-counter" */
         APPLY_PLACE_TAKEN_FILTER: "data_filtered_by_place_taken",
         /** Filter by Sum value — matches the seeded row with Sum=42.00 */
         APPLY_SUM_FILTER: "data_filtered_by_sum",
-        /** Filter by BookNote text — matches the seeded row with BookNote='model-book-note' */
+        /** Filter by BookNote text — matches the seeded row with BookNote='booking-note' */
         APPLY_BOOKNOTE_FILTER: "data_filtered_by_booknote",
         /** Filter by Hours value — matches the seeded row with Hours=5.00 */
         APPLY_HOURS_FILTER: "data_filtered_by_hours",
-        /** Filter by TextType text — matches the seeded row with TextType='model-type-text' */
+        /** Filter by TextType text — matches the seeded row with TextType='type-text' */
         APPLY_TEXT_TYPE_FILTER: "data_filtered_by_text_type",
-        /** Filter by TextOrder text — matches the seeded row with TextOrder='model-order-text' */
+        /** Filter by TextOrder text — matches the seeded row with TextOrder='order-text' */
         APPLY_TEXT_ORDER_FILTER: "data_filtered_by_text_order",
-        /** Filter by PlaceDone text — matches the seeded row with PlaceDone='model-place-done' */
+        /** Filter by PlaceDone text — matches the seeded row with PlaceDone='client-location' */
         APPLY_PLACE_DONE_FILTER: "data_filtered_by_place_done",
         /** Filter by TotalPrice value — matches the seeded row with TotalPrice=100.00 */
         APPLY_TOTAL_PRICE_FILTER: "data_filtered_by_total_price",
-        /** Filter by PriceNote text — matches the seeded row with PriceNote='model-price-note' */
+        /** Filter by PriceNote text — matches the seeded row with PriceNote='price-note' */
         APPLY_PRICE_NOTE_FILTER: "data_filtered_by_price_note",
         /** Use the FilterForm date interval select to filter to today — DateFrom/To pre-filled */
         APPLY_DATE_INTERVAL_TODAY: "data_filtered_today",
@@ -615,37 +615,37 @@ const dataFiltersStates = {
 
     /** Data screen showing filtered results — filter fields are pre-filled */
     data_filtered: {},
-    /** Data screen filtered by IDDoc text — IDDoc field shows "DOC-1" after reload */
+    /** Data screen filtered by IDDoc text — IDDoc field shows "gala-client-meeting" after reload */
     data_filtered_by_doc: {},
-    /** Data screen filtered by OrderFilterSelect="TEST-ORDER" — only rows with that order */
+    /** Data screen filtered by OrderFilterSelect="SPRING-GALA" — only rows with that order */
     data_filtered_by_order: {},
-    /** Data screen filtered by PersonFilterSelect="testadmin" — only rows with that person */
+    /** Data screen filtered by PersonFilterSelect="Alice" — only rows with that person */
     data_filtered_by_person: {},
-    /** Data screen filtered by TypeFilterSelect="TEST" — only rows with that type */
+    /** Data screen filtered by TypeFilterSelect="BOUQUET" — only rows with that type */
     data_filtered_by_type: {},
-    /** Data screen filtered by OperatorFilterSelect="testadmin" — only rows created by that operator */
+    /** Data screen filtered by OperatorFilterSelect="Alice" — only rows created by that operator */
     data_filtered_by_operator: {},
     /** Data screen filtered by Note text — only rows matching the note value */
     data_filtered_by_note: {},
     /** Data screen filtered by exact row ID — only the single row with that ID is shown */
     data_filtered_by_id: {},
-    /** Data screen filtered by PlaceTaken="model-place" — matches the seeded reminder row */
+    /** Data screen filtered by PlaceTaken="shop-counter" — matches the seeded reminder row */
     data_filtered_by_place_taken: {},
     /** Data screen filtered by Sum="42" — matches the seeded reminder row (Sum=42.00) */
     data_filtered_by_sum: {},
-    /** Data screen filtered by BookNote="model-book-note" — matches the seeded reminder row */
+    /** Data screen filtered by BookNote="booking-note" — matches the seeded reminder row */
     data_filtered_by_booknote: {},
     /** Data screen filtered by Hours="5" — matches the seeded reminder row (Hours=5.00) */
     data_filtered_by_hours: {},
-    /** Data screen filtered by TextType="model-type-text" — matches the seeded reminder row */
+    /** Data screen filtered by TextType="type-text" — matches the seeded reminder row */
     data_filtered_by_text_type: {},
-    /** Data screen filtered by TextOrder="model-order-text" — matches the seeded reminder row */
+    /** Data screen filtered by TextOrder="order-text" — matches the seeded reminder row */
     data_filtered_by_text_order: {},
-    /** Data screen filtered by PlaceDone="model-place-done" — matches the seeded reminder row */
+    /** Data screen filtered by PlaceDone="client-location" — matches the seeded reminder row */
     data_filtered_by_place_done: {},
     /** Data screen filtered by TotalPrice="100" — matches the seeded reminder row (TotalPrice=100.00) */
     data_filtered_by_total_price: {},
-    /** Data screen filtered by PriceNote="model-price-note" — matches the seeded reminder row */
+    /** Data screen filtered by PriceNote="price-note" — matches the seeded reminder row */
     data_filtered_by_price_note: {},
     /** Data screen filtered to today via the date interval select — DateFrom/To show today */
     data_filtered_today: {},

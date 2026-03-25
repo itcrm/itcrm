@@ -114,7 +114,7 @@ export async function createTestEnv() {
     url,
     db,
     users: {
-      admin: { login: "testadmin", password: "testpass" },
+      admin: { login: "Alice", password: "Alice123" },
     },
     async dispose() {
       if (coverageEnabled) {

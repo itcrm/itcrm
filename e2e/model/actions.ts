@@ -36,7 +36,7 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   NAVIGATE_REMINDER: async (page, env) => {
-    // Navigate directly to the reminder view for testadmin (ID=1) — seeded row has RemindTo=1
+    // Navigate directly to the reminder view for Alice (ID=1) — seeded row has RemindTo=1
     await page.goto(env.url + "/lv/Data/Reminder/1");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
@@ -98,17 +98,17 @@ export const eventActions: Record<string, ActionFn> = {
         const el = get(name);
         if (el) el.value = val;
       };
-      set("IDDoc", "DOC-1");
+      set("IDDoc", "gala-client-meeting");
       // Set both visible selects (display) and hidden IDs (server validation).
-      // Seeded fixtures: testadmin=ID1, TEST-ORDER=ID1, TEST=ID1.
-      set("PersonSelect", "testadmin");
+      // Seeded fixtures: Alice=ID1, SPRING-GALA=ID1, BOUQUET=ID1.
+      set("PersonSelect", "Alice");
       set("IDPerson", "1");
-      set("OrderSelect", "TEST-ORDER");
+      set("OrderSelect", "SPRING-GALA");
       set("IDOrder", "1");
-      set("TypeSelect", "TEST");
+      set("TypeSelect", "BOUQUET");
       set("IDType", "1");
     });
-    await page.fill('#AddDataForm [name="Note"]', "model-test-note");
+    await page.fill('#AddDataForm [name="Note"]', "Meeting with client about arrangement");
     const saveResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Save")
     );
@@ -233,13 +233,13 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_SAVED_FILTER: async (page) => {
-    // MODEL-TEST-FILTER has Note='model-test-note'. Directly fill the Note field and apply
+    // Weekly flowers has Note='Meeting with client about arrangement'. Directly fill the Note field and apply
     // the filter — this reaches the identical state to selecting the saved filter from the
     // IDFilter dropdown (the state verifier only checks Note value and visible data rows).
     // The IDFilter onchange + getFilterData AJAX path is flaky: the Filters/Get PHP worker
     // holds the session file lock until it exits, which can block the subsequent
     // Data/Filter request when PHP-FPM has limited concurrency.
-    await page.fill('#FilterForm [name="Note"]', "model-test-note");
+    await page.fill('#FilterForm [name="Note"]', "Meeting with client about arrangement");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -253,7 +253,7 @@ export const eventActions: Record<string, ActionFn> = {
   SEARCH_WITH_DELETED: async (page) => {
     // Check FindDeleted in SearchForm and search — includes soft-deleted rows (tr.deleted) in results
     await page.check('form[name="SearchForm"] [name="FindDeleted"]');
-    await page.fill('form[name="SearchForm"] [name="Search"]', "model-test-note");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     // The deleted row should appear with the "deleted" CSS class
@@ -262,7 +262,7 @@ export const eventActions: Record<string, ActionFn> = {
 
   APPLY_DATA_SEARCH: async (page) => {
     // Submit the menu SearchForm — posts to /Data/Search with the search term
-    await page.fill('form[name="SearchForm"] [name="Search"]', "model-test-note");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -271,7 +271,7 @@ export const eventActions: Record<string, ActionFn> = {
   APPLY_DATA_SEARCH_DATE_SORTED: async (page) => {
     // Select Sort=1 (by Date) in SearchForm before submitting
     await page.selectOption('form[name="SearchForm"] [name="Sort"]', "1");
-    await page.fill('form[name="SearchForm"] [name="Search"]', "model-test-note");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -280,7 +280,7 @@ export const eventActions: Record<string, ActionFn> = {
   APPLY_DATA_SEARCH_TODAY: async (page) => {
     // Select Period=5 (Today) and search — filters results to today's date range
     await page.selectOption('form[name="SearchForm"] [name="Period"]', "5");
-    await page.fill('form[name="SearchForm"] [name="Search"]', "model-test-note");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -289,7 +289,7 @@ export const eventActions: Record<string, ActionFn> = {
   APPLY_DATA_SEARCH_WEEK: async (page) => {
     // Select Period=7 (Week) and search — filters results to current week date range
     await page.selectOption('form[name="SearchForm"] [name="Period"]', "7");
-    await page.fill('form[name="SearchForm"] [name="Search"]', "model-test-note");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -298,7 +298,7 @@ export const eventActions: Record<string, ActionFn> = {
   APPLY_DATA_SEARCH_MONTH: async (page) => {
     // Select Period=1 (last 30 days) and search — filters results to last month
     await page.selectOption('form[name="SearchForm"] [name="Period"]', "1");
-    await page.fill('form[name="SearchForm"] [name="Search"]', "model-test-note");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -307,7 +307,7 @@ export const eventActions: Record<string, ActionFn> = {
   APPLY_DATA_SEARCH_YEAR: async (page) => {
     // Select Period=4 (last year) and search — filters results to last 12 months
     await page.selectOption('form[name="SearchForm"] [name="Period"]', "4");
-    await page.fill('form[name="SearchForm"] [name="Search"]', "model-test-note");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -325,8 +325,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_DOC_FILTER: async (page) => {
-    // Fill the IDDoc field with "DOC-1" — matches the test row's IDDoc value
-    await page.fill('#FilterForm [name="IDDoc"]', "DOC-1");
+    // Fill the IDDoc field with "gala-client-meeting" — matches the test row's IDDoc value
+    await page.fill('#FilterForm [name="IDDoc"]', "gala-client-meeting");
     // Select "All time" so DateFrom/DateTo don't exclude today's rows (SHOW_PERIOD=-2 makes defaults future-dated)
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     // Wait for the full navigation triggered by window.location.replace() in the
@@ -340,8 +340,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_ORDER_FILTER: async (page) => {
-    // Fill OrderFilterSelect with "TEST-ORDER" — filterAutocomplete() sets hidden Order=1 on submit
-    await page.fill('#FilterForm [name="OrderFilterSelect"]', "TEST-ORDER");
+    // Fill OrderFilterSelect with "SPRING-GALA" — filterAutocomplete() sets hidden Order=1 on submit
+    await page.fill('#FilterForm [name="OrderFilterSelect"]', "SPRING-GALA");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -353,8 +353,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_PERSON_FILTER: async (page) => {
-    // Fill PersonFilterSelect with "testadmin" — filterAutocomplete() sets hidden Person=1 on submit
-    await page.fill('#FilterForm [name="PersonFilterSelect"]', "testadmin");
+    // Fill PersonFilterSelect with "Alice" — filterAutocomplete() sets hidden Person=1 on submit
+    await page.fill('#FilterForm [name="PersonFilterSelect"]', "Alice");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -366,8 +366,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_TYPE_FILTER: async (page) => {
-    // Fill TypeFilterSelect with "TEST" — filterAutocomplete() sets hidden Type=1 on submit
-    await page.fill('#FilterForm [name="TypeFilterSelect"]', "TEST");
+    // Fill TypeFilterSelect with "BOUQUET" — filterAutocomplete() sets hidden Type=1 on submit
+    await page.fill('#FilterForm [name="TypeFilterSelect"]', "BOUQUET");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -379,8 +379,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_OPERATOR_FILTER: async (page) => {
-    // Fill OperatorFilterSelect with "testadmin" — filterAutocomplete() sets hidden Operator=1 on submit
-    await page.fill('#FilterForm [name="OperatorFilterSelect"]', "testadmin");
+    // Fill OperatorFilterSelect with "Alice" — filterAutocomplete() sets hidden Operator=1 on submit
+    await page.fill('#FilterForm [name="OperatorFilterSelect"]', "Alice");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -392,8 +392,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_NOTE_FILTER: async (page) => {
-    // Fill the Note filter field with "model-test-note" — matches the seeded data row
-    await page.fill('#FilterForm [name="Note"]', "model-test-note");
+    // Fill the Note filter field with "Meeting with client about arrangement" — matches the seeded data row
+    await page.fill('#FilterForm [name="Note"]', "Meeting with client about arrangement");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -418,8 +418,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_PLACE_TAKEN_FILTER: async (page) => {
-    // Filter by PlaceTaken="model-place" — seeded reminder row has PlaceTaken='model-place'
-    await page.fill('#FilterForm [name="PlaceTaken"]', "model-place");
+    // Filter by PlaceTaken="shop-counter" — seeded reminder row has PlaceTaken='shop-counter'
+    await page.fill('#FilterForm [name="PlaceTaken"]', "shop-counter");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -444,8 +444,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_BOOKNOTE_FILTER: async (page) => {
-    // Filter by BookNote="model-book-note" — seeded reminder row has BookNote='model-book-note'
-    await page.fill('#FilterForm [name="BookNote"]', "model-book-note");
+    // Filter by BookNote="booking-note" — seeded reminder row has BookNote='booking-note'
+    await page.fill('#FilterForm [name="BookNote"]', "booking-note");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -470,8 +470,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_TEXT_TYPE_FILTER: async (page) => {
-    // Filter by TextType="model-type-text" — seeded reminder row has TextType='model-type-text'
-    await page.fill('#FilterForm [name="TextType"]', "model-type-text");
+    // Filter by TextType="type-text" — seeded reminder row has TextType='type-text'
+    await page.fill('#FilterForm [name="TextType"]', "type-text");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -483,8 +483,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_TEXT_ORDER_FILTER: async (page) => {
-    // Filter by TextOrder="model-order-text" — seeded reminder row has TextOrder='model-order-text'
-    await page.fill('#FilterForm [name="TextOrder"]', "model-order-text");
+    // Filter by TextOrder="order-text" — seeded reminder row has TextOrder='order-text'
+    await page.fill('#FilterForm [name="TextOrder"]', "order-text");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -496,8 +496,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_PLACE_DONE_FILTER: async (page) => {
-    // Filter by PlaceDone="model-place-done" — seeded reminder row has PlaceDone='model-place-done'
-    await page.fill('#FilterForm [name="PlaceDone"]', "model-place-done");
+    // Filter by PlaceDone="client-location" — seeded reminder row has PlaceDone='client-location'
+    await page.fill('#FilterForm [name="PlaceDone"]', "client-location");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -522,8 +522,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_PRICE_NOTE_FILTER: async (page) => {
-    // Filter by PriceNote="model-price-note" — seeded reminder row has this value (LIKE match)
-    await page.fill('#FilterForm [name="PriceNote"]', "model-price-note");
+    // Filter by PriceNote="price-note" — seeded reminder row has this value (LIKE match)
+    await page.fill('#FilterForm [name="PriceNote"]', "price-note");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -583,7 +583,7 @@ export const eventActions: Record<string, ActionFn> = {
 
   APPLY_DATA_FILTER: async (page) => {
     // Fill the free-text Note search field in the FilterForm header
-    await page.fill('#FilterForm [name="Note"]', "model-test-note");
+    await page.fill('#FilterForm [name="Note"]', "Meeting with client about arrangement");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -663,7 +663,7 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   SUBMIT_VALID_TYPE: async (page) => {
-    const code = "T-MODEL-TEST";
+    const code = "T-FLORAL-NEW";
     await page.fill('#AddTypesForm [name="Code"]', code);
     const saveResponse = page.waitForResponse((r) =>
       r.url().includes("/Types/Save")
@@ -740,7 +740,7 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   SUBMIT_VALID_ORDER: async (page) => {
-    const code = "O-MODEL-TEST";
+    const code = "O-FLORAL-NEW";
     await page.fill('#AddOrdersForm [name="Code"]', code);
     await page.click('#AddOrdersForm [type="submit"]');
     await expect(page.locator("#OrdersList")).toContainText(code);
@@ -759,7 +759,7 @@ export const eventActions: Record<string, ActionFn> = {
       .locator('#AddOrdersForm [name="Code"]')
       .inputValue();
     if (!codeVal.trim()) {
-      await page.fill('#AddOrdersForm [name="Code"]', "TEST-ORDER-FIXED");
+      await page.fill('#AddOrdersForm [name="Code"]', "SPRING-GALA-FIX");
     }
     const saveResponse = page.waitForResponse((r) =>
       r.url().includes("/Orders/Save")
@@ -775,25 +775,25 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_ORDERS_FILTER: async (page) => {
-    await page.fill('#AddOrdersForm [name="Code"]', "TEST");
+    await page.fill('#AddOrdersForm [name="Code"]', "SPRING");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Orders/Filter")
     );
     await page.click('#AddOrdersForm input[value="Meklēt"]');
     await filterResponse;
     await page.waitForLoadState("load");
-    await expect(page.locator("#OrdersList")).toContainText("TEST-ORDER");
+    await expect(page.locator("#OrdersList")).toContainText("SPRING-GALA");
   },
 
   APPLY_ORDERS_DESCRIPTION_FILTER: async (page) => {
-    await page.fill('#AddOrdersForm [name="Description"]', "Test Order");
+    await page.fill('#AddOrdersForm [name="Description"]', "Spring Gala");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Orders/Filter")
     );
     await page.click('#AddOrdersForm input[value="Meklēt"]');
     await filterResponse;
     await page.waitForLoadState("load");
-    await expect(page.locator("#OrdersList")).toContainText("TEST-ORDER");
+    await expect(page.locator("#OrdersList")).toContainText("SPRING-GALA");
   },
 
   SORT_ORDERS: async (page) => {
@@ -804,7 +804,7 @@ export const eventActions: Record<string, ActionFn> = {
     await page.click('a[href="javascript:changeOrderSort(\'Code\')"]');
     await sortResponse;
     await page.waitForLoadState("load");
-    await expect(page.locator("#OrdersList")).toContainText("TEST-ORDER");
+    await expect(page.locator("#OrdersList")).toContainText("SPRING-GALA");
   },
 
   CLEAR_ORDERS_FILTER: async (page) => {
@@ -860,7 +860,7 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   SUBMIT_VALID_USER: async (page) => {
-    const login = "model-test-user";
+    const login = "temp-florist";
     await page.fill('#AddUsersForm [name="Login"]', login);
     await page.fill('#AddUsersForm [name="Password"]', "test1234");
     const saveResponse = page.waitForResponse((r) =>
@@ -884,7 +884,7 @@ export const eventActions: Record<string, ActionFn> = {
       .locator('#AddUsersForm [name="Login"]')
       .inputValue();
     if (!loginVal.trim()) {
-      await page.fill('#AddUsersForm [name="Login"]', "testadmin");
+      await page.fill('#AddUsersForm [name="Login"]', "Alice");
     }
     const saveResponse = page.waitForResponse((r) =>
       r.url().includes("/Users/Save")
@@ -914,10 +914,10 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   DELETE_USER_ROW: async (page) => {
-    // Delete the model-test-user row (not testadmin)
+    // Delete the temp-florist row (not Alice)
     const userRow = page
       .locator("#UsersList tr.Data")
-      .filter({ hasText: "model-test-user" });
+      .filter({ hasText: "temp-florist" });
     page.once("dialog", (dialog) => dialog.accept());
     const deleteResponse = page.waitForResponse((r) =>
       r.url().includes("/Users/Delete")
@@ -936,7 +936,7 @@ export const eventActions: Record<string, ActionFn> = {
     await expect(
       page
         .locator("#UsersList tr.Data:not(.deleted)")
-        .filter({ hasText: "model-test-user" })
+        .filter({ hasText: "temp-florist" })
     ).toBeVisible();
   },
 
@@ -959,14 +959,14 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   SHOW_ORDER_CHANGES: async (page) => {
-    // TEST-ORDER is seeded with pre-existing change history so the changes button is always visible
+    // SPRING-GALA is seeded with pre-existing change history so the changes button is always visible
     const changesResponse = page.waitForResponse((r) =>
       r.url().includes("/Orders/Changes")
     );
     await page.locator("#OrdersList a.extra.changes:not(.hide)").first().click();
     await changesResponse;
     await page.locator("#Loading").waitFor({ state: "hidden" });
-    // Changes are loaded into #Changes1 (TEST-ORDER, always ID=1 in seeded data)
+    // Changes are loaded into #Changes1 (SPRING-GALA, always ID=1 in seeded data)
     await expect(page.locator("#Changes1")).not.toBeEmpty();
   },
 
@@ -1075,7 +1075,7 @@ export const eventActions: Record<string, ActionFn> = {
       .locator('#AddFiltersForm [name="Name"]')
       .inputValue();
     if (!nameVal.trim()) {
-      await page.fill('#AddFiltersForm [name="Name"]', "MODEL-TEST-FILTER");
+      await page.fill('#AddFiltersForm [name="Name"]', "Weekly flowers");
     }
     const saveResponse = page.waitForResponse((r) =>
       r.url().includes("/Filters/Save")
@@ -1104,7 +1104,7 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   SUBMIT_VALID_FILTER: async (page) => {
-    const name = "MODEL-TEST-FILTER";
+    const name = "Weekly flowers";
     await page.fill('#AddFiltersForm [name="Name"]', name);
     const saveResponse = page.waitForResponse((r) =>
       r.url().includes("/Filters/Save")
@@ -1267,7 +1267,7 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
     // (IDFilter is unset from session after submit, but the filter's field values persist.)
     await expect(
       page.locator('#FilterForm [name="Note"]')
-    ).toHaveValue("model-test-note");
+    ).toHaveValue("Meeting with client about arrangement");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
@@ -1415,47 +1415,47 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   data_filtered_by_doc: async (page) => {
     // IDDoc field shows the filter value that was applied
     await expect(page.locator('#FilterForm [name="IDDoc"]')).toHaveValue(
-      "DOC-1"
+      "gala-client-meeting"
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
   data_filtered_by_order: async (page) => {
-    // OrderFilterSelect field shows "TEST-ORDER, " — filterAutocomplete(1) appends ", " on reload
+    // OrderFilterSelect field shows "SPRING-GALA, " — filterAutocomplete(1) appends ", " on reload
     await expect(page.locator('#FilterForm [name="OrderFilterSelect"]')).toHaveValue(
-      "TEST-ORDER, "
+      "SPRING-GALA, "
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
   data_filtered_by_person: async (page) => {
-    // PersonFilterSelect field shows "testadmin, " — filterAutocomplete(1) appends ", " on reload
+    // PersonFilterSelect field shows "Alice, " — filterAutocomplete(1) appends ", " on reload
     await expect(page.locator('#FilterForm [name="PersonFilterSelect"]')).toHaveValue(
-      "testadmin, "
+      "Alice, "
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
   data_filtered_by_type: async (page) => {
-    // TypeFilterSelect field shows "TEST, " — filterAutocomplete(1) appends ", " on reload
+    // TypeFilterSelect field shows "BOUQUET, " — filterAutocomplete(1) appends ", " on reload
     await expect(page.locator('#FilterForm [name="TypeFilterSelect"]')).toHaveValue(
-      "TEST, "
+      "BOUQUET, "
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
   data_filtered_by_operator: async (page) => {
-    // OperatorFilterSelect field shows "testadmin, " — filterAutocomplete(1) appends ", " on reload
+    // OperatorFilterSelect field shows "Alice, " — filterAutocomplete(1) appends ", " on reload
     await expect(page.locator('#FilterForm [name="OperatorFilterSelect"]')).toHaveValue(
-      "testadmin, "
+      "Alice, "
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
   data_filtered_by_note: async (page) => {
-    // Note filter field shows "model-test-note" — the note filter was applied
+    // Note filter field shows "Meeting with client about arrangement" — the note filter was applied
     await expect(page.locator('#FilterForm [name="Note"]')).toHaveValue(
-      "model-test-note"
+      "Meeting with client about arrangement"
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
@@ -1467,9 +1467,9 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   },
 
   data_filtered_by_place_taken: async (page) => {
-    // PlaceTaken filter field shows "model-place" — place taken filter was applied
+    // PlaceTaken filter field shows "shop-counter" — place taken filter was applied
     await expect(page.locator('#FilterForm [name="PlaceTaken"]')).toHaveValue(
-      "model-place"
+      "shop-counter"
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
@@ -1481,9 +1481,9 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   },
 
   data_filtered_by_booknote: async (page) => {
-    // BookNote filter field shows "model-book-note" — book note filter was applied
+    // BookNote filter field shows "booking-note" — book note filter was applied
     await expect(page.locator('#FilterForm [name="BookNote"]')).toHaveValue(
-      "model-book-note"
+      "booking-note"
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
@@ -1495,25 +1495,25 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   },
 
   data_filtered_by_text_type: async (page) => {
-    // TextType filter field shows "model-type-text" — text type filter was applied
+    // TextType filter field shows "type-text" — text type filter was applied
     await expect(page.locator('#FilterForm [name="TextType"]')).toHaveValue(
-      "model-type-text"
+      "type-text"
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
   data_filtered_by_text_order: async (page) => {
-    // TextOrder filter field shows "model-order-text" — text order filter was applied
+    // TextOrder filter field shows "order-text" — text order filter was applied
     await expect(page.locator('#FilterForm [name="TextOrder"]')).toHaveValue(
-      "model-order-text"
+      "order-text"
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
   data_filtered_by_place_done: async (page) => {
-    // PlaceDone filter field shows "model-place-done" — place done filter was applied
+    // PlaceDone filter field shows "client-location" — place done filter was applied
     await expect(page.locator('#FilterForm [name="PlaceDone"]')).toHaveValue(
-      "model-place-done"
+      "client-location"
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
@@ -1527,10 +1527,10 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   },
 
   data_filtered_by_price_note: async (page) => {
-    // PriceNote filter field shows "model-price-note" — price note filter was applied
+    // PriceNote filter field shows "price-note" — price note filter was applied
     await expect(
       page.locator('#FilterForm [name="PriceNote"]')
-    ).toHaveValue("model-price-note");
+    ).toHaveValue("price-note");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
@@ -1601,17 +1601,17 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   orders_hard_deleted: async (page) => {
     // After hard delete the deleted row is permanently gone from the list
     await expect(page.locator("#OrdersList tr.deleted")).toHaveCount(0);
-    // At least TEST-ORDER (seeded) remains as an active row
+    // At least SPRING-GALA (seeded) remains as an active row
     await expect(page.locator("#OrdersList tr.Data:not(.deleted)").first()).toBeVisible();
   },
 
   orders_sort_toggled: async (page) => {
     // Orders list is shown after toggling the sort to Code ASC
-    await expect(page.locator("#OrdersList")).toContainText("TEST-ORDER");
+    await expect(page.locator("#OrdersList")).toContainText("SPRING-GALA");
   },
 
   orders_changes_panel: async (page) => {
-    // #Changes1 (TEST-ORDER) is expanded with change history loaded
+    // #Changes1 (SPRING-GALA) is expanded with change history loaded
     await expect(page.locator("#Changes1")).not.toBeEmpty();
   },
 
@@ -1627,13 +1627,13 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
 
   orders_filtered: async (page) => {
     // Filter is stored in session; list shows only matching orders
-    await expect(page.locator("#OrdersList")).toContainText("TEST-ORDER");
+    await expect(page.locator("#OrdersList")).toContainText("SPRING-GALA");
   },
 
   orders_description_filtered: async (page) => {
-    // Description filter is active in session; list shows orders matching "Test Order"
-    await expect(page.locator("#OrdersList")).toContainText("TEST-ORDER");
-    await expect(page.locator("#OrdersList")).toContainText("Test Order");
+    // Description filter is active in session; list shows orders matching "Spring Gala"
+    await expect(page.locator("#OrdersList")).toContainText("SPRING-GALA");
+    await expect(page.locator("#OrdersList")).toContainText("Spring Gala");
   },
 
   orders_row_deleted: async (page) => {
@@ -1652,7 +1652,7 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   },
 
   users_saved: async (page) => {
-    await expect(page.locator("#UsersList")).toContainText("model-test-user");
+    await expect(page.locator("#UsersList")).toContainText("temp-florist");
   },
 
   users_validation_error: async (page) => {
