@@ -190,7 +190,6 @@ class Data extends DBObject {
     }
 
     function Search() {
-        $str = addslashes($_POST['Search']);
         $startDate = '';
         switch ($_POST['Period']) {
             case 1:
@@ -242,22 +241,17 @@ class Data extends DBObject {
                 break;
         }
 
-        $search = explode(' ', trim($str));
+        $search = explode(' ', trim($_POST['Search']));
         $str = array();
-        foreach ($search as $k => $v) $str[] = '(
-                     D.IDDoc LIKE ("%' . $v . '%") OR
-                     D.TextOrder LIKE ("%' . $v . '%") OR
-                     D.TextType LIKE ("%' . $v . '%") OR
-                     D.PlaceTaken LIKE ("%' . $v . '%") OR
-                     D.PlaceDone LIKE ("%' . $v . '%") OR
-                     D.Note LIKE ("%' . $v . '%") OR
-                     D.BookNote LIKE ("%' . $v . '%") OR
-                     D.PriceNote LIKE ("%' . $v . '%") OR
-                     P.Login LIKE ("%' . $v . '%") OR
-                     U.Login LIKE ("%' . $v . '%") OR
-                     O.Code LIKE ("%' . $v . '%") OR
-                     T.Code LIKE ("%' . $v . '%")
-                     )';
+        $searchParams = [];
+        $searchColumns = ['D.IDDoc', 'D.TextOrder', 'D.TextType', 'D.PlaceTaken', 'D.PlaceDone',
+            'D.Note', 'D.BookNote', 'D.PriceNote', 'P.Login', 'U.Login', 'O.Code', 'T.Code'];
+        foreach ($search as $k => $v) {
+            $likes = array_map(function($col) { return $col . ' LIKE ?'; }, $searchColumns);
+            $str[] = '(' . implode(' OR ', $likes) . ')';
+            $param = '%' . $v . '%';
+            for ($i = 0; $i < count($searchColumns); $i++) $searchParams[] = $param;
+        }
         if (!isset($_POST['FindDeleted']) || $_POST['FindDeleted'] != 1) {
             $str[] = 'D.Status=1';
         }
@@ -265,10 +259,10 @@ class Data extends DBObject {
         $str = implode(' AND ', $str);
 
         $query = 'SELECT D.*,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `DateShow`,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `Date`,
-                         DATE_FORMAT(D.`AddDate`,"%y.%m.%d %H:%i") as `AddDate`,
-                         DATE_FORMAT(D.`RemindDate`,"%y.%m.%d %H:%i") as `RemindDate`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `DateShow`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `Date`,
+                         (substr(strftime(\'%Y\', D.`AddDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`AddDate`)) as `AddDate`,
+                         (substr(strftime(\'%Y\', D.`RemindDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`RemindDate`)) as `RemindDate`,
                          `RemindDate` as RemindDateStamp,
                          P.Login as Person, U.Login as User, R.Login as RemindTo,
                          O.Code as `Order`, T.Code as Type
@@ -278,11 +272,20 @@ class Data extends DBObject {
                LEFT JOIN Users R ON (R.ID=D.RemindTo)
                LEFT JOIN Orders O ON (O.ID=D.IDOrder)
                LEFT JOIN Types T ON (T.ID=D.IDType)
-               WHERE ' . $str . '
-                     ' . ($startDate > -1 ? 'AND D.Date BETWEEN "' . $startDate . '" AND "' . ($endDate != '' ? $endDate : date('Y-m-d 23:59:59')) . '"' : '');
+               WHERE ' . $str;
 
-        $where = ' WHERE ' . $str . '
-                  ' . ($startDate > -1 ? 'AND D.Date BETWEEN "' . $startDate . '" AND "' . ($endDate != '' ? $endDate : date('Y-m-d 23:59:59')) . '"' : '');
+        $dateParams = [];
+        if ($startDate > -1) {
+            $query .= ' AND D.Date BETWEEN ? AND ?';
+            $dateParams[] = $startDate;
+            $dateParams[] = ($endDate != '' ? $endDate : date('Y-m-d 23:59:59'));
+        }
+
+        $where = ' WHERE ' . $str;
+        $whereParams = array_merge($searchParams, $dateParams);
+        if ($startDate > -1) {
+            $where .= ' AND D.Date BETWEEN ? AND ?';
+        }
 
         $query .= ' ORDER BY ' . ($_POST['Sort'] == 1 ? 'Date' : 'ID') . ' DESC';
 
@@ -318,7 +321,7 @@ class Data extends DBObject {
 
         $query2 .= $where;
 
-        if (!$result = self::$DB->query($query2)) {
+        if (!$result = self::$DB->prepare($query2, $whereParams)) {
             throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
         while ($row = $result->fetch_assoc()) {
@@ -333,7 +336,7 @@ class Data extends DBObject {
             $pagestart = 0;
         }
 
-        $query .= ' LIMIT ' . $pagestart . ', ' . $page;
+        $query .= ' LIMIT ' . $page . ' OFFSET ' . $pagestart;
 
         // add faili image function
         $fileFnExists = false;
@@ -342,7 +345,8 @@ class Data extends DBObject {
             $fileFnExists = true;
         }
 
-        if (!$result = self::$DB->query($query)) {
+        $allParams = array_merge($searchParams, $dateParams);
+        if (!$result = self::$DB->prepare($query, $allParams)) {
             throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
@@ -389,13 +393,14 @@ class Data extends DBObject {
             $fileFnExists = true;
         }
 
-        $Filter = $this->getFilter();
+        $filterParams = [];
+        $Filter = $this->getFilter($filterParams);
 
         $query = 'SELECT D.*,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `DateShow`,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `Date`,
-                         DATE_FORMAT(D.`AddDate`,"%y.%m.%d %H:%i") as `AddDate`,
-                         DATE_FORMAT(D.`RemindDate`,"%y.%m.%d %H:%i") as `RemindDate`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `DateShow`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `Date`,
+                         (substr(strftime(\'%Y\', D.`AddDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`AddDate`)) as `AddDate`,
+                         (substr(strftime(\'%Y\', D.`RemindDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`RemindDate`)) as `RemindDate`,
                          `RemindDate` as RemindDateStamp,
                          P.Login as Person, U.Login as User, R.Login as RemindTo,
                          O.Code as `Order`, T.Code as Type
@@ -429,20 +434,14 @@ class Data extends DBObject {
         if (!empty($_SESSION['Filter']['Search'])) {
             $search = explode(' ', trim($_SESSION['Filter']['Search']));
             $str = array();
-            foreach ($search as $k => $v) $str[] = '(
-                     D.IDDoc LIKE ("%' . $v . '%") OR
-                     D.TextOrder LIKE ("%' . $v . '%") OR
-                     D.TextType LIKE ("%' . $v . '%") OR
-                     D.PlaceTaken LIKE ("%' . $v . '%") OR
-                     D.PlaceDone LIKE ("%' . $v . '%") OR
-                     D.Note LIKE ("%' . $v . '%") OR
-                     D.BookNote LIKE ("%' . $v . '%") OR
-                     D.PriceNote LIKE ("%' . $v . '%") OR
-                     P.Login LIKE ("%' . $v . '%") OR
-                     U.Login LIKE ("%' . $v . '%") OR
-                     O.Code LIKE ("%' . $v . '%") OR
-                     T.Code LIKE ("%' . $v . '%")
-                     )';
+            $searchColumns = ['D.IDDoc', 'D.TextOrder', 'D.TextType', 'D.PlaceTaken', 'D.PlaceDone',
+                'D.Note', 'D.BookNote', 'D.PriceNote', 'P.Login', 'U.Login', 'O.Code', 'T.Code'];
+            foreach ($search as $k => $v) {
+                $likes = array_map(function($col) { return $col . ' LIKE ?'; }, $searchColumns);
+                $str[] = '(' . implode(' OR ', $likes) . ')';
+                $param = '%' . $v . '%';
+                for ($i = 0; $i < count($searchColumns); $i++) $filterParams[] = $param;
+            }
             if ($_POST['FindDeleted'] != 1) {
                 $str[] = 'D.Status=1';
             }
@@ -469,10 +468,10 @@ class Data extends DBObject {
         LEFT JOIN Types T ON (T.ID=D.IDType)';
 
         $query3 = 'SELECT D.*,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `DateShow`,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `Date`,
-                         DATE_FORMAT(D.`AddDate`,"%y.%m.%d %H:%i") as `AddDate`,
-                         DATE_FORMAT(D.`RemindDate`,"%y.%m.%d %H:%i") as `RemindDate`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `DateShow`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `Date`,
+                         (substr(strftime(\'%Y\', D.`AddDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`AddDate`)) as `AddDate`,
+                         (substr(strftime(\'%Y\', D.`RemindDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`RemindDate`)) as `RemindDate`,
                          `RemindDate` as RemindDateStamp,
                          P.Login as Person, U.Login as User, R.Login as RemindTo,
                          O.Code as `Order`, T.Code as Type
@@ -572,7 +571,7 @@ class Data extends DBObject {
         $query2 .= $where;
         $query2 .= ' and D.ID NOT IN' . $CheckedRow;
 
-        if (!$result = self::$DB->query($query2)) {
+        if (!$result = self::$DB->prepare($query2, $filterParams)) {
             throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
         while ($row = $result->fetch_assoc()) {
@@ -588,9 +587,9 @@ class Data extends DBObject {
 
         $query .= ' and D.ID NOT IN' . $CheckedRow;
         $query .= ' ORDER BY ' . $Sort;
-        $query .= ' LIMIT ' . $pagestart . ', ' . $page;
+        $query .= ' LIMIT ' . $page . ' OFFSET ' . $pagestart;
 
-        if (!$result = self::$DB->query($query)) {
+        if (!$result = self::$DB->prepare($query, $filterParams)) {
             throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
 
@@ -688,12 +687,16 @@ class Data extends DBObject {
         return 1;
     }
 
-    function getFilter() {
-        if (isset($_SESSION['Filter']['ID']) && $_SESSION['Filter']['ID'] != '')
-            $Vars['ID'] = 'D.ID="' . $_SESSION['Filter']['ID'] . '"';
+    function getFilter(&$filterParams = []) {
+        if (isset($_SESSION['Filter']['ID']) && $_SESSION['Filter']['ID'] != '') {
+            $Vars['ID'] = 'D.ID=?';
+            $filterParams[] = $_SESSION['Filter']['ID'];
+        }
 
-        if (isset($_SESSION['Filter']['IDDoc']) && $_SESSION['Filter']['IDDoc'] != '')
-            $Vars['IDDoc'] = 'D.IDDoc LIKE "%' . $_SESSION['Filter']['IDDoc'] . '%"';
+        if (isset($_SESSION['Filter']['IDDoc']) && $_SESSION['Filter']['IDDoc'] != '') {
+            $Vars['IDDoc'] = 'D.IDDoc LIKE ?';
+            $filterParams[] = '%' . $_SESSION['Filter']['IDDoc'] . '%';
+        }
 
         if (empty($_SESSION['Filter']['DateFrom']))
             $_SESSION['Filter']['DateFrom'] = date('Y-m-d', time() - 60 * 60 * 24 * Config::SHOW_PERIOD);
@@ -710,8 +713,14 @@ class Data extends DBObject {
         if (isset($_SESSION['FilterSaved']['Date']['To']) && isset($_SESSION['Filter']['DateTo']) && $_SESSION['FilterSaved']['Date']['To'] < $_SESSION['Filter']['DateTo'])
             $_SESSION['Filter']['DateTo'] = $_SESSION['FilterSaved']['Date']['To'];
 
-        $Vars['Date'] = ($_SESSION['Sort'] == '`ID`' ? 'D.AddDate ' : 'D.Date') . ' BETWEEN "' . $_SESSION['Filter']['DateFrom'] . '" AND "' . $_SESSION['Filter']['DateTo'] . '"';
-        if (isset($_SESSION['FilterSaved']['Date']['From']) && $_SESSION['FilterSaved']['Date']['From'] == -1) unset($Vars['Date']);
+        $Vars['Date'] = ($_SESSION['Sort'] == '`ID`' ? 'D.AddDate ' : 'D.Date') . ' BETWEEN ? AND ?';
+        $filterParams[] = $_SESSION['Filter']['DateFrom'];
+        $filterParams[] = $_SESSION['Filter']['DateTo'];
+        if (isset($_SESSION['FilterSaved']['Date']['From']) && $_SESSION['FilterSaved']['Date']['From'] == -1) {
+            unset($Vars['Date']);
+            array_pop($filterParams);
+            array_pop($filterParams);
+        }
 
         if (isset($_SESSION['FilterSaved']['IDPerson']) && $_SESSION['FilterSaved']['IDPerson']) {
             $Vars['Person'] = 'D.IDPerson=' . $_SESSION['FilterSaved']['IDPerson'];
@@ -742,8 +751,10 @@ class Data extends DBObject {
         if (isset($_SESSION['FilterSaved']['TextOrder']) && $_SESSION['FilterSaved']['TextOrder'])
             $_SESSION['Filter']['TextOrder'] = $_SESSION['FilterSaved']['TextOrder'];
 
-        if (isset($_SESSION['Filter']['TextOrder']) && $_SESSION['Filter']['TextOrder'] != '')
-            $Vars['TextOrder'] = 'D.TextOrder LIKE "%' . addslashes($_SESSION['Filter']['TextOrder']) . '%"';
+        if (isset($_SESSION['Filter']['TextOrder']) && $_SESSION['Filter']['TextOrder'] != '') {
+            $Vars['TextOrder'] = 'D.TextOrder LIKE ?';
+            $filterParams[] = '%' . $_SESSION['Filter']['TextOrder'] . '%';
+        }
 
         if (isset($_SESSION['FilterSaved']['IDType']) && $_SESSION['FilterSaved']['IDType']) {
             $Vars['Type'] = 'D.IDType=' . $_SESSION['FilterSaved']['IDType'];
@@ -757,56 +768,73 @@ class Data extends DBObject {
         if (isset($_SESSION['FilterSaved']['TextType']) && $_SESSION['FilterSaved']['TextType'])
             $_SESSION['Filter']['TextType'] = $_SESSION['FilterSaved']['TextType'];
 
-        if (isset($_SESSION['Filter']['TextType']) && $_SESSION['Filter']['TextType'] != '')
-            $Vars['TextType'] = 'D.TextType LIKE "%' . addslashes($_SESSION['Filter']['TextType']) . '%"';
+        if (isset($_SESSION['Filter']['TextType']) && $_SESSION['Filter']['TextType'] != '') {
+            $Vars['TextType'] = 'D.TextType LIKE ?';
+            $filterParams[] = '%' . $_SESSION['Filter']['TextType'] . '%';
+        }
 
         if (isset($_SESSION['FilterSaved']['Sum']) && $_SESSION['FilterSaved']['Sum'])
             $_SESSION['Filter']['Sum'] = $_SESSION['FilterSaved']['Sum'];
 
-        if (isset($_SESSION['Filter']['Sum']) && $_SESSION['Filter']['Sum'] != '')
-            $Vars['Sum'] = 'D.Sum LIKE "%' . addslashes($_SESSION['Filter']['Sum']) . '%"';
+        if (isset($_SESSION['Filter']['Sum']) && $_SESSION['Filter']['Sum'] != '') {
+            $Vars['Sum'] = 'D.Sum LIKE ?';
+            $filterParams[] = '%' . $_SESSION['Filter']['Sum'] . '%';
+        }
 
         if (isset($_SESSION['FilterSaved']['Hours']) && $_SESSION['FilterSaved']['Hours'])
             $_SESSION['Filter']['Hours'] = $_SESSION['FilterSaved']['Hours'];
 
-        if (isset($_SESSION['Filter']['Hours']) && $_SESSION['Filter']['Hours'] != '')
-            $Vars['Hours'] = 'D.Hours LIKE "%' . addslashes($_SESSION['Filter']['Hours']) . '%"';
+        if (isset($_SESSION['Filter']['Hours']) && $_SESSION['Filter']['Hours'] != '') {
+            $Vars['Hours'] = 'D.Hours LIKE ?';
+            $filterParams[] = '%' . $_SESSION['Filter']['Hours'] . '%';
+        }
 
         if (isset($_SESSION['FilterSaved']['PlaceTaken']) && $_SESSION['FilterSaved']['PlaceTaken'])
             $_SESSION['Filter']['PlaceTaken'] = $_SESSION['FilterSaved']['PlaceTaken'];
 
-        if (isset($_SESSION['Filter']['PlaceTaken']) && $_SESSION['Filter']['PlaceTaken'] != '')
-            $Vars['PlaceTaken'] = 'D.PlaceTaken LIKE "%' . addslashes($_SESSION['Filter']['PlaceTaken']) . '%"';
+        if (isset($_SESSION['Filter']['PlaceTaken']) && $_SESSION['Filter']['PlaceTaken'] != '') {
+            $Vars['PlaceTaken'] = 'D.PlaceTaken LIKE ?';
+            $filterParams[] = '%' . $_SESSION['Filter']['PlaceTaken'] . '%';
+        }
 
         if (isset($_SESSION['FilterSaved']['PlaceDone']) && $_SESSION['FilterSaved']['PlaceDone'])
             $_SESSION['Filter']['PlaceDone'] = $_SESSION['FilterSaved']['PlaceDone'];
 
-        if (isset($_SESSION['Filter']['PlaceDone']) && $_SESSION['Filter']['PlaceDone'] != '')
-            $Vars['PlaceDone'] = 'D.PlaceDone LIKE "%' . addslashes($_SESSION['Filter']['PlaceDone']) . '%"';
+        if (isset($_SESSION['Filter']['PlaceDone']) && $_SESSION['Filter']['PlaceDone'] != '') {
+            $Vars['PlaceDone'] = 'D.PlaceDone LIKE ?';
+            $filterParams[] = '%' . $_SESSION['Filter']['PlaceDone'] . '%';
+        }
 
         if (isset($_SESSION['FilterSaved']['Note']) && $_SESSION['FilterSaved']['Note'])
             $_SESSION['Filter']['Note'] = $_SESSION['FilterSaved']['Note'];
 
         if (isset($_SESSION['Filter']['Note']) && $_SESSION['Filter']['Note'] != '') {
             $str = explode(' ', $_SESSION['Filter']['Note']);
-            $Vars['Note'] = array();
+            $noteClauses = array();
             foreach ($str as $k => $v) {
-                $Vars['Note'][] = 'D.Note LIKE "%' . addslashes($v) . '%"';
+                $noteClauses[] = 'D.Note LIKE ?';
+                $filterParams[] = '%' . $v . '%';
             }
-            $Vars['Note'] = '(' . implode(' OR ', $Vars['Note']) . ')';
+            $Vars['Note'] = '(' . implode(' OR ', $noteClauses) . ')';
         }
 
         if (isset($_SESSION['FilterSaved']['BookNote']) && $_SESSION['FilterSaved']['BookNote'])
             $_SESSION['Filter']['BookNote'] = $_SESSION['FilterSaved']['BookNote'];
 
-        if (isset($_SESSION['Filter']['BookNote']) && $_SESSION['Filter']['BookNote'] != '')
-            $Vars['BookNote'] = 'D.BookNote LIKE "%' . addslashes($_SESSION['Filter']['BookNote']) . '%"';
+        if (isset($_SESSION['Filter']['BookNote']) && $_SESSION['Filter']['BookNote'] != '') {
+            $Vars['BookNote'] = 'D.BookNote LIKE ?';
+            $filterParams[] = '%' . $_SESSION['Filter']['BookNote'] . '%';
+        }
 
-        if (isset($_SESSION['Filter']['TotalPrice']) && $_SESSION['Filter']['TotalPrice'] != '')
-            $Vars['BookNote'] = 'D.TotalPrice=' . (float)$_SESSION['Filter']['TotalPrice'];
+        if (isset($_SESSION['Filter']['TotalPrice']) && $_SESSION['Filter']['TotalPrice'] != '') {
+            $Vars['BookNote'] = 'D.TotalPrice=?';
+            $filterParams[] = (float)$_SESSION['Filter']['TotalPrice'];
+        }
 
-        if (isset($_SESSION['Filter']['PriceNote']) && $_SESSION['Filter']['PriceNote'] != '')
-            $Vars['BookNote'] = 'D.PriceNote LIKE "%' . addslashes($_SESSION['Filter']['PriceNote']) . '%"';
+        if (isset($_SESSION['Filter']['PriceNote']) && $_SESSION['Filter']['PriceNote'] != '') {
+            $Vars['BookNote'] = 'D.PriceNote LIKE ?';
+            $filterParams[] = '%' . $_SESSION['Filter']['PriceNote'] . '%';
+        }
 
         foreach ($Vars as $k => $v)
             if ($v == '') unset($Vars[$k]);
@@ -1035,30 +1063,32 @@ class Data extends DBObject {
         }
 
         $query = 'INSERT INTO `Data`
-                     SET `IDDoc`="' . addslashes($this->getIDDoc()) . '",
-                         `IDUser`=' . $_SESSION['User']->getID() . ',
-                         `IDOrder`=' . (int)$this->getIDOrder() . ',
-                         `TextOrder`="' . addslashes($this->getTextOrder()) . '",
-                         `IDType`=' . (int)$this->getIDType() . ',
-                         `TextType`="' . addslashes($this->getTextType()) . '",
-                         `Sum`=' . (float)$this->getSum() . ',
-                         `Hours`=' . (float)$this->getHours() . ',
-                         `PlaceTaken`="' . addslashes($this->getPlaceTaken()) . '",
-                         `PlaceDone`="' . addslashes($this->getPlaceDone()) . '",
-                         `IDPerson`=' . (int)$this->getIDPerson() . ',
-                         `Note`="' . addslashes($this->getNote()) . '",
-                         `Date`="' . $this->getDate() . '",
-                         `BookNote`="' . addslashes($this->getBookNote()) . '",
-                         `TotalPrice`=' . (float)$this->getTotalPrice() . ',
-                         `PriceNote`="' . addslashes($this->getPriceNote()) . '",
-                         `AddDate`=NOW(),
-                         `RemindDate`="' . $this->getRemindDate() . '",
-                         `RemindDateEnd`="' . $this->getRemindDateEnd() . '",
-                         `RemindTo`="' . (int)$this->getRemindTo() . '",
-                         `allDay`="' . (int)$this->getallDay() . '",
-                         `Status`=' . ($_POST['Tpl'] == 1 ? '10' : '1');
+                     (`IDDoc`, `IDUser`, `IDOrder`, `TextOrder`, `IDType`, `TextType`, `Sum`, `Hours`, `PlaceTaken`, `PlaceDone`, `IDPerson`, `Note`, `Date`, `BookNote`, `TotalPrice`, `PriceNote`, `AddDate`, `RemindDate`, `RemindDateEnd`, `RemindTo`, `allDay`, `Status`)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime(\'now\'), ?, ?, ?, ?, ?)';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            $this->getIDDoc(),
+            $_SESSION['User']->getID(),
+            (int)$this->getIDOrder(),
+            $this->getTextOrder(),
+            (int)$this->getIDType(),
+            $this->getTextType(),
+            (float)$this->getSum(),
+            (float)$this->getHours(),
+            $this->getPlaceTaken(),
+            $this->getPlaceDone(),
+            (int)$this->getIDPerson(),
+            $this->getNote(),
+            $this->getDate(),
+            $this->getBookNote(),
+            (float)$this->getTotalPrice(),
+            $this->getPriceNote(),
+            $this->getRemindDate(),
+            $this->getRemindDateEnd(),
+            (int)$this->getRemindTo(),
+            (int)$this->getallDay(),
+            ($_POST['Tpl'] == 1 ? 10 : 1)
+        ])) {
             throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
         }
 
@@ -1088,30 +1118,36 @@ class Data extends DBObject {
             $allDay = ($allDay == "true") ? 1 : 0;
         }
         $query = 'UPDATE `Data` SET
-                         `IDDoc`="' . addslashes($this->getIDDoc()) . '",
-                         `IDUser`=' . $_SESSION['User']->getID() . ',
-                         `IDOrder`=' . (int)$this->getIDOrder() . ',
-                         `TextOrder`="' . addslashes($this->getTextOrder()) . '",
-                         `IDType`=' . (int)$this->getIDType() . ',
-                         `TextType`="' . addslashes($this->getTextType()) . '",
-                         `Sum`=' . (float)$this->getSum() . ',
-                         `Hours`=' . (float)$this->getHours() . ',
-                         `PlaceTaken`="' . addslashes($this->getPlaceTaken()) . '",
-                         `PlaceDone`="' . addslashes($this->getPlaceDone()) . '",
-                         `IDPerson`=' . (int)$this->getIDPerson() . ',
-                         `Note`="' . addslashes($this->getNote()) . '",
-                         `Date`="' . $this->getDate() . '",
-                         `BookNote`="' . addslashes($this->getBookNote()) . '",
-                         `TotalPrice`=' . (float)$this->getTotalPrice() . ',
-                         `PriceNote`="' . addslashes($this->getPriceNote()) . '",
-                         `RemindDate`="' . $this->getRemindDate() . '",
-                         `RemindDateEnd`="' . $this->getRemindDateEnd() . '",
-                         `RemindTo`="' . (int)$this->getRemindTo() . '",
-                         `Changes`="' . addslashes($this->getChanges()) . '",
-                         `allDay`="' . $allDay . '"
+                         `IDDoc`=?, `IDUser`=?, `IDOrder`=?, `TextOrder`=?, `IDType`=?, `TextType`=?,
+                         `Sum`=?, `Hours`=?, `PlaceTaken`=?, `PlaceDone`=?, `IDPerson`=?, `Note`=?,
+                         `Date`=?, `BookNote`=?, `TotalPrice`=?, `PriceNote`=?, `RemindDate`=?,
+                         `RemindDateEnd`=?, `RemindTo`=?, `Changes`=?, `allDay`=?
+                   WHERE `ID`=?';
 
-                   WHERE `ID`=' . (int)$this->getID();
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            $this->getIDDoc(),
+            $_SESSION['User']->getID(),
+            (int)$this->getIDOrder(),
+            $this->getTextOrder(),
+            (int)$this->getIDType(),
+            $this->getTextType(),
+            (float)$this->getSum(),
+            (float)$this->getHours(),
+            $this->getPlaceTaken(),
+            $this->getPlaceDone(),
+            (int)$this->getIDPerson(),
+            $this->getNote(),
+            $this->getDate(),
+            $this->getBookNote(),
+            (float)$this->getTotalPrice(),
+            $this->getPriceNote(),
+            $this->getRemindDate(),
+            $this->getRemindDateEnd(),
+            (int)$this->getRemindTo(),
+            $this->getChanges(),
+            $allDay,
+            (int)$this->getID()
+        ])) {
             throw new AppError('Update error on Data (' . __LINE__ . ')');
         }
 
@@ -1131,23 +1167,28 @@ class Data extends DBObject {
             $query = 'DELETE FROM `Data` WHERE `ID`=' . $this->getID();
         } else {
             $Changes = unserialize($this->getChanges());
+            if (!is_array($Changes)) $Changes = array();
             $Changes[date('Y-m-d H:i:s')] = array('User' => $_SESSION['User']->getID() . ' ' . $_SESSION['User']->getLogin(), 'Status' => $Status);
             ksort($Changes);
             $Changes = array_reverse($Changes);
 
-            $query = 'Update `Data`
-                            SET `Status`=' . $Status . ',
-                            Changes="' . addslashes(serialize($Changes)) . '" WHERE `ID`=' . $this->getID();
+            $query = 'UPDATE `Data` SET `Status`=?, `Changes`=? WHERE `ID`=?';
+            $deleteParams = [$Status, serialize($Changes), $this->getID()];
         }
 
-        if (!self::$DB->query($query)) {
+        if ($deleteParams ?? false) {
+            $result = self::$DB->prepare($query, $deleteParams);
+        } else {
+            $result = self::$DB->query($query);
+        }
+        if (!$result) {
             throw new AppError('Delete error on Data (' . __LINE__ . ')');
         }
         return 1;
     }
 
     static function getById($ID) {
-        $query = 'SELECT *, DATE_FORMAT(`Date`,"%Y-%m-%d-%H-%i") as `Date`
+        $query = 'SELECT *, strftime(\'%Y-%m-%d-%H-%M\', `Date`) as `Date`
                     FROM `Data` WHERE `ID`=' . (int)$ID;
 
         if (!$result = self::$DB->query($query)) {
@@ -1158,11 +1199,11 @@ class Data extends DBObject {
 
     static function getRow($ID) {
         $query = 'SELECT D.*,
-                         DATE_FORMAT(`Date`,"%y.%m.%d %H:%i") as `Date`,
-                         DATE_FORMAT( D.`RemindDateEnd` , "%y.%m.%d %H:%i" ) AS `RemindDateEnd`,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `DateShow`,
-                         DATE_FORMAT(D.`AddDate`,"%y.%m.%d %H:%i") as `AddDate`,
-                         DATE_FORMAT(D.`RemindDate`,"%y.%m.%d %H:%i") as `RemindDate`,
+                         (substr(strftime(\'%Y\', `Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', `Date`)) as `Date`,
+                         (substr(strftime(\'%Y\', D.`RemindDateEnd`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`RemindDateEnd`)) AS `RemindDateEnd`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `DateShow`,
+                         (substr(strftime(\'%Y\', D.`AddDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`AddDate`)) as `AddDate`,
+                         (substr(strftime(\'%Y\', D.`RemindDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`RemindDate`)) as `RemindDate`,
                          `RemindDate` as RemindDateStamp,
                          P.Login as Person, U.Login as User, R.Login as RemindTo,
                          O.Code as `Order`, T.Code as Type
@@ -1306,10 +1347,10 @@ class Data extends DBObject {
 
     function Open($ID) {
         $query = 'SELECT D.*,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `DateShow`,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `Date`,
-                         DATE_FORMAT(D.`AddDate`,"%y.%m.%d %H:%i") as `AddDate`,
-                         DATE_FORMAT(D.`RemindDate`,"%y.%m.%d %H:%i") as `RemindDate`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `DateShow`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `Date`,
+                         (substr(strftime(\'%Y\', D.`AddDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`AddDate`)) as `AddDate`,
+                         (substr(strftime(\'%Y\', D.`RemindDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`RemindDate`)) as `RemindDate`,
                          `RemindDate` as RemindDateStamp,
                          P.Login as Person, U.Login as User, R.Login as RemindTo,
                          O.Code as `Order`, T.Code as Type
@@ -1406,12 +1447,13 @@ class Data extends DBObject {
 
     function SavephotoTagger() {
         $query = 'INSERT INTO `photo_tagger`
-                     SET `photoid`="' . $_GET['photoID'] . '",
-                         `y`=' . $_GET['y'] . ',
-                         `width`=' . $_GET['width'] . ',
-                         `height`="' . $_GET['height'] . '",
-                         `message`="' . $_GET['message'] . '",
-                         `x`="' . $_GET['x'] . '"';
+                     (`photoid`, `y`, `width`, `height`, `message`, `x`)
+                     VALUES ("' . $_GET['photoID'] . '",
+                         ' . $_GET['y'] . ',
+                         ' . $_GET['width'] . ',
+                         "' . $_GET['height'] . '",
+                         "' . $_GET['message'] . '",
+                         "' . $_GET['x'] . '")';
 
         if (!self::$DB->query($query)) {
             throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
@@ -1707,7 +1749,8 @@ class Data extends DBObject {
     }
 
     function AddAllSelected() {
-        $Filter = $this->getFilter();
+        $filterParams = [];
+        $Filter = $this->getFilter($filterParams);
         $Sort = 'D.RemindDate DESC ';
         $query = 'SELECT D.ID
                     FROM `Data` D
@@ -1723,20 +1766,14 @@ class Data extends DBObject {
         if (!empty($_SESSION['Filter']['Search'])) {
             $search = explode(' ', trim($_SESSION['Filter']['Search']));
             $str = array();
-            foreach ($search as $k => $v) $str[] = '(
-                     D.IDDoc LIKE ("%' . $v . '%") OR
-                     D.TextOrder LIKE ("%' . $v . '%") OR
-                     D.TextType LIKE ("%' . $v . '%") OR
-                     D.PlaceTaken LIKE ("%' . $v . '%") OR
-                     D.PlaceDone LIKE ("%' . $v . '%") OR
-                     D.Note LIKE ("%' . $v . '%") OR
-                     D.BookNote LIKE ("%' . $v . '%") OR
-                     D.PriceNote LIKE ("%' . $v . '%") OR
-                     P.Login LIKE ("%' . $v . '%") OR
-                     U.Login LIKE ("%' . $v . '%") OR
-                     O.Code LIKE ("%' . $v . '%") OR
-                     T.Code LIKE ("%' . $v . '%")
-                     )';
+            $searchColumns = ['D.IDDoc', 'D.TextOrder', 'D.TextType', 'D.PlaceTaken', 'D.PlaceDone',
+                'D.Note', 'D.BookNote', 'D.PriceNote', 'P.Login', 'U.Login', 'O.Code', 'T.Code'];
+            foreach ($search as $k => $v) {
+                $likes = array_map(function($col) { return $col . ' LIKE ?'; }, $searchColumns);
+                $str[] = '(' . implode(' OR ', $likes) . ')';
+                $param = '%' . $v . '%';
+                for ($i = 0; $i < count($searchColumns); $i++) $filterParams[] = $param;
+            }
             if ($_POST['FindDeleted'] != 1) {
                 $str[] = 'D.Status=1';
             }
@@ -1754,7 +1791,7 @@ class Data extends DBObject {
 
         $query .= $where;
 
-        if (!$result = self::$DB->query($query)) {
+        if (!$result = self::$DB->prepare($query, $filterParams)) {
             throw new AppError('Read error on Data (' . __LINE__ . ')');
         }
         while ($row = $result->fetch_assoc()) {

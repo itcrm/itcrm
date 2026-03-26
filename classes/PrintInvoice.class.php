@@ -36,7 +36,8 @@ class PrintInvoice extends TCPDF {
     }
 
     public function getInvoiceValue($column, $DocID) {
-        $column = self::$DB->real_escape_string($column);
+        $allowedColumns = ['Samaksa', 'Kopa', 'Atlaide', 'atlaidessumma', 'PirmsNodokliem', 'PVN', 'Samaksai', 'Izsniedza', 'recipient', 'recipientID'];
+        if (!in_array($column, $allowedColumns)) return null;
         $query = 'SELECT `' . $column . '` FROM `invoices` WHERE DocID = ' . intval($DocID) . ' LIMIT 1';
 
         if (!$result = self::$DB->query($query)) {
@@ -48,9 +49,9 @@ class PrintInvoice extends TCPDF {
     }
 
     public function renderRecipient($name) {
-        $query = 'SELECT Nosaukums, Kods, Adrese, Banka, Konts FROM `recipients` WHERE Nosaukums = "' . $name . '"';
+        $query = 'SELECT Nosaukums, Kods, Adrese, Banka, Konts FROM `recipients` WHERE Nosaukums = ?';
 
-        if (!$result = self::$DB->query($query)) {
+        if (!$result = self::$DB->prepare($query, [$name])) {
             throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
 

@@ -2,10 +2,7 @@
 
 //$start = microtime(1);
 
-define('_DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('_DB_USER', getenv('DB_USER') ?: 'YOUR_MARIADB_USER');
-define('_DB_PASS', getenv('DB_PASSWORD') ?: 'YOUR_MARIADB_PASSWORD');
-define('_DB_NAME', getenv('DB_DATABASE') ?: 'YOUR_MARIADB_DATABASE');
+define('_DB_PATH', getenv('DB_PATH') ?: __DIR__ . '/data/database.sqlite');
 
 spl_autoload_register(function ($class) {
     require_once './classes/' . $class . '.class.php';

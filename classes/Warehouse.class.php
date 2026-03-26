@@ -65,8 +65,8 @@ class Warehouse extends DBObject {
         }
         // Rindai tiek pievienots teksts ar detaļas numuru un daudzumu kas tika pievienots;
         //Darbibas ar Rindu;
-        $query = "UPDATE `Data` SET
-                     `Note` = '" . addslashes(Data::getNote()) . " " . $title . "*" . $daudzums . " " . $vienibas . "' " . $RTotalPrice . " WHERE `ID`=" . $RID;
+        $noteValue = Data::getNote() . " " . $title . "*" . $daudzums . " " . $vienibas;
+        $query = "UPDATE `Data` SET `Note` = '" . self::$DB->escapeString($noteValue) . "' " . $RTotalPrice . " WHERE `ID`=" . (int)$RID;
         if (!self::$DB->query($query)) {
             throw new AppError('Write error on Warehouse (' . __LINE__ . ') : ' . self::$DB->error);
         }
@@ -86,10 +86,10 @@ class Warehouse extends DBObject {
 
     function ListLimits() {
         $query = 'SELECT D.*,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `DateShow`,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `Date`,
-                         DATE_FORMAT(D.`AddDate`,"%y.%m.%d %H:%i") as `AddDate`,
-                         DATE_FORMAT(D.`RemindDate`,"%y.%m.%d %H:%i") as `RemindDate`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `DateShow`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `Date`,
+                         (substr(strftime(\'%Y\', D.`AddDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`AddDate`)) as `AddDate`,
+                         (substr(strftime(\'%Y\', D.`RemindDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`RemindDate`)) as `RemindDate`,
                          `RemindDate` as RemindDateStamp,
                          P.Login as Person, U.Login as User, R.Login as RemindTo,
                          O.Code as `Order`, T.Code as Type

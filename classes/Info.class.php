@@ -60,15 +60,16 @@ class Info extends DBObject {
     }
 
     function Add() {
-        $query = 'REPLACE INTO `Info`
-                      SET `IDData`=' . (int)$this->getIDData() . ',
-                          `IDSupplier`=' . (int)$this->getIDSupplier() . ',
-                          `IDUser`="' . $_SESSION['User']->getID() . '",
-                          `Info`="' . addslashes($this->getInfo()) . '",
-                          `Color`="' . addslashes($this->getColor()) . '",
-                          `AddDate`=NOW()';
+        $query = 'INSERT OR REPLACE INTO `Info` (`IDData`, `IDSupplier`, `IDUser`, `Info`, `Color`, `AddDate`)
+                  VALUES (?, ?, ?, ?, ?, datetime(\'now\'))';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            (int)$this->getIDData(),
+            (int)$this->getIDSupplier(),
+            $_SESSION['User']->getID(),
+            $this->getInfo(),
+            $this->getColor()
+        ])) {
             throw new AppError('Write error on Info (' . __LINE__ . ')');
         }
 

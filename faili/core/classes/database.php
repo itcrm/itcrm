@@ -21,20 +21,16 @@ function read_param($name, $default) {
 
 function save_param($name, $value) {
     global $_IDC_DATABASE;
-    $query = "INSERT INTO parameters (param_name,param_value) VALUES ('$name','$value')";
-    $res = mysqli_query($_IDC_DATABASE->db_link, $query);
-    if (!$res) {
-        $query = "UPDATE parameters SET param_value='" . sql_escape($value) . "' WHERE param_name='" . sql_escape($name) . "'";
-        $res = mysqli_query($_IDC_DATABASE->db_link, $query);
-        if ((!$res)) {
-            die("Unable to save setting '$name': " . mysqli_error($_IDC_DATABASE->db_link));
-        }
+    $query = "INSERT OR REPLACE INTO parameters (param_name, param_value) VALUES ('" . sql_escape($name) . "', '" . sql_escape($value) . "')";
+    $res = $_IDC_DATABASE->db_link->exec($query);
+    if ($res === false) {
+        die("Unable to save setting '$name': " . $_IDC_DATABASE->db_link->lastErrorMsg());
     }
 }
 
 function sql_escape($s) {
     global $_IDC_DATABASE;
-    return mysqli_escape_string($_IDC_DATABASE->db_link, $s);
+    return $_IDC_DATABASE->db_link->escapeString($s);
 }
 
 class CDatabase {
@@ -51,15 +47,16 @@ class CDatabase {
             // esam jau pieslēgušies
             return $this->db_link;
         } else {
-            // slēdzamies pie DB
-            if ($this->db_link = mysqli_connect($server, $user, $pass, $dbname)) {
-                $this->query('SET NAMES utf8');
-                $this->query('SET CHARACTER SET utf8');
-                $this->query('SET COLLATION_CONNECTION=\'utf8_general_ci\'');
+            // slēdzamies pie DB — use the same SQLite database
+            $dbPath = defined('_DB_PATH') ? _DB_PATH : $dbname;
+            try {
+                $this->db_link = new SQLite3($dbPath);
+                $this->db_link->busyTimeout(5000);
+                $this->db_link->exec('PRAGMA journal_mode=WAL');
                 $this->errno = 0;
                 $this->error = '';
                 return $this->db_link;
-            } else {
+            } catch (Exception $e) {
                 return false;
             }
         }
@@ -75,20 +72,20 @@ class CDatabase {
      */
     function query($query, $result_type = DB_RESULT_TYPE_SINGLE, &$rowset = false) {
         if ($this->db_link != null) {
-            $res = mysqli_query($this->db_link, $query);
-            if ($res != false) {
+            $res = @$this->db_link->query($query);
+            if ($res !== false) {
                 $this->errno = 0;
                 $this->error = '';
                 if (($res === true) || ($result_type == DB_RESULT_TYPE_NONE)) {
                     return true;
                 } else {
                     if ($rowset === false) $rowset = new CRowSet;
-                    $rowset->add_mysql($res, $result_type);
+                    $rowset->add_sqlite($res, $result_type);
                     return $rowset;
                 }
             } else {
-                $this->errno = mysqli_errno($this->db_link);
-                $this->error = mysqli_error($this->db_link);
+                $this->errno = $this->db_link->lastErrorCode();
+                $this->error = $this->db_link->lastErrorMsg();
                 return false;
             }
         } else {
@@ -117,7 +114,7 @@ class CDatabase {
 
     function last_insert_id() {
         if ($this->db_link != null) {
-            return mysqli_insert_id($this->db_link);
+            return $this->db_link->lastInsertRowID();
         } else {
             return false;
         }
@@ -126,43 +123,48 @@ class CDatabase {
 
 class CRowSet {
     public $rows;
-    private $rs_res;
+    private $rs_rows;
     private $type;
     private $rownum;
+    private $pos;
 
     function __construct() {
         $this->rows = array();
-        $this->rs_res = false;
+        $this->rs_rows = array();
         $this->type = DB_RESULT_TYPE_NONE;
         $this->rownum = 0;
+        $this->pos = 0;
     }
 
     /**
-     * Pievieno MySQL rezultātu rowsetam
+     * Pievieno SQLite rezultātu rowsetam
      *
-     * @param mysqli_result $res
+     * @param SQLite3Result $res
      */
-    function add_mysql($res, $type = DB_RESULT_TYPE_ARRAY) {
+    function add_sqlite($res, $type = DB_RESULT_TYPE_ARRAY) {
         $this->type = $type;
         $this->rownum = 0;
+        $this->pos = 0;
+
+        // Buffer all rows from SQLite3Result
+        $allRows = array();
+        $i = 0;
+        while ($row = $res->fetchArray(SQLITE3_BOTH)) {
+            $row = array_change_key_case($row, CASE_LOWER);
+            $row['_UC_ROWID'] = $i;
+            $allRows[] = $row;
+            $i++;
+        }
+        $res->finalize();
 
         switch ($type) {
             case DB_RESULT_TYPE_ARRAY:
-                $this->rows = array();
-                $i = 0;
-                while ($row = mysqli_fetch_array($res, MYSQLI_BOTH)) {
-                    $row = array_change_key_case($row, CASE_LOWER);
-                    $row['_UC_ROWID'] = $i;
-                    $this->rows[] = $row;
-                    $i++;
-                }
-                $this->rs_res = false;
-                mysqli_free_result($res);
+                $this->rows = $allRows;
                 break;
             case DB_RESULT_TYPE_SINGLE:
                 $this->rows = false;
-                $this->rs_res = $res;
-                $this->rownum = 0;
+                $this->rs_rows = $allRows;
+                $this->pos = 0;
                 break;
             default:
         }
@@ -178,14 +180,11 @@ class CRowSet {
                 }
                 break;
             case DB_RESULT_TYPE_SINGLE:
-                if ($this->rs_res !== false) {
-                    $row = mysqli_fetch_array($this->rs_res, MYSQLI_BOTH);
-                    if ($row != false) {
-                        $row = array_change_key_case($row, CASE_LOWER);
-                        $row['_UC_ROWID'] = $this->rownum;
-                        $this->rownum++;
-                        return $row;
-                    }
+                if ($this->pos < count($this->rs_rows)) {
+                    $row = $this->rs_rows[$this->pos];
+                    $this->rownum = $this->pos;
+                    $this->pos++;
+                    return $row;
                 }
                 return false;
 
@@ -202,14 +201,11 @@ class CRowSet {
                 }
                 return false;
             case DB_RESULT_TYPE_SINGLE:
-                if ($this->rs_res !== false) {
-                    $row = mysqli_fetch_array($this->rs_res, MYSQL_ASSOC);
-                    if ($row != false) {
-                        $row = array_change_key_case($row, CASE_LOWER);
-                        $row['_UC_ROWID'] = $this->rownum;
-                        $this->rownum++;
-                        return $row;
-                    }
+                if ($this->pos < count($this->rs_rows)) {
+                    $row = $this->rs_rows[$this->pos];
+                    $this->rownum = $this->pos;
+                    $this->pos++;
+                    return $row;
                 }
                 return false;
             default:
@@ -222,10 +218,7 @@ class CRowSet {
             case DB_RESULT_TYPE_ARRAY:
                 return count($this->rows);
             case DB_RESULT_TYPE_SINGLE:
-                if ($this->rs_res !== false) {
-                    return mysqli_num_rows($this->rs_res);
-                }
-                return false;
+                return count($this->rs_rows);
             default:
                 return false;
         }

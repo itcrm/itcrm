@@ -87,14 +87,11 @@ class Types extends DBObject {
     }
 
     function Add() {
-        $query = 'INSERT INTO `Types`
-                     SET `Code`="' . addslashes($this->getCode()) . '",
-                         `Description`="' . addslashes($this->getDescription()) . '",
-                         `AddDate`=NOW(),
-                         `Status`=1';
+        $query = 'INSERT INTO `Types` (`Code`, `Description`, `AddDate`, `Status`)
+                  VALUES (?, ?, datetime(\'now\'), 1)';
 
-        if (!self::$DB->query($query)) {
-            if (self::$DB->errno == 1062) throw new AppError(Language::$Orders['DuplicateEntry']);
+        if (!self::$DB->prepare($query, [$this->getCode(), $this->getDescription()])) {
+            if (self::$DB->errno == 19) throw new AppError(Language::$Orders['DuplicateEntry']);
             throw new AppError('Write error on Types (' . __LINE__ . ')');
         }
 
@@ -104,12 +101,13 @@ class Types extends DBObject {
     }
 
     function Update() {
-        $query = 'UPDATE `Types`
-                     SET `Code`="' . addslashes($this->getCode()) . '",
-                         `Description`="' . addslashes($this->getDescription()) . '"
-                   WHERE `ID`=' . (int)$this->getID();
+        $query = 'UPDATE `Types` SET `Code`=?, `Description`=? WHERE `ID`=?';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            $this->getCode(),
+            $this->getDescription(),
+            (int)$this->getID()
+        ])) {
             throw new AppError('Update error on Types (' . __LINE__ . ')');
         }
     }

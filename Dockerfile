@@ -10,10 +10,11 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libonig-dev \
     libxml2-dev \
+    libsqlite3-dev \
     zip \
     unzip \
     git \
-    mariadb-client \
+    sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -22,8 +23,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     intl \
     mbstring \
     pdo \
-    pdo_mysql \
-    mysqli \
+    pdo_sqlite \
     zip \
     opcache \
     xml
@@ -38,6 +38,8 @@ COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 COPY --chown=www-data:www-data . /var/www/html/
+
+RUN mkdir -p /var/www/html/data && chown www-data:www-data /var/www/html/data
 
 EXPOSE 80
 

@@ -1,5 +1,117 @@
 <?php
 
+class SQLiteResultWrapper {
+    private $rows = array();
+    private $pos = 0;
+    public $num_rows;
+
+    function __construct($result) {
+        if ($result instanceof SQLite3Result) {
+            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                $this->rows[] = $row;
+            }
+            $result->finalize();
+        }
+        $this->num_rows = count($this->rows);
+    }
+
+    function fetch_assoc() {
+        if ($this->pos < $this->num_rows) {
+            return $this->rows[$this->pos++];
+        }
+        return null;
+    }
+
+    function fetch_array() {
+        return $this->fetch_assoc();
+    }
+}
+
+class SQLiteDBWrapper {
+    private $db;
+    public $insert_id = 0;
+    public $errno = 0;
+    public $error = '';
+
+    function __construct($path) {
+        $dir = dirname($path);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        $this->db = new SQLite3($path);
+        $this->db->busyTimeout(5000);
+        $this->db->exec('PRAGMA journal_mode=WAL');
+        $this->db->exec('PRAGMA foreign_keys=ON');
+    }
+
+    function query($sql) {
+        $this->errno = 0;
+        $this->error = '';
+
+        $result = @$this->db->query($sql);
+        if ($result === false) {
+            $this->errno = $this->db->lastErrorCode();
+            $this->error = $this->db->lastErrorMsg();
+            return false;
+        }
+
+        $this->insert_id = $this->db->lastInsertRowID();
+        return new SQLiteResultWrapper($result);
+    }
+
+    function exec($sql) {
+        $this->errno = 0;
+        $this->error = '';
+
+        $result = @$this->db->exec($sql);
+        if ($result === false) {
+            $this->errno = $this->db->lastErrorCode();
+            $this->error = $this->db->lastErrorMsg();
+            return false;
+        }
+
+        $this->insert_id = $this->db->lastInsertRowID();
+        return true;
+    }
+
+    function prepare($sql, $params = []) {
+        $this->errno = 0;
+        $this->error = '';
+
+        $stmt = @$this->db->prepare($sql);
+        if ($stmt === false) {
+            $this->errno = $this->db->lastErrorCode();
+            $this->error = $this->db->lastErrorMsg();
+            return false;
+        }
+
+        foreach ($params as $i => $value) {
+            $stmt->bindValue($i + 1, $value);
+        }
+
+        $result = @$stmt->execute();
+        if ($result === false) {
+            $this->errno = $this->db->lastErrorCode();
+            $this->error = $this->db->lastErrorMsg();
+            $stmt->close();
+            return false;
+        }
+
+        $this->insert_id = $this->db->lastInsertRowID();
+        $wrapped = new SQLiteResultWrapper($result);
+        $stmt->close();
+        return $wrapped;
+    }
+
+    function escapeString($str) {
+        return $this->db->escapeString($str);
+    }
+
+    function close() {
+        $this->db->close();
+    }
+}
+
 abstract class DBObject {
     protected $Fields = array();
     static $url = array();
@@ -13,12 +125,11 @@ abstract class DBObject {
     }
 
     static function Connect() {
-        DBObject::$DB = mysqli_connect(Config::DB_HOST_NAME, Config::DB_USER_NAME, Config::DB_PASSWORD, Config::DB_DATABASE_NAME);
-        if (mysqli_connect_errno()) {
-            throw new AppError(mysqli_connect_error());
-        }
+        DBObject::$DB = new SQLiteDBWrapper(Config::DB_PATH);
+    }
 
-        DBObject::$DB->query('SET NAMES UTF8');
+    static function escape($str) {
+        return self::$DB->escapeString($str ?? '');
     }
 
     function __call($method, $params) {
@@ -41,7 +152,7 @@ abstract class DBObject {
     }
 
     function fetchObject($vals, $Object = '') {
-        if ($vals instanceof mysqli_result) $vals = $vals->fetch_assoc();
+        if ($vals instanceof SQLiteResultWrapper) $vals = $vals->fetch_assoc();
 
         $Obj = $Object == '' ? $this : $Object;
 
@@ -61,7 +172,7 @@ abstract class DBObject {
         $aVars = array();
 
         if (!$Obj) $Obj[0] = $this;
-        elseif ($Obj instanceof mysqli_result) {
+        elseif ($Obj instanceof SQLiteResultWrapper) {
             while ($row = $Obj->fetch_assoc()) $aVars[] = $row;
             return empty($aVars) ? '' : $aVars;
         }
@@ -125,7 +236,7 @@ abstract class DBObject {
         $result = self::$DB->query($string);
 
         if ($result == false) {
-            error_log("SQL error: " . mysqli_error(self::$DB) . "\n\nOriginal query: $string\n");
+            error_log("SQL error: " . self::$DB->error . "\n\nOriginal query: $string\n");
         }
         return $result;
     }

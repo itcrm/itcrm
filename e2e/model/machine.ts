@@ -39,18 +39,30 @@ const authenticatedStates = {
   logged_out: {},
 
   // ── Data screen ────────────────────────────────────────────────────
+
+  /** Default data page — SHOW_PERIOD=-2 means no rows visible until a date filter is applied */
   data: {
     on: {
       /** Submit data form with missing required fields — triggers validation */
       SUBMIT_EMPTY_DATA_ROW: "data_validation_error",
-      /** Save a new data row — makes the list non-empty */
+      /** Save a new data row */
       SUBMIT_DATA_ROW: "data_row_saved",
-      /** Toggle the bulk-edit bar visible */
-      TOGGLE_MULTI_EDIT: "data_multi_edit_open",
+      /** Apply "Today" date filter — seeded rows become visible, enabling row-level actions */
+      APPLY_DATE_LAST_24H: "data_last_24h",
       /** Navigate to the reminder view — shows rows with RemindTo=user (seeded row) */
       NAVIGATE_REMINDER: "data_reminder_view",
-      /** Apply "Today" date filter — seeded rows become visible, enabling row-level actions */
-      APPLY_DATE_INTERVAL_TODAY: "data_last_24h",
+      APPLY_DATA_SEARCH: "data_search_results",
+      APPLY_DATA_SEARCH_DATE_SORTED: "data_search_date_sorted",
+      APPLY_DATA_SEARCH_TODAY: "data_search_today",
+      APPLY_DATA_SEARCH_WEEK: "data_search_week",
+      APPLY_DATA_SEARCH_MONTH: "data_search_month",
+      APPLY_DATA_SEARCH_YEAR: "data_search_year",
+      NAVIGATE_TYPES: "types",
+      NAVIGATE_USERS: "users",
+      NAVIGATE_ORDERS: "orders",
+      NAVIGATE_TASK: "task",
+      NAVIGATE_WAREHOUSE: "warehouse",
+      NAVIGATE_FILTERS: "filters",
     },
   },
 
@@ -60,26 +72,15 @@ const authenticatedStates = {
       EDIT_DATA_ROW: "data_row_editing",
       COPY_DATA_ROW: "data_row_copy",
       EXPAND_DATA_ROW: "data_row_expanded",
-      /** Toggle multi-edit bar when rows exist */
+      DELETE_DATA_ROW: "data_row_deleted",
       TOGGLE_MULTI_EDIT: "data_multi_edit_with_rows",
-      /** Toggle the DataList sort between AddDate and Date */
       CHANGE_DATA_SORT: "data_sort_toggled",
-      /** Use the menu Search form — full POST to /Data/Search */
-      APPLY_DATA_SEARCH: "data_search_results",
-      /** Search with Sort=by-Date selected in the SearchForm Sort dropdown */
-      APPLY_DATA_SEARCH_DATE_SORTED: "data_search_date_sorted",
-      /** Search with Period=Today (5) — date-restricted to current day */
-      APPLY_DATA_SEARCH_TODAY: "data_search_today",
-      /** Search with Period=Week (7) — date-restricted to current week */
-      APPLY_DATA_SEARCH_WEEK: "data_search_week",
-      /** Search with Period=Month (1) — date-restricted to last 30 days */
-      APPLY_DATA_SEARCH_MONTH: "data_search_month",
-      /** Search with Period=Year (4) — date-restricted to last year */
-      APPLY_DATA_SEARCH_YEAR: "data_search_year",
-      /** Open the change-history page for a data row (opens /lv/Changes/{ID}) */
       VIEW_DATA_CHANGES: "data_changes_page",
     },
   },
+
+  /** Data screen after creating a new row via the form */
+  data_row_saved: {},
 
   /** Data reminder view — /Data/Reminder/1 shows rows with RemindTo=Alice */
   data_reminder_view: {},
@@ -88,19 +89,12 @@ const authenticatedStates = {
   data_validation_error: {
     on: {
       SUBMIT_DATA_ROW: "data_row_saved",
+      NAVIGATE_TYPES: "types",
     },
   },
 
   /** Data screen sorted by document date — DateSort link shows "Dok.datums" */
   data_sort_toggled: {},
-
-  /** Data screen after saving a row — row-level delete chain starts here */
-  data_row_saved: {
-    on: {
-      /** First delete marks the row as deleted (soft-delete) */
-      DELETE_DATA_ROW: "data_row_deleted",
-    },
-  },
 
   /** Data search results with FindDeleted=1 — deleted rows appear (tr.deleted class) */
   data_search_deleted: {},
@@ -126,9 +120,9 @@ const authenticatedStates = {
   /** Data row is soft-deleted (has CSS class "deleted") — restore is available */
   data_row_deleted: {
     on: {
-      RESTORE_DATA_ROW: "data_row_saved",
-      /** Second delete permanently removes the row */
-      HARD_DELETE_DATA_ROW: "data_empty",
+      RESTORE_DATA_ROW: "data_last_24h",
+      /** Second delete permanently removes the row — returns with remaining seed rows */
+      HARD_DELETE_DATA_ROW: "data_last_24h",
       /** Check FindDeleted and resubmit the filter to show deleted rows in the reload */
       FIND_DELETED_ROWS: "data_find_deleted",
       /** Search with FindDeleted=1 checked — deleted rows appear in search results */
@@ -139,21 +133,14 @@ const authenticatedStates = {
   /** Data screen with FindDeleted checked — deleted rows are visible after page reload */
   data_find_deleted: {},
 
-  /** Data screen with no rows — after hard-deleting the last row */
-  data_empty: {
-    on: {
-      SUBMIT_DATA_ROW: "data_row_saved",
-    },
-  },
-
   /** Data screen with a row loaded into the edit form (ID field non-empty) */
   data_row_editing: {
     on: {
       /** Save the edits — triggers a confirmation dialog then updates the row */
-      SUBMIT_EDIT_DATA_ROW: "data_row_saved",
+      SUBMIT_EDIT_DATA_ROW: "data_last_24h",
       /** Submit the edit form with a missing required field — triggers validation */
       SUBMIT_INVALID_EDIT_DATA_ROW: "data_edit_validation_error",
-      RESET_DATA_FORM: "data_row_saved",
+      RESET_DATA_FORM: "data_last_24h",
     },
   },
 
@@ -161,24 +148,24 @@ const authenticatedStates = {
   data_edit_validation_error: {
     on: {
       /** Fix the required field and save — updates the row */
-      SUBMIT_EDIT_DATA_ROW: "data_row_saved",
-      RESET_DATA_FORM: "data_row_saved",
+      SUBMIT_EDIT_DATA_ROW: "data_last_24h",
+      RESET_DATA_FORM: "data_last_24h",
     },
   },
 
   /** Data screen after clicking clone — form has ID="0" and cloned field values */
   data_row_copy: {
     on: {
-      /** Save the cloned row — creates a new row and goes to data_row_saved */
+      /** Save the cloned row — creates a new row */
       SUBMIT_DATA_ROW: "data_row_saved",
-      RESET_DATA_FORM: "data_row_saved",
+      RESET_DATA_FORM: "data_last_24h",
     },
   },
 
   /** Data screen with the detail slider expanded on one row */
   data_row_expanded: {
     on: {
-      COLLAPSE_DATA_ROW: "data_row_saved",
+      COLLAPSE_DATA_ROW: "data_last_24h",
       /** Clicking edit on an expanded row loads it into the edit form */
       EDIT_DATA_ROW: "data_row_editing",
     },
@@ -187,21 +174,13 @@ const authenticatedStates = {
   /** Change-history page for a specific data row (/lv/Changes/{ID}) */
   data_changes_page: {},
 
-  /** Bulk-edit bar (#MultiEdit) is visible — allows changing a field across selected rows */
-  data_multi_edit_open: {
-    on: {
-      /** Click the checkmark icon again to hide the bar */
-      TOGGLE_MULTI_EDIT: "data",
-    },
-  },
-
-  /** Multi-edit bar visible with at least one data row present — enables bulk apply */
+  /** Multi-edit bar visible with seed data rows present — enables bulk apply */
   data_multi_edit_with_rows: {
     on: {
       /** Apply the bulk change — server updates rows and reloads the page */
-      SUBMIT_MULTI_EDIT: "data_row_saved",
+      SUBMIT_MULTI_EDIT: "data_last_24h",
       /** Close the multi-edit bar */
-      TOGGLE_MULTI_EDIT: "data_row_saved",
+      TOGGLE_MULTI_EDIT: "data_last_24h",
     },
   },
 

@@ -5,3 +5,4 @@ playwright-report
 .env
 coverage
 coverage-raw
+data/

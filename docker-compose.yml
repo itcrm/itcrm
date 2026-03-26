@@ -8,11 +8,7 @@ services:
     ports:
       - "${SERVER_PORT:-80}:80"
     environment:
-      - DB_HOST=${DB_HOST:-mariadb}
-      - DB_PORT=${DB_PORT:-3306}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_DATABASE=${DB_DATABASE}
+      - DB_PATH=/var/www/html/data/database.sqlite
       - APP_ENV=${APP_ENV:-production}
       - APP_DEBUG=${APP_DEBUG:-false}
     volumes:
@@ -23,9 +19,7 @@ services:
       - ./images:/var/www/html/images:cached
       - ./tcpdf:/var/www/html/tcpdf:cached
       - ./faili:/var/www/html/faili:cached
-    depends_on:
-      mariadb:
-        condition: service_healthy
+      - sqlite_data:/var/www/html/data
     networks:
       - itcrm-network
     healthcheck:
@@ -35,32 +29,8 @@ services:
       retries: 3
       start_period: 5s
 
-  mariadb:
-    image: mariadb:10.11
-    container_name: itcrm-mariadb
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "${DB_PORT:-3306}:3306"
-    volumes:
-      - mariadb_data:/var/lib/mysql
-      - ./docker/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
-      - ./docker/seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
-    networks:
-      - itcrm-network
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
 volumes:
-  mariadb_data:
+  sqlite_data:
     driver: local
 
 networks:
