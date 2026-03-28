@@ -6,7 +6,7 @@
  *
  * getShortestPaths derives one test path per reachable state, guaranteeing:
  *   - every state is reached and verified
- *   - every state gets a screenshot saved to e2e/screenshots/states/
+ *   - every state gets a screenshot snapshot (update with --update-snapshots / -u)
  *   - adding a new state + event to the machine automatically adds a test
  *
  * publicMachine  — unauthenticated routes (login, login_failed).
@@ -16,18 +16,13 @@
  *                        Tests log in as setup, then follow the path.
  *                        LOGOUT is a root-level event available from every state.
  */
-import { test, Page } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
 import { AnyStateMachine } from "xstate";
 import { getShortestPaths } from "@xstate/graph";
-import { join } from "path";
-import { mkdirSync } from "fs";
 import { createTestEnv, TestEnvironment } from "../utils/test-environment";
 import { publicMachine, authenticatedMachine, dataFiltersMachine } from "../model/machine";
 import { eventActions, stateVerifications } from "../model/actions";
 import { standardMasks, waitForAnimations } from "../utils/screenshot";
-
-const screenshotsDir = join(__dirname, "..", "screenshots", "states");
-mkdirSync(screenshotsDir, { recursive: true });
 
 async function walkPath(
   page: Page,
@@ -64,8 +59,7 @@ function registerPaths(machine: AnyStateMachine, setup?: (page: Page, env: TestE
 
         await page.waitForLoadState("networkidle");
         await waitForAnimations(page);
-        await page.screenshot({
-          path: join(screenshotsDir, `${stateName}.png`),
+        await expect(page).toHaveScreenshot(`${stateName}.png`, {
           fullPage: true,
           mask: standardMasks(page),
         });
