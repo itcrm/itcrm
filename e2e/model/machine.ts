@@ -49,30 +49,17 @@ const authenticatedStates = {
       TOGGLE_MULTI_EDIT: "data_multi_edit_open",
       /** Navigate to the reminder view — shows rows with RemindTo=user (seeded row) */
       NAVIGATE_REMINDER: "data_reminder_view",
+      /** Apply "Today" date filter — seeded rows become visible, enabling row-level actions */
+      APPLY_DATE_INTERVAL_TODAY: "data_last_24h",
     },
   },
 
-  /** Data reminder view — /Data/Reminder/1 shows rows with RemindTo=Alice */
-  data_reminder_view: {},
-
-  /** Data screen after a failed save — required fields have the `error` class */
-  data_validation_error: {
-    on: {
-      SUBMIT_DATA_ROW: "data_row_saved",
-    },
-  },
-
-  /** Data screen sorted by document date — DateSort link shows "Dok.datums" */
-  data_sort_toggled: {},
-
-  /** Data screen with at least one saved row — enables row-level actions */
-  data_row_saved: {
+  /** Data screen with "Today" filter applied — seeded rows are visible, row-level actions available */
+  data_last_24h: {
     on: {
       EDIT_DATA_ROW: "data_row_editing",
       COPY_DATA_ROW: "data_row_copy",
       EXPAND_DATA_ROW: "data_row_expanded",
-      /** First delete marks the row as deleted (soft-delete) */
-      DELETE_DATA_ROW: "data_row_deleted",
       /** Toggle multi-edit bar when rows exist */
       TOGGLE_MULTI_EDIT: "data_multi_edit_with_rows",
       /** Toggle the DataList sort between AddDate and Date */
@@ -91,6 +78,27 @@ const authenticatedStates = {
       APPLY_DATA_SEARCH_YEAR: "data_search_year",
       /** Open the change-history page for a data row (opens /lv/Changes/{ID}) */
       VIEW_DATA_CHANGES: "data_changes_page",
+    },
+  },
+
+  /** Data reminder view — /Data/Reminder/1 shows rows with RemindTo=Alice */
+  data_reminder_view: {},
+
+  /** Data screen after a failed save — required fields have the `error` class */
+  data_validation_error: {
+    on: {
+      SUBMIT_DATA_ROW: "data_row_saved",
+    },
+  },
+
+  /** Data screen sorted by document date — DateSort link shows "Dok.datums" */
+  data_sort_toggled: {},
+
+  /** Data screen after saving a row — row-level delete chain starts here */
+  data_row_saved: {
+    on: {
+      /** First delete marks the row as deleted (soft-delete) */
+      DELETE_DATA_ROW: "data_row_deleted",
     },
   },
 

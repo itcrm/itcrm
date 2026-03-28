@@ -1372,6 +1372,10 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
     expect(parseInt(idVal)).toBeGreaterThan(0);
   },
 
+  data_last_24h: async (page) => {
+    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
+  },
+
   data_row_saved: async (page) => {
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
