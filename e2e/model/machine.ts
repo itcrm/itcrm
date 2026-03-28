@@ -60,8 +60,6 @@ const authenticatedStates = {
       EDIT_DATA_ROW: "data_row_editing",
       COPY_DATA_ROW: "data_row_copy",
       EXPAND_DATA_ROW: "data_row_expanded",
-      /** First delete marks the row as deleted (soft-delete) */
-      DELETE_DATA_ROW: "data_row_deleted",
       /** Toggle multi-edit bar when rows exist */
       TOGGLE_MULTI_EDIT: "data_multi_edit_with_rows",
       /** Toggle the DataList sort between AddDate and Date */
@@ -96,32 +94,11 @@ const authenticatedStates = {
   /** Data screen sorted by document date — DateSort link shows "Dok.datums" */
   data_sort_toggled: {},
 
-  /** Data screen with at least one saved row — enables row-level actions */
+  /** Data screen after saving a row — row-level delete chain starts here */
   data_row_saved: {
     on: {
-      EDIT_DATA_ROW: "data_row_editing",
-      COPY_DATA_ROW: "data_row_copy",
-      EXPAND_DATA_ROW: "data_row_expanded",
       /** First delete marks the row as deleted (soft-delete) */
       DELETE_DATA_ROW: "data_row_deleted",
-      /** Toggle multi-edit bar when rows exist */
-      TOGGLE_MULTI_EDIT: "data_multi_edit_with_rows",
-      /** Toggle the DataList sort between AddDate and Date */
-      CHANGE_DATA_SORT: "data_sort_toggled",
-      /** Use the menu Search form — full POST to /Data/Search */
-      APPLY_DATA_SEARCH: "data_search_results",
-      /** Search with Sort=by-Date selected in the SearchForm Sort dropdown */
-      APPLY_DATA_SEARCH_DATE_SORTED: "data_search_date_sorted",
-      /** Search with Period=Today (5) — date-restricted to current day */
-      APPLY_DATA_SEARCH_TODAY: "data_search_today",
-      /** Search with Period=Week (7) — date-restricted to current week */
-      APPLY_DATA_SEARCH_WEEK: "data_search_week",
-      /** Search with Period=Month (1) — date-restricted to last 30 days */
-      APPLY_DATA_SEARCH_MONTH: "data_search_month",
-      /** Search with Period=Year (4) — date-restricted to last year */
-      APPLY_DATA_SEARCH_YEAR: "data_search_year",
-      /** Open the change-history page for a data row (opens /lv/Changes/{ID}) */
-      VIEW_DATA_CHANGES: "data_changes_page",
     },
   },
 
