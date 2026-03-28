@@ -98,7 +98,7 @@ export const eventActions: Record<string, ActionFn> = {
         const el = get(name);
         if (el) el.value = val;
       };
-      set("IDDoc", "gala-client-meeting");
+      set("IDDoc", "spring-delivery-followup");
       // Set both visible selects (display) and hidden IDs (server validation).
       // Seeded fixtures: Alice=ID1, SPRING-GALA=ID1, BOUQUET=ID1.
       set("PersonSelect", "Alice");
@@ -108,7 +108,7 @@ export const eventActions: Record<string, ActionFn> = {
       set("TypeSelect", "BOUQUET");
       set("IDType", "1");
     });
-    await page.fill('#AddDataForm [name="Note"]', "Meeting with client about arrangement");
+    await page.fill('#AddDataForm [name="Note"]', "Follow-up call regarding spring delivery");
     const saveResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Save")
     );
@@ -253,7 +253,7 @@ export const eventActions: Record<string, ActionFn> = {
   SEARCH_WITH_DELETED: async (page) => {
     // Check FindDeleted in SearchForm and search — includes soft-deleted rows (tr.deleted) in results
     await page.check('form[name="SearchForm"] [name="FindDeleted"]');
-    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "Follow-up call regarding spring delivery");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     // The deleted row should appear with the "deleted" CSS class

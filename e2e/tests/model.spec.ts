@@ -76,5 +76,6 @@ registerPaths(authenticatedMachine, (page, env) =>
 );
 registerPaths(dataFiltersMachine, async (page, env) => {
   await eventActions["SUBMIT_VALID_CREDENTIALS"](page, env);
-  await eventActions["SUBMIT_DATA_ROW"](page, env);
+  // SHOW_PERIOD=-2 makes default dates future-dated; select Today to show seeded rows
+  await eventActions["APPLY_DATE_INTERVAL_TODAY"](page, env);
 });

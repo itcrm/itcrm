@@ -554,7 +554,7 @@ export const authenticatedMachine = createMachine({
 /**
  * State machine covering all data filter states.
  *
- * Starts at data_row_saved (setup: login + submit a data row).
+ * Starts at ready (setup: login).
  * Each filter state is reachable in a single step, so getShortestPaths
  * generates one-step paths instead of three-step paths through authenticatedMachine.
  */
@@ -564,7 +564,7 @@ const dataFiltersStates = {
       on: {
         /** Apply a text search filter — reloads page with filtered results */
         APPLY_DATA_FILTER: "data_filtered",
-        /** Filter by IDDoc="gala-client-meeting" — matches the test row created by SUBMIT_DATA_ROW */
+        /** Filter by IDDoc="gala-client-meeting" */
         APPLY_DOC_FILTER: "data_filtered_by_doc",
         /** Filter by OrderFilterSelect="SPRING-GALA" — matches the test row's order */
         APPLY_ORDER_FILTER: "data_filtered_by_order",
