@@ -63,8 +63,6 @@ VALUES
   (3, 'Old Supplier Co',          'No longer in use',                     '#757575', '2021-06-01 08:00:00', 0);
 
 -- ─── Filters (saved search templates) ───────────────────────────────────────────
--- Saved filter for APPLY_SAVED_FILTER test (data_saved_filter state)
--- Note='Meeting with client about arrangement' so applying the filter pre-fills the Note field and matches the test data row.
 INSERT INTO `Filters` (`Name`, `Note`, `AddDate`, `Status`)
 VALUES ('Weekly flowers', 'Meeting with client about arrangement', NOW(), 1);
 
@@ -85,6 +83,10 @@ INSERT INTO `Data` (`IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTak
 VALUES (1, 1, 1, 1, 'Delivery reminder for flower order', 'shop-counter', 'client-location',
         '42.00', '5.00', '100.00', 'booking-note', 'order-text', 'type-text', 'price-note',
         NOW(), NOW(), '2024-01-01 12:00:00', 1, 1);
+
+-- IDDoc='gala-client-meeting', Person=Alice(1), Order=SPRING-GALA(1), Type=BOUQUET(1).
+INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `Date`, `AddDate`, `Status`)
+VALUES ('gala-client-meeting', 1, 1, 1, 1, 'Meeting with client about arrangement', NOW(), NOW(), 1);
 
 -- Floral arrangements
 INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTaken`, `PlaceDone`,
