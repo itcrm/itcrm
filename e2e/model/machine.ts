@@ -564,7 +564,7 @@ const dataFiltersStates = {
       on: {
         /** Apply a text search filter — reloads page with filtered results */
         APPLY_DATA_FILTER: "data_filtered",
-        /** Filter by IDDoc="gala-client-meeting" — matches the test row created by SUBMIT_DATA_ROW */
+        /** Filter by IDDoc="automation-test-row" — matches the test row created by SUBMIT_DATA_ROW */
         APPLY_DOC_FILTER: "data_filtered_by_doc",
         /** Filter by OrderFilterSelect="SPRING-GALA" — matches the test row's order */
         APPLY_ORDER_FILTER: "data_filtered_by_order",
@@ -615,7 +615,7 @@ const dataFiltersStates = {
 
     /** Data screen showing filtered results — filter fields are pre-filled */
     data_filtered: {},
-    /** Data screen filtered by IDDoc text — IDDoc field shows "gala-client-meeting" after reload */
+    /** Data screen filtered by IDDoc text — IDDoc field shows "automation-test-row" after reload */
     data_filtered_by_doc: {},
     /** Data screen filtered by OrderFilterSelect="SPRING-GALA" — only rows with that order */
     data_filtered_by_order: {},

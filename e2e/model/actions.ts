@@ -98,7 +98,7 @@ export const eventActions: Record<string, ActionFn> = {
         const el = get(name);
         if (el) el.value = val;
       };
-      set("IDDoc", "gala-client-meeting");
+      set("IDDoc", "automation-test-row");
       // Set both visible selects (display) and hidden IDs (server validation).
       // Seeded fixtures: Alice=ID1, SPRING-GALA=ID1, BOUQUET=ID1.
       set("PersonSelect", "Alice");
@@ -108,7 +108,7 @@ export const eventActions: Record<string, ActionFn> = {
       set("TypeSelect", "BOUQUET");
       set("IDType", "1");
     });
-    await page.fill('#AddDataForm [name="Note"]', "Meeting with client about arrangement");
+    await page.fill('#AddDataForm [name="Note"]', "New test row added by automation");
     const saveResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Save")
     );
@@ -233,13 +233,13 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_SAVED_FILTER: async (page) => {
-    // Weekly flowers has Note='Meeting with client about arrangement'. Directly fill the Note field and apply
+    // Weekly flowers has Note='New test row added by automation'. Directly fill the Note field and apply
     // the filter — this reaches the identical state to selecting the saved filter from the
     // IDFilter dropdown (the state verifier only checks Note value and visible data rows).
     // The IDFilter onchange + getFilterData AJAX path is flaky: the Filters/Get PHP worker
     // holds the session file lock until it exits, which can block the subsequent
     // Data/Filter request when PHP-FPM has limited concurrency.
-    await page.fill('#FilterForm [name="Note"]', "Meeting with client about arrangement");
+    await page.fill('#FilterForm [name="Note"]', "New test row added by automation");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -253,7 +253,7 @@ export const eventActions: Record<string, ActionFn> = {
   SEARCH_WITH_DELETED: async (page) => {
     // Check FindDeleted in SearchForm and search — includes soft-deleted rows (tr.deleted) in results
     await page.check('form[name="SearchForm"] [name="FindDeleted"]');
-    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "New test row added by automation");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     // The deleted row should appear with the "deleted" CSS class
@@ -262,7 +262,7 @@ export const eventActions: Record<string, ActionFn> = {
 
   APPLY_DATA_SEARCH: async (page) => {
     // Submit the menu SearchForm — posts to /Data/Search with the search term
-    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "New test row added by automation");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -271,7 +271,7 @@ export const eventActions: Record<string, ActionFn> = {
   APPLY_DATA_SEARCH_DATE_SORTED: async (page) => {
     // Select Sort=1 (by Date) in SearchForm before submitting
     await page.selectOption('form[name="SearchForm"] [name="Sort"]', "1");
-    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "New test row added by automation");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -280,7 +280,7 @@ export const eventActions: Record<string, ActionFn> = {
   APPLY_DATA_SEARCH_TODAY: async (page) => {
     // Select Period=5 (Today) and search — filters results to today's date range
     await page.selectOption('form[name="SearchForm"] [name="Period"]', "5");
-    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "New test row added by automation");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -289,7 +289,7 @@ export const eventActions: Record<string, ActionFn> = {
   APPLY_DATA_SEARCH_WEEK: async (page) => {
     // Select Period=7 (Week) and search — filters results to current week date range
     await page.selectOption('form[name="SearchForm"] [name="Period"]', "7");
-    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "New test row added by automation");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -298,7 +298,7 @@ export const eventActions: Record<string, ActionFn> = {
   APPLY_DATA_SEARCH_MONTH: async (page) => {
     // Select Period=1 (last 30 days) and search — filters results to last month
     await page.selectOption('form[name="SearchForm"] [name="Period"]', "1");
-    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "New test row added by automation");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -307,7 +307,7 @@ export const eventActions: Record<string, ActionFn> = {
   APPLY_DATA_SEARCH_YEAR: async (page) => {
     // Select Period=4 (last year) and search — filters results to last 12 months
     await page.selectOption('form[name="SearchForm"] [name="Period"]', "4");
-    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "New test row added by automation");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -325,8 +325,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_DOC_FILTER: async (page) => {
-    // Fill the IDDoc field with "gala-client-meeting" — matches the test row's IDDoc value
-    await page.fill('#FilterForm [name="IDDoc"]', "gala-client-meeting");
+    // Fill the IDDoc field with "automation-test-row" — matches the test row's IDDoc value
+    await page.fill('#FilterForm [name="IDDoc"]', "automation-test-row");
     // Select "All time" so DateFrom/DateTo don't exclude today's rows (SHOW_PERIOD=-2 makes defaults future-dated)
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     // Wait for the full navigation triggered by window.location.replace() in the
@@ -392,8 +392,8 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   APPLY_NOTE_FILTER: async (page) => {
-    // Fill the Note filter field with "Meeting with client about arrangement" — matches the seeded data row
-    await page.fill('#FilterForm [name="Note"]', "Meeting with client about arrangement");
+    // Fill the Note filter field with "New test row added by automation" — matches the seeded data row
+    await page.fill('#FilterForm [name="Note"]', "New test row added by automation");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -583,7 +583,7 @@ export const eventActions: Record<string, ActionFn> = {
 
   APPLY_DATA_FILTER: async (page) => {
     // Fill the free-text Note search field in the FilterForm header
-    await page.fill('#FilterForm [name="Note"]', "Meeting with client about arrangement");
+    await page.fill('#FilterForm [name="Note"]', "New test row added by automation");
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
     const filterResponse = page.waitForResponse((r) =>
       r.url().includes("/Data/Filter")
@@ -1267,7 +1267,7 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
     // (IDFilter is unset from session after submit, but the filter's field values persist.)
     await expect(
       page.locator('#FilterForm [name="Note"]')
-    ).toHaveValue("Meeting with client about arrangement");
+    ).toHaveValue("New test row added by automation");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
@@ -1415,7 +1415,7 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   data_filtered_by_doc: async (page) => {
     // IDDoc field shows the filter value that was applied
     await expect(page.locator('#FilterForm [name="IDDoc"]')).toHaveValue(
-      "gala-client-meeting"
+      "automation-test-row"
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
@@ -1453,9 +1453,9 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   },
 
   data_filtered_by_note: async (page) => {
-    // Note filter field shows "Meeting with client about arrangement" — the note filter was applied
+    // Note filter field shows "New test row added by automation" — the note filter was applied
     await expect(page.locator('#FilterForm [name="Note"]')).toHaveValue(
-      "Meeting with client about arrangement"
+      "New test row added by automation"
     );
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },

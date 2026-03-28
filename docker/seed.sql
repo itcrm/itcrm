@@ -64,9 +64,9 @@ VALUES
 
 -- ─── Filters (saved search templates) ───────────────────────────────────────────
 -- Saved filter for APPLY_SAVED_FILTER test (data_saved_filter state)
--- Note='Meeting with client about arrangement' so applying the filter pre-fills the Note field and matches the test data row.
+-- Note='New test row added by automation' so applying the filter pre-fills the Note field and matches the test data row.
 INSERT INTO `Filters` (`Name`, `Note`, `AddDate`, `Status`)
-VALUES ('Weekly flowers', 'Meeting with client about arrangement', NOW(), 1);
+VALUES ('Weekly flowers', 'New test row added by automation', NOW(), 1);
 
 INSERT INTO `Filters` (`Name`, `IDOrder`, `IDType`, `Note`, `AddDate`, `Status`)
 VALUES
