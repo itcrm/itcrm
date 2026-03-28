@@ -49,12 +49,6 @@ const authenticatedStates = {
       TOGGLE_MULTI_EDIT: "data_multi_edit_open",
       /** Navigate to the reminder view — shows rows with RemindTo=user (seeded row) */
       NAVIGATE_REMINDER: "data_reminder_view",
-      NAVIGATE_TYPES: "types",
-      NAVIGATE_USERS: "users",
-      NAVIGATE_ORDERS: "orders",
-      NAVIGATE_TASK: "task",
-      NAVIGATE_WAREHOUSE: "warehouse",
-      NAVIGATE_FILTERS: "filters",
     },
   },
 
@@ -65,7 +59,6 @@ const authenticatedStates = {
   data_validation_error: {
     on: {
       SUBMIT_DATA_ROW: "data_row_saved",
-      NAVIGATE_TYPES: "types",
     },
   },
 
@@ -98,10 +91,6 @@ const authenticatedStates = {
       APPLY_DATA_SEARCH_YEAR: "data_search_year",
       /** Open the change-history page for a data row (opens /lv/Changes/{ID}) */
       VIEW_DATA_CHANGES: "data_changes_page",
-      NAVIGATE_TYPES: "types",
-      NAVIGATE_USERS: "users",
-      NAVIGATE_ORDERS: "orders",
-      NAVIGATE_FILTERS: "filters",
     },
   },
 
@@ -195,7 +184,6 @@ const authenticatedStates = {
     on: {
       /** Click the checkmark icon again to hide the bar */
       TOGGLE_MULTI_EDIT: "data",
-      NAVIGATE_TYPES: "types",
     },
   },
 
@@ -545,6 +533,12 @@ export const authenticatedMachine = createMachine({
   on: {
     LOGOUT: ".logged_out",
     NAVIGATE_DATA: ".data",
+    NAVIGATE_TYPES: ".types",
+    NAVIGATE_USERS: ".users",
+    NAVIGATE_ORDERS: ".orders",
+    NAVIGATE_TASK: ".task",
+    NAVIGATE_WAREHOUSE: ".warehouse",
+    NAVIGATE_FILTERS: ".filters",
   },
   states: authenticatedStates,
 });
