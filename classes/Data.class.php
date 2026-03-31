@@ -420,6 +420,7 @@ class Data extends DBObject {
 
         if (isset(self::$url[2]) && self::$url[2] == 'Reminder') {
             unset($Filter);
+            $filterParams = [];
 
             if (self::$url[3] === '0') $Filter['RemindTo'] = 'RemindTo>0';
             else $Filter['RemindTo'] = 'RemindTo=' . (is_numeric(self::$url[3]) ? self::$url[3] : $_SESSION['User']->getID());
