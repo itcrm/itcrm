@@ -1447,16 +1447,13 @@ class Data extends DBObject {
     }
 
     function SavephotoTagger() {
-        $query = 'INSERT INTO `photo_tagger`
-                     (`photoid`, `y`, `width`, `height`, `message`, `x`)
-                     VALUES ("' . $_GET['photoID'] . '",
-                         ' . $_GET['y'] . ',
-                         ' . $_GET['width'] . ',
-                         "' . $_GET['height'] . '",
-                         "' . $_GET['message'] . '",
-                         "' . $_GET['x'] . '")';
+        $query = 'INSERT INTO `photo_tagger` (`photoid`, `y`, `width`, `height`, `message`, `x`)
+                  VALUES (?, ?, ?, ?, ?, ?)';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            $_GET['photoID'], $_GET['y'], $_GET['width'],
+            $_GET['height'], $_GET['message'], $_GET['x']
+        ])) {
             throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
         }
         $this->setID(self::$DB->insert_id);
@@ -1464,9 +1461,9 @@ class Data extends DBObject {
     }
 
     function DeletephotoTagger($ID) {
-        $query = 'DELETE FROM photo_tagger WHERE id=' . $ID;
+        $query = 'DELETE FROM photo_tagger WHERE id=?';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [(int)$ID])) {
             throw new AppError('Write error on Data (' . __LINE__ . ') : ' . self::$DB->error);
         }
         $this->setID(self::$DB->insert_id);
