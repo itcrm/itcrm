@@ -8,10 +8,10 @@ class Changes extends DBObject {
 
     function GetChanges($ID) {
         $query = 'SELECT  D.ID as ID_Row, D.*,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `DateShow`,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `Date`,
-                         DATE_FORMAT(D.`AddDate`,"%y.%m.%d %H:%i") as `AddDate`,
-                         DATE_FORMAT(D.`RemindDate`,"%y.%m.%d %H:%i") as `RemindDate`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `DateShow`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `Date`,
+                         (substr(strftime(\'%Y\', D.`AddDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`AddDate`)) as `AddDate`,
+                         (substr(strftime(\'%Y\', D.`RemindDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`RemindDate`)) as `RemindDate`,
                          `RemindDate` as RemindDateStamp,
                          P.Login as Person, U.Login as User, R.Login as RemindTo,
                          O.Code as `Order`, T.Code as Type
@@ -23,10 +23,10 @@ class Changes extends DBObject {
                LEFT JOIN Types T ON (T.ID=D.IDType)
                WHERE D.`ID`=' . $ID . ' UNION
                SELECT D.*, D.ID as IDS,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `DateShow`,
-                         DATE_FORMAT(D.`Date`,"%y.%m.%d %H:%i") as `Date`,
-                         DATE_FORMAT(D.`AddDate`,"%y.%m.%d %H:%i") as `AddDate`,
-                         DATE_FORMAT(D.`RemindDate`,"%y.%m.%d %H:%i") as `RemindDate`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `DateShow`,
+                         (substr(strftime(\'%Y\', D.`Date`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`Date`)) as `Date`,
+                         (substr(strftime(\'%Y\', D.`AddDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`AddDate`)) as `AddDate`,
+                         (substr(strftime(\'%Y\', D.`RemindDate`), 3) || \'.\' || strftime(\'%m.%d %H:%M\', D.`RemindDate`)) as `RemindDate`,
                          `RemindDate` as RemindDateStamp,
                          P.Login as Person, U.Login as User, R.Login as RemindTo,
                          O.Code as `Order`, T.Code as Type

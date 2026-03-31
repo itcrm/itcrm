@@ -8,21 +8,22 @@
 -- Admin user for automated tests (dev only)
 -- Password: Alice123
 INSERT INTO `Users` (`Login`, `Password`, `Color`, `Name`, `Phone`, `AddDate`, `Status`)
-VALUES ('Alice', MD5('Alice123'), '#000000', 'Alice Morgan', '+1 555-0100', NOW(), 99);
+VALUES ('Alice', '8714bd74bdd83c760184dd89c829f3a2', '#000000', 'Alice Morgan', '+1 555-0100', datetime('now'), 99);
 
 -- Additional staff users
+-- Passwords: John123, Sarah123, Mark123, Emma123, disabled123 (all MD5-hashed)
 INSERT INTO `Users` (`Login`, `Password`, `Color`, `Name`, `Phone`, `AddDate`, `Status`)
 VALUES
-  ('John',     MD5('John123'),     '#1E88E5', 'John Smith',     '+1 555-0101', '2023-06-15 09:00:00', 1),
-  ('Sarah',    MD5('Sarah123'),    '#E53935', 'Sarah Jones',    '+1 555-0102', '2023-07-01 10:30:00', 1),
-  ('Mark',     MD5('Mark123'),     '#43A047', 'Mark Davis',     '+1 555-0103', '2023-09-10 08:00:00', 1),
-  ('Emma',     MD5('Emma123'),     '#FB8C00', 'Emma Wilson',    '+1 555-0104', '2024-01-20 14:00:00', 1),
-  ('disabled', MD5('disabled123'), '#9E9E9E', 'Old Account',    '',            '2022-01-01 00:00:00', 0);
+  ('John',     'a5391e96f8d48a62e8c85381df108e98', '#1E88E5', 'John Smith',     '+1 555-0101', '2023-06-15 09:00:00', 1),
+  ('Sarah',    '4eb641b60073572fcd1afe9017ac52db', '#E53935', 'Sarah Jones',    '+1 555-0102', '2023-07-01 10:30:00', 1),
+  ('Mark',     'b38ac18016d255ee4e9a364fb6490ebf', '#43A047', 'Mark Davis',     '+1 555-0103', '2023-09-10 08:00:00', 1),
+  ('Emma',     'dda71ccb468d687e9d9b39e55bb20733', '#FB8C00', 'Emma Wilson',    '+1 555-0104', '2024-01-20 14:00:00', 1),
+  ('disabled', '024dda788e21e6bae8d736f807919fdd', '#9E9E9E', 'Old Account',    '',            '2022-01-01 00:00:00', 0);
 
 -- ─── Types (service/work categories) ────────────────────────────────────────────
 -- Seed fixtures required by the Data-row tests (IDType=1, IDOrder=1, IDPerson=1)
 INSERT INTO `Types` (`Code`, `Description`, `AddDate`, `Status`)
-VALUES ('BOUQUET', 'Bouquet arrangement', NOW(), 1);
+VALUES ('BOUQUET', 'Bouquet arrangement', datetime('now'), 1);
 
 INSERT INTO `Types` (`Code`, `Description`, `AddDate`, `Status`)
 VALUES
@@ -39,7 +40,7 @@ VALUES
 -- ─── Orders (projects / work orders) ────────────────────────────────────────────
 -- Changes column holds PHP-serialized diff history; non-empty means the changes button is visible in the UI.
 INSERT INTO `Orders` (`IDUser`, `Code`, `Description`, `Color`, `AddDate`, `Status`, `Changes`)
-VALUES (1, 'SPRING-GALA', 'Spring Gala', '#000000', NOW(), 1,
+VALUES (1, 'SPRING-GALA', 'Spring Gala', '#000000', datetime('now'), 1,
   'a:1:{s:19:"2024-01-01 12:00:00";a:1:{s:11:"Description";a:2:{s:3:"old";s:11:"Spring Gala";s:3:"new";s:14:"Spring Gala v2";}}}');
 
 INSERT INTO `Orders` (`IDUser`, `Code`, `Description`, `Color`, `AddDate`, `Status`, `Changes`)
@@ -64,7 +65,7 @@ VALUES
 
 -- ─── Filters (saved search templates) ───────────────────────────────────────────
 INSERT INTO `Filters` (`Name`, `Note`, `AddDate`, `Status`)
-VALUES ('Weekly flowers', 'Meeting with client about arrangement', NOW(), 1);
+VALUES ('Weekly flowers', 'Meeting with client about arrangement', datetime('now'), 1);
 
 INSERT INTO `Filters` (`Name`, `IDOrder`, `IDType`, `Note`, `AddDate`, `Status`)
 VALUES
@@ -82,11 +83,11 @@ INSERT INTO `Data` (`IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTak
                     `RemindDate`, `RemindTo`, `Status`)
 VALUES (1, 1, 1, 1, 'Delivery reminder for flower order', 'shop-counter', 'client-location',
         '42.00', '5.00', '100.00', 'booking-note', 'order-text', 'type-text', 'price-note',
-        NOW(), NOW(), '2024-01-01 12:00:00', 1, 1);
+        datetime('now'), datetime('now'), '2024-01-01 12:00:00', 1, 1);
 
 -- IDDoc='gala-client-meeting', Person=Alice(1), Order=SPRING-GALA(1), Type=BOUQUET(1).
 INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `Date`, `AddDate`, `Status`)
-VALUES ('gala-client-meeting', 1, 1, 1, 1, 'Meeting with client about arrangement', NOW(), NOW(), 1);
+VALUES ('gala-client-meeting', 1, 1, 1, 1, 'Meeting with client about arrangement', datetime('now'), datetime('now'), 1);
 
 -- Floral arrangements
 INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTaken`, `PlaceDone`,

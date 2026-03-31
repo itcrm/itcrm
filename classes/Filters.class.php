@@ -310,26 +310,29 @@ class Filters extends DBObject {
     }
 
     function Add() {
-        $query = 'INSERT INTO `Filters`
-                     SET `Name`="' . addslashes($this->getName()) . '",
-                         `Date`=' . (int)$this->getDate() . ',
-                         `DateType`=' . (int)$this->getDateType() . ',
-                         `IDPerson`="' . substr_replace($this->getIDPerson(), "", -2) . '",
-                         `IDOperator`="' . substr_replace($this->getIDOperator(), "", -2) . '",
-                         `IDOrder`="' . substr_replace($this->getIDOrder(), "", -2) . '",
-                         `TextOrder`="' . addslashes($this->getTextOrder()) . '",
-                         `IDType`="' . substr_replace($this->getIDType(), "", -2) . '",
-                         `TextType`="' . addslashes($this->getTextType()) . '",
-                         `Sum`=' . (float)$this->getSum() . ',
-                         `Hours`=' . (float)$this->getHours() . ',
-                         `PlaceTaken`="' . addslashes($this->getPlaceTaken()) . '",
-                         `PlaceDone`="' . addslashes($this->getPlaceDone()) . '",
-                         `Note`="' . addslashes($this->getNote()) . '",
-                         `BookNote`="' . addslashes($this->getBookNote()) . '",
-                         `Search`="' . addslashes($this->getSearch()) . '",
-                         `AddDate`=NOW(),
-                         `Status`=1';
-        if (!self::$DB->query($query)) {
+        $query = 'INSERT INTO `Filters` (`Name`, `Date`, `DateType`, `IDPerson`, `IDOperator`, `IDOrder`,
+                    `TextOrder`, `IDType`, `TextType`, `Sum`, `Hours`, `PlaceTaken`, `PlaceDone`,
+                    `Note`, `BookNote`, `Search`, `AddDate`, `Status`)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime(\'now\'), 1)';
+
+        if (!self::$DB->prepare($query, [
+            $this->getName(),
+            (int)$this->getDate(),
+            (int)$this->getDateType(),
+            substr_replace($this->getIDPerson(), "", -2),
+            substr_replace($this->getIDOperator(), "", -2),
+            substr_replace($this->getIDOrder(), "", -2),
+            $this->getTextOrder(),
+            substr_replace($this->getIDType(), "", -2),
+            $this->getTextType(),
+            (float)$this->getSum(),
+            (float)$this->getHours(),
+            $this->getPlaceTaken(),
+            $this->getPlaceDone(),
+            $this->getNote(),
+            $this->getBookNote(),
+            $this->getSearch()
+        ])) {
             throw new AppError('Write error on Filters (' . __LINE__ . ')');
         }
 
@@ -339,24 +342,30 @@ class Filters extends DBObject {
 
     function Update() {
         $query = 'UPDATE `Filters` SET
-                         `Name`="' . addslashes($this->getName()) . '",
-                         `Date`=' . (int)$this->getDate() . ',
-                         `DateType`=' . (int)$this->getDateType() . ',
-                         `IDPerson`="' . substr_replace($this->getIDPerson(), "", -2) . '",
-                         `IDOperator`="' . substr_replace($this->getIDOperator(), "", -2) . '",
-                         `IDOrder`="' . substr_replace($this->getIDOrder(), "", -2) . '",
-                         `TextOrder`="' . addslashes($this->getTextOrder()) . '",
-                         `IDType`="' . substr_replace($this->getIDType(), "", -2) . '",
-                         `TextType`="' . addslashes($this->getTextType()) . '",
-                         `Sum`=' . (float)$this->getSum() . ',
-                         `Hours`=' . (float)$this->getHours() . ',
-                         `PlaceTaken`="' . addslashes($this->getPlaceTaken()) . '",
-                         `PlaceDone`="' . addslashes($this->getPlaceDone()) . '",
-                         `Note`="' . addslashes($this->getNote()) . '",
-                         `Search`="' . addslashes($this->getSearch()) . '",
-                         `BookNote`="' . addslashes($this->getBokkNote()) . '"
-                   WHERE `ID`=' . (int)$this->getID();
-        if (!self::$DB->query($query)) {
+                         `Name`=?, `Date`=?, `DateType`=?, `IDPerson`=?, `IDOperator`=?,
+                         `IDOrder`=?, `TextOrder`=?, `IDType`=?, `TextType`=?, `Sum`=?,
+                         `Hours`=?, `PlaceTaken`=?, `PlaceDone`=?, `Note`=?, `Search`=?, `BookNote`=?
+                   WHERE `ID`=?';
+
+        if (!self::$DB->prepare($query, [
+            $this->getName(),
+            (int)$this->getDate(),
+            (int)$this->getDateType(),
+            substr_replace($this->getIDPerson(), "", -2),
+            substr_replace($this->getIDOperator(), "", -2),
+            substr_replace($this->getIDOrder(), "", -2),
+            $this->getTextOrder(),
+            substr_replace($this->getIDType(), "", -2),
+            $this->getTextType(),
+            (float)$this->getSum(),
+            (float)$this->getHours(),
+            $this->getPlaceTaken(),
+            $this->getPlaceDone(),
+            $this->getNote(),
+            $this->getSearch(),
+            $this->getBokkNote(),
+            (int)$this->getID()
+        ])) {
             throw new AppError('Update error on Filters (' . __LINE__ . ')');
         }
     }

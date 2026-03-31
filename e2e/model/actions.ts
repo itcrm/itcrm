@@ -253,7 +253,7 @@ export const eventActions: Record<string, ActionFn> = {
   SEARCH_WITH_DELETED: async (page) => {
     // Check FindDeleted in SearchForm and search — includes soft-deleted rows (tr.deleted) in results
     await page.check('form[name="SearchForm"] [name="FindDeleted"]');
-    await page.fill('form[name="SearchForm"] [name="Search"]', "Follow-up call regarding spring delivery");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
     // The deleted row should appear with the "deleted" CSS class
@@ -531,6 +531,15 @@ export const eventActions: Record<string, ActionFn> = {
     await page.click('#FilterForm [type="submit"]');
     await filterResponse;
     await page.waitForLoadState("load");
+    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
+  },
+
+  APPLY_DATE_LAST_24H: async (page) => {
+    // Select Today (value=1) in the date interval select — reveals seed rows with datetime('now') dates
+    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "1");
+    const navigation = page.waitForNavigation({ waitUntil: "load" });
+    await page.click('#FilterForm [type="submit"]');
+    await navigation;
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
@@ -1348,9 +1357,9 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
     await expect(page.locator("#DataList tr.deleted").first()).toBeVisible();
   },
 
-  data_empty: async (page) => {
-    // After permanently deleting the last row the DataList has no data rows
-    await expect(page.locator("#DataList tr.Data")).toHaveCount(0);
+  data_last_24h: async (page) => {
+    // Date filter applied — seed rows with datetime('now') dates are visible
+    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
   data_reminder_view: async (page) => {
@@ -1574,11 +1583,6 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   },
 
 
-
-  data_multi_edit_open: async (page) => {
-    await expect(page.locator("#MultiEdit")).toBeVisible();
-    await page.waitForTimeout(500);
-  },
 
   data_multi_edit_with_rows: async (page) => {
     await expect(page.locator("#MultiEdit")).toBeVisible();

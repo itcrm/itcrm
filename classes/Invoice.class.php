@@ -128,15 +128,16 @@ class Invoice extends DBObject {
     }
 
     function Add() {
-        $query = 'REPLACE INTO `Info`
-                      SET `IDData`=' . (int)$this->getIDData() . ',
-                          `IDSupplier`=' . (int)$this->getIDSupplier() . ',
-                          `IDUser`="' . $_SESSION['User']->getID() . '",
-                          `Info`="' . addslashes($this->getInfo()) . '",
-                          `Color`="' . addslashes($this->getColor()) . '",
-                          `AddDate`=NOW()';
+        $query = 'INSERT OR REPLACE INTO `Info` (`IDData`, `IDSupplier`, `IDUser`, `Info`, `Color`, `AddDate`)
+                  VALUES (?, ?, ?, ?, ?, datetime(\'now\'))';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            (int)$this->getIDData(),
+            (int)$this->getIDSupplier(),
+            $_SESSION['User']->getID(),
+            $this->getInfo(),
+            $this->getColor()
+        ])) {
             throw new AppError('Write error on Info (' . __LINE__ . ')');
         }
 
@@ -154,8 +155,8 @@ class Invoice extends DBObject {
     }
 
     function getRecipient($id) {
-        $query = "SELECT * FROM `recipients` WHERE `ID` = '$id'";
-        if (!$result = self::$DB->query($query)) {
+        $query = 'SELECT * FROM `recipients` WHERE `ID` = ?';
+        if (!$result = self::$DB->prepare($query, [(int)$id])) {
             throw new AppError('Read error on Invoices (' . __LINE__ . ')');
         }
         $recipients = array();
@@ -207,21 +208,10 @@ ORDER BY `Nosaukums`';
         $Telefons = $_POST['Telefons'];
         $Epasts = $_POST['Epasts'];
 
-        $query = 'INSERT INTO `recipients` (
-    `ID` ,
-    `Nosaukums` ,
-    `Kods` ,
-    `Adrese` ,
-    `Banka` ,
-    `Konts`,
-    `Epasts`,
-    `Telefons`
-    )
-    VALUES (
-    NULL , "' . $Nosaukums . '", "' . $Kods . '", "' . $JurAdrese . '", "' . $Kreditiestade . '", "' . $Konts . '", "' . $Epasts . '","' . $Telefons . '"
-    );';
+        $query = 'INSERT INTO `recipients` (`Nosaukums`, `Kods`, `Adrese`, `Banka`, `Konts`, `Epasts`, `Telefons`)
+                  VALUES (?, ?, ?, ?, ?, ?, ?)';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [$Nosaukums, $Kods, $JurAdrese, $Kreditiestade, $Konts, $Epasts, $Telefons])) {
             throw new AppError('Write error on Invoice (' . __LINE__ . ')');
         }
         $this->MakeCont($_POST['Nosaukums'], $_POST['Kods'], $_POST['JurAdrese'], $_POST['Kreditiestade'], $_POST['Konts'], $_POST['Telefons'], $_POST['Epasts']);
@@ -229,7 +219,7 @@ ORDER BY `Nosaukums`';
     }
 
     function loadRecipient($ID) {
-        $query = 'SELECT * FROM `recipients` WHERE ID = "' . $ID . '"';
+        $query = 'SELECT * FROM `recipients` WHERE ID = ' . (int)$ID;
         //ID,Nosaukums, Kods, Adrese, Banka, Konts, Telefons, Epasts
         $Table = $this->good_query_table($query);
         $Table['__template'] = '/Invoice/ChangeRecipient';
@@ -284,16 +274,19 @@ ORDER BY `Nosaukums`';
     function editRecipient() {
         $ID = $_POST['ID'];
         $query = 'UPDATE recipients
-            SET `Nosaukums` = "' . str_replace("%27%27", "%22", rawurlencode($_POST['Nosaukums'])) . '" ,
-                `Kods` = "' . $_POST['Kods'] . '" ,
-                `Adrese` = "' . str_replace("%27%27", "%22", rawurlencode($_POST['JurAdrese'])) . '" ,
-                `Banka` = "' . str_replace("%27%27", "%22", rawurlencode($_POST['Kreditiestade'])) . '" ,
-                `Konts` = "' . $_POST['Konts'] . '",
-                `Epasts` = "' . rawurlencode($_POST['Epasts']) . '",
-                `Telefons` = "' . rawurlencode($_POST['Telefons']) . '"
-            WHERE ID = "' . $ID . '"';
+            SET `Nosaukums`=?, `Kods`=?, `Adrese`=?, `Banka`=?, `Konts`=?, `Epasts`=?, `Telefons`=?
+            WHERE ID=?';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            str_replace("%27%27", "%22", rawurlencode($_POST['Nosaukums'])),
+            $_POST['Kods'],
+            str_replace("%27%27", "%22", rawurlencode($_POST['JurAdrese'])),
+            str_replace("%27%27", "%22", rawurlencode($_POST['Kreditiestade'])),
+            $_POST['Konts'],
+            rawurlencode($_POST['Epasts']),
+            rawurlencode($_POST['Telefons']),
+            (int)$ID
+        ])) {
             throw new AppError('Write error on Invoice (' . __LINE__ . ')');
         }
         $this->MakeCont($_POST['Nosaukums'], $_POST['Kods'], $_POST['JurAdrese'], $_POST['Kreditiestade'], $_POST['Konts'], $_POST['Telefons'], $_POST['Epasts']);
@@ -326,45 +319,26 @@ ORDER BY `Nosaukums`';
         $recipientID = $_POST['recipientID'];
 
         if ($ID == 0) {
-            $query = "INSERT INTO `invoices` (
-`DocID` ,
-`Samaksa` ,
-`recipient` ,
-`Atlaide` ,
-`izsniedza`,
-`Kopa` ,
-`atlaidessumma` ,
-`PirmsNodokliem` ,
-`PVN` ,
-`Samaksai`,
-`recipientID`
-)
-VALUES (
- '$DocID', '$Samaksa', '$recipient', '$Atlaide', '$Izsniedza', '$Kopa', '$atlaidessumma', '$PirmsNodokliem', '$PVN', '$Samaksai','$recipientID'
-);";
+            $query = 'INSERT INTO `invoices` (`DocID`, `Samaksa`, `recipient`, `Atlaide`, `izsniedza`,
+                `Kopa`, `atlaidessumma`, `PirmsNodokliem`, `PVN`, `Samaksai`, `recipientID`)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            $params = [$DocID, $Samaksa, $recipient, $Atlaide, $Izsniedza,
+                $Kopa, $atlaidessumma, $PirmsNodokliem, $PVN, $Samaksai, $recipientID];
         } else {
-            $query = "UPDATE invoices
-SET `DocID` = '$DocID',
-`Samaksa` = '$Samaksa' ,
-`recipient` = '$recipient' ,
-`Atlaide` =  '$Atlaide',
-`izsniedza` = '$Izsniedza',
-`Kopa` = '$Kopa',
-`atlaidessumma` = '$atlaidessumma',
-`PirmsNodokliem` = '$PirmsNodokliem',
-`PVN` = '$PVN',
-`Samaksai` = '$Samaksai',
-`recipientID` = '$recipientID'
-WHERE ID = '$ID'";
+            $query = 'UPDATE invoices SET `DocID`=?, `Samaksa`=?, `recipient`=?, `Atlaide`=?,
+                `izsniedza`=?, `Kopa`=?, `atlaidessumma`=?, `PirmsNodokliem`=?, `PVN`=?,
+                `Samaksai`=?, `recipientID`=? WHERE ID=?';
+            $params = [$DocID, $Samaksa, $recipient, $Atlaide, $Izsniedza,
+                $Kopa, $atlaidessumma, $PirmsNodokliem, $PVN, $Samaksai, $recipientID, (int)$ID];
         }
 
-        $query2 = "Update Data SET `TextOrder` = '" . addslashes(rawurldecode($recipient)) . "' WHERE ID = '$DocID'";
-
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, $params)) {
             throw new AppError('Write error on Invoice (' . __LINE__ . ')');
         }
 
-        if (!self::$DB->query($query2)) {
+        if (!self::$DB->prepare('UPDATE Data SET `TextOrder`=? WHERE ID=?', [
+            rawurldecode($recipient), (int)$DocID
+        ])) {
             throw new AppError('Write error on Invoice (' . __LINE__ . ')');
         }
 
@@ -382,31 +356,15 @@ WHERE ID = '$ID'";
         $Summa = $_POST['summa'];
 
         if ($ID == 0) {
-            $query = 'INSERT INTO `invoice_items` (
-`DocID` ,
-`Nosaukums` ,
-`Artikuls` ,
-`Daudzums` ,
-`Mervieniba`,
-`Cena`,
-`Summa`
-)
-VALUES (
- "' . $DocID . '", "' . $Nosaukums . '", "' . $Artikuls . '", "' . $Daudzums . '", "' . $Mervieniba . '", "' . $Cena . '", "' . $Summa . '"
-);';
+            $query = 'INSERT INTO `invoice_items` (`DocID`, `Nosaukums`, `Artikuls`, `Daudzums`, `Mervieniba`, `Cena`, `Summa`)
+                VALUES (?, ?, ?, ?, ?, ?, ?)';
+            $params = [$DocID, $Nosaukums, $Artikuls, $Daudzums, $Mervieniba, $Cena, $Summa];
         } else {
-            $query = 'UPDATE invoice_items
-SET `DocID` = "' . $DocID . '" ,
-`Nosaukums` = "' . $Nosaukums . '" ,
-`Artikuls` = "' . $Artikuls . '" ,
-`Daudzums` = "' . $Daudzums . '" ,
-`Mervieniba` = "' . $Mervieniba . '",
-`Cena` = "' . $Cena . '",
-`Summa` = "' . $Summa . '"
-WHERE ID = "' . $ID . '"';
+            $query = 'UPDATE invoice_items SET `DocID`=?, `Nosaukums`=?, `Artikuls`=?, `Daudzums`=?, `Mervieniba`=?, `Cena`=?, `Summa`=? WHERE ID=?';
+            $params = [$DocID, $Nosaukums, $Artikuls, $Daudzums, $Mervieniba, $Cena, $Summa, (int)$ID];
         }
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, $params)) {
             throw new AppError('Write error on Invoice (' . __LINE__ . ')');
         }
 

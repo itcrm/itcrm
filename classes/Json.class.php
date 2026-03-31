@@ -65,9 +65,8 @@ class Json extends DBObject {
 
     function GetFilterOrders($code) {
         $code = substr(strrchr(", " . $code, ', '), 2);
-        $query = "SELECT ID,Code FROM `Orders` WHERE Code LIKE '" . $code . "%'
-                   ORDER BY `Code` LIMIT 0,20";
-        if (!$result = self::$DB->query($query)) {
+        $query = 'SELECT ID,Code FROM `Orders` WHERE Code LIKE ? ORDER BY `Code` LIMIT 20';
+        if (!$result = self::$DB->prepare($query, [$code . '%'])) {
             throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Orders = array();
@@ -81,9 +80,9 @@ class Json extends DBObject {
 
     function GetFilterPersons($code) {
         $code = substr(strrchr(", " . $code, ', '), 2);
-        $query = "SELECT ID, Login FROM `Users` WHERE Login LIKE '%" . $code . "%' AND `Status` >-3
-    ORDER BY `Login` LIMIT 0,30";
-        if (!$result = self::$DB->query($query)) {
+        $query = 'SELECT ID, Login FROM `Users` WHERE Login LIKE ? AND `Status` >-3
+    ORDER BY `Login` LIMIT 30';
+        if (!$result = self::$DB->prepare($query, ['%' . $code . '%'])) {
             throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Users = array();
@@ -97,9 +96,8 @@ class Json extends DBObject {
 
     function GetFilterTypes($code) {
         $code = substr(strrchr(", " . $code, ', '), 2);
-        $query = "SELECT ID, Code FROM `Types` WHERE Code LIKE '" . $code . "%'
-                   ORDER BY `Code` LIMIT 0,30";
-        if (!$result = self::$DB->query($query)) {
+        $query = 'SELECT ID, Code FROM `Types` WHERE Code LIKE ? ORDER BY `Code` LIMIT 30';
+        if (!$result = self::$DB->prepare($query, [$code . '%'])) {
             throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Type = array();
@@ -113,9 +111,8 @@ class Json extends DBObject {
 
     function GetGroups($code) {
         $code = substr(strrchr(", " . $code, ', '), 2);
-        $query = "SELECT id as ID, title as label FROM `groups_linear` WHERE title LIKE '%" . $code . "%'
-                   ORDER BY `iorder` LIMIT 0,30";
-        if (!$result = self::$DB->query($query)) {
+        $query = 'SELECT id as ID, title as label FROM `groups_linear` WHERE title LIKE ? ORDER BY `iorder` LIMIT 30';
+        if (!$result = self::$DB->prepare($query, ['%' . $code . '%'])) {
             throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Type = array();
@@ -129,9 +126,8 @@ class Json extends DBObject {
 
     function GetPersons($code) {
         $code = substr(strrchr(", " . $code, ', '), 2);
-        $query = "SELECT ID, Login FROM `Users` WHERE Login LIKE '" . $code . "%' AND `Status` > 0
-                   ORDER BY `Login` LIMIT 0,30";
-        if (!$result = self::$DB->query($query)) {
+        $query = 'SELECT ID, Login FROM `Users` WHERE Login LIKE ? AND `Status` > 0 ORDER BY `Login` LIMIT 30';
+        if (!$result = self::$DB->prepare($query, [$code . '%'])) {
             throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Users = array();
@@ -145,9 +141,8 @@ class Json extends DBObject {
 
     function GetTypes($code) {
         $code = substr(strrchr(", " . $code, ', '), 2);
-        $query = "SELECT ID, Code FROM `Types` WHERE Code LIKE '" . $code . "%' AND `Status`=1
-                   ORDER BY `Code` LIMIT 0,30";
-        if (!$result = self::$DB->query($query)) {
+        $query = 'SELECT ID, Code FROM `Types` WHERE Code LIKE ? AND `Status`=1 ORDER BY `Code` LIMIT 30';
+        if (!$result = self::$DB->prepare($query, [$code . '%'])) {
             throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Type = array();
@@ -161,9 +156,8 @@ class Json extends DBObject {
 
     function GetOrders($code) {
         $code = substr(strrchr(", " . $code, ', '), 2);
-        $query = "SELECT ID,Code FROM `Orders` WHERE Code LIKE '" . $code . "%' AND `Status`=1
-                   ORDER BY `Code` LIMIT 0,20";
-        if (!$result = self::$DB->query($query)) {
+        $query = 'SELECT ID,Code FROM `Orders` WHERE Code LIKE ? AND `Status`=1 ORDER BY `Code` LIMIT 20';
+        if (!$result = self::$DB->prepare($query, [$code . '%'])) {
             throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $Orders = array();
@@ -176,9 +170,9 @@ class Json extends DBObject {
     }
 
     function getWarehouse($code) {
-        $query = "SELECT ID, PlaceTaken AS label FROM `Data` WHERE IDType='" . Config::WarehouseTypeID . "' AND PlaceTaken LIKE '" . $code . "%' AND `Status`=1
-                   ORDER BY `PlaceTaken` LIMIT 0,20";
-        if (!$result = self::$DB->query($query)) {
+        $query = 'SELECT ID, PlaceTaken AS label FROM `Data` WHERE IDType=? AND PlaceTaken LIKE ? AND `Status`=1
+                   ORDER BY `PlaceTaken` LIMIT 20';
+        if (!$result = self::$DB->prepare($query, [Config::WarehouseTypeID, $code . '%'])) {
             throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
         $warehouse = array();
@@ -191,9 +185,9 @@ class Json extends DBObject {
     }
 
     function NrExist($value) {
-        $query = "SELECT * FROM `Data` WHERE IDType='72' AND IDDoc = '" . $value . "'";
+        $query = 'SELECT * FROM `Data` WHERE IDType=72 AND IDDoc = ?';
 
-        if (!$result = self::$DB->query($query)) {
+        if (!$result = self::$DB->prepare($query, [$value])) {
             throw new AppError('Read error on Json (' . __LINE__ . ')');
         }
 
@@ -210,15 +204,16 @@ class Json extends DBObject {
      * @return none
      */
     private function ErrorLogger($data) {
-        $query = 'INSERT INTO `Error`
-                     SET `Time`=NOW(),
-                         `User`="' . $_SESSION['User']->getID() . '",
-                         `Type`="' . $_SESSION['Filter']['Type'] . '",
-                         `Url`="' . $data['url'] . '",
-                         `Line`="' . $data['line'] . '",
-                         `Message`="' . $data['message'] . '"';
+        $query = 'INSERT INTO `Error` (`Time`, `User`, `Type`, `Url`, `Line`, `Message`)
+                  VALUES (datetime(\'now\'), ?, ?, ?, ?, ?)';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            $_SESSION['User']->getID(),
+            $_SESSION['Filter']['Type'],
+            $data['url'],
+            $data['line'],
+            $data['message']
+        ])) {
             throw new AppError('Write error on Json (' . __LINE__ . ') : ' . self::$DB->error);
         }
         return 'Kļūda failā: ' . $data['url'] . ' līnijā:' . $data['line'] . ' ar paziņojumu:' . $data['message'];

@@ -13,11 +13,12 @@ class Users extends DBObject {
     protected $Status;
 
     function checkDuplicates() {
-        $query = 'SELECT * FROM `Users`
-                       WHERE UPPER(`Login`)="' . addslashes(strtoupper($this->getLogin())) . '"
-                       ' . ($this->getID() > 0 ? ' AND ID!=' . $this->getID() : '');
+        $params = [strtoupper($this->getLogin())];
+        $query = 'SELECT * FROM `Users` WHERE UPPER(`Login`)=?'
+            . ($this->getID() > 0 ? ' AND ID!=?' : '');
+        if ($this->getID() > 0) $params[] = $this->getID();
 
-        if (!$result = self::$DB->query($query)) {
+        if (!$result = self::$DB->prepare($query, $params)) {
             throw new AppError('Read error on Users (' . __LINE__ . ')');
         }
 
@@ -33,12 +34,12 @@ class Users extends DBObject {
             } catch (AppError $ex) {
                 return Language::$Users['WrongLoginPassword'];
             }
-            $query = "SELECT *
-                       FROM Users
-                      WHERE Login='" . addslashes($this->getLogin()) . "'
-                        AND Password='" . md5($this->getPassword()) . "'";
+            $query = 'SELECT * FROM Users WHERE Login=? AND Password=?';
 
-            if (!$result = self::$DB->query($query)) {
+            if (!$result = self::$DB->prepare($query, [
+                $this->getLogin(),
+                md5($this->getPassword())
+            ])) {
                 throw new AppError('Read error on Users (' . __LINE__ . ')');
             }
             if ($result->num_rows == 0) {
@@ -147,16 +148,16 @@ class Users extends DBObject {
     }
 
     function Add() {
-        $query = 'INSERT INTO `Users`
-                     SET `Login`="' . addslashes($this->getLogin()) . '",
-                         `Password`="' . md5($this->getPassword()) . '",
-                         `Color`="' . addslashes($this->getColor()) . '",
-                         `Name`="' . addslashes($this->getName()) . '",
-                         `Phone`="' . addslashes($this->getPhone()) . '",
-                         `AddDate`=NOW(),
-                         `Status`=99';
+        $query = 'INSERT INTO `Users` (`Login`, `Password`, `Color`, `Name`, `Phone`, `AddDate`, `Status`)
+                  VALUES (?, ?, ?, ?, ?, datetime(\'now\'), 99)';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            $this->getLogin(),
+            md5($this->getPassword()),
+            $this->getColor(),
+            $this->getName(),
+            $this->getPhone()
+        ])) {
             throw new AppError('Write error on Users (' . __LINE__ . ') ');
         }
 
@@ -166,17 +167,22 @@ class Users extends DBObject {
     }
 
     function Update() {
-        $query = 'UPDATE `Users`
-                     SET `Login`="' . addslashes($this->getLogin()) . '",
-                         ' . ($this->getPassword() != ''
-            ? '`Password`="' . md5($this->getPassword()) . '",'
-            : '') . '
-                         `Color`="' . addslashes($this->getColor()) . '",
-                         `Name`="' . addslashes($this->getName()) . '",
-                         `Phone`="' . addslashes($this->getPhone()) . '"
-                   WHERE `ID`=' . (int)$this->getID();
+        $params = [$this->getLogin()];
+        $passwordClause = '';
+        if ($this->getPassword() != '') {
+            $passwordClause = '`Password`=?,';
+            $params[] = md5($this->getPassword());
+        }
+        $params[] = $this->getColor();
+        $params[] = $this->getName();
+        $params[] = $this->getPhone();
+        $params[] = (int)$this->getID();
 
-        if (!self::$DB->query($query)) {
+        $query = 'UPDATE `Users`
+                     SET `Login`=?, ' . $passwordClause . ' `Color`=?, `Name`=?, `Phone`=?
+                   WHERE `ID`=?';
+
+        if (!self::$DB->prepare($query, $params)) {
             throw new AppError('Update error on Users (' . __LINE__ . ')');
         }
     }

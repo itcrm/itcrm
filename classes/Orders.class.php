@@ -67,13 +67,16 @@ class Orders extends DBObject {
         return 1;
     }
 
-    function getFilter() {
-        $filter = (isset($_SESSION['FilterOrder']['Code']) && $_SESSION['FilterOrder']['Code'] != '')
-            ? ' Code LIKE("%' . addslashes($_SESSION['FilterOrder']['Code']) . '%") '
-            : '';
-        $filter .=  !empty($_SESSION['FilterOrder']['Description'])
-            ? ($filter ? ' AND ' : '') . ' Description LIKE("%' . addslashes($_SESSION['FilterOrder']['Description']) . '%") '
-            : '';
+    function getFilter(&$params = []) {
+        $filter = '';
+        if (isset($_SESSION['FilterOrder']['Code']) && $_SESSION['FilterOrder']['Code'] != '') {
+            $filter = ' Code LIKE(?) ';
+            $params[] = '%' . $_SESSION['FilterOrder']['Code'] . '%';
+        }
+        if (!empty($_SESSION['FilterOrder']['Description'])) {
+            $filter .= ($filter ? ' AND ' : '') . ' Description LIKE(?) ';
+            $params[] = '%' . $_SESSION['FilterOrder']['Description'] . '%';
+        }
 
         return $filter;
     }
@@ -84,16 +87,17 @@ class Orders extends DBObject {
     }
 
     function countOrders() {
-        $filter = $this->getFilter();
+        $params = [];
+        $filter = $this->getFilter($params);
 
         $query = 'SELECT COUNT(*) FROM Orders '
             . ($filter != '' ? ' WHERE ' . $filter : '');
 
-        if (!$result = self::$DB->query($query)) {
+        if (!$result = self::$DB->prepare($query, $params)) {
             throw new AppError('Error on ' . get_class() . ' (' . __LINE__ . ')');
         }
 
-        $row = $result->fetch_array();
+        $row = $result->fetch_assoc();
         return intval($row['COUNT(*)']);
     }
 
@@ -101,16 +105,17 @@ class Orders extends DBObject {
         if (empty($_SESSION['OrderSort']))
             $_SESSION['OrderSort'] = '`ID` DESC';
 
-        $filter = $this->getFilter();
+        $params = [];
+        $filter = $this->getFilter($params);
 
         $query = 'SELECT O.*, U.`Login` as User
                     FROM `Orders` O
                     LEFT JOIN Users U ON (O.IDUser=U.ID)
                  ' . ($filter != '' ? ' WHERE ' . $filter : '') . '
                 ORDER BY O.' . $_SESSION['OrderSort'] . '
-                LIMIT ' . $Start . ',' . Config::PAGE_LENGTH;
+                LIMIT ' . Config::PAGE_LENGTH . ' OFFSET ' . $Start;
 
-        if (!$result = self::$DB->query($query)) {
+        if (!$result = self::$DB->prepare($query, $params)) {
             throw new AppError('Read error on Orders (' . __LINE__ . ')');
         }
         $Orders = array();
@@ -240,16 +245,16 @@ class Orders extends DBObject {
     }
 
     function Add() {
-        $query = 'INSERT INTO `Orders`
-                     SET `IDUser`=' . $_SESSION['User']->getID() . ',
-                         `Code`="' . addslashes($this->getCode()) . '",
-                         `Color`="' . addslashes($this->getColor()) . '",
-                         `Description`="' . addslashes($this->getDescription()) . '",
-                         `AddDate`=NOW(),
-                         `Status`=1';
+        $query = 'INSERT INTO `Orders` (`IDUser`, `Code`, `Color`, `Description`, `AddDate`, `Status`)
+                  VALUES (?, ?, ?, ?, datetime(\'now\'), 1)';
 
-        if (!self::$DB->query($query)) {
-            if (self::$DB->errno == 1062) throw new AppError(Language::$Orders['DuplicateEntry']);
+        if (!self::$DB->prepare($query, [
+            $_SESSION['User']->getID(),
+            $this->getCode(),
+            $this->getColor(),
+            $this->getDescription()
+        ])) {
+            if (self::$DB->errno == 19) throw new AppError(Language::$Orders['DuplicateEntry']);
             throw new AppError('Write error on Orders (' . __LINE__ . ')');
         }
 
@@ -263,14 +268,17 @@ class Orders extends DBObject {
 
     function Update() {
         $query = 'UPDATE `Orders`
-                     SET `IDUser`=' . $_SESSION['User']->getID() . ',
-                         `Code`="' . addslashes($this->getCode()) . '",
-                         `Color`="' . addslashes($this->getColor()) . '",
-                         `Description`="' . addslashes($this->getDescription()) . '",
-                         `Changes`="' . addslashes($this->getChanges()) . '"
-                   WHERE `ID`=' . (int)$this->getID();
+                     SET `IDUser`=?, `Code`=?, `Color`=?, `Description`=?, `Changes`=?
+                   WHERE `ID`=?';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            $_SESSION['User']->getID(),
+            $this->getCode(),
+            $this->getColor(),
+            $this->getDescription(),
+            $this->getChanges(),
+            (int)$this->getID()
+        ])) {
             throw new AppError('Update error on Orders (' . __LINE__ . ')');
         }
     }

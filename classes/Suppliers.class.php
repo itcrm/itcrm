@@ -11,11 +11,12 @@ class Suppliers extends DBObject {
     protected $Status;
 
     function checkDuplicates() {
-        $query = 'SELECT * FROM `Suppliers`
-                       WHERE UPPER(`Name`)="' . addslashes(strtoupper($this->getName())) . '"
-                       ' . ($this->getID() > 0 ? ' AND ID!=' . $this->getID() : '');
+        $params = [strtoupper($this->getName())];
+        $query = 'SELECT * FROM `Suppliers` WHERE UPPER(`Name`)=?'
+            . ($this->getID() > 0 ? ' AND ID!=?' : '');
+        if ($this->getID() > 0) $params[] = $this->getID();
 
-        if (!$result = self::$DB->query($query)) {
+        if (!$result = self::$DB->prepare($query, $params)) {
             throw new AppError('Read error on Suppliers (' . __LINE__ . ')');
         }
 
@@ -65,15 +66,15 @@ class Suppliers extends DBObject {
     }
 
     function Add() {
-        $query = 'INSERT INTO `Suppliers`
-                     SET `IDUser`="' . $_SESSION['User']->getID() . '",
-                         `Name`="' . addslashes($this->getName()) . '",
-                         `Description`="' . addslashes($this->getDescription()) . '",
-                         `Color`="' . addslashes($this->getColor()) . '",
-                         `AddDate`=NOW(),
-                         `Status`=1';
+        $query = 'INSERT INTO `Suppliers` (`IDUser`, `Name`, `Description`, `Color`, `AddDate`, `Status`)
+                  VALUES (?, ?, ?, ?, datetime(\'now\'), 1)';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            $_SESSION['User']->getID(),
+            $this->getName(),
+            $this->getDescription(),
+            $this->getColor()
+        ])) {
             throw new AppError('Write error on Suppliers (' . __LINE__ . ')');
         }
 
@@ -83,13 +84,14 @@ class Suppliers extends DBObject {
     }
 
     function Update() {
-        $query = 'UPDATE `Suppliers`
-                     SET `Name`="' . addslashes($this->getName()) . '",
-                         `Description`="' . addslashes($this->getDescription()) . '",
-                         `Color`="' . addslashes($this->getColor()) . '"
-                   WHERE `ID`=' . (int)$this->getID();
+        $query = 'UPDATE `Suppliers` SET `Name`=?, `Description`=?, `Color`=? WHERE `ID`=?';
 
-        if (!self::$DB->query($query)) {
+        if (!self::$DB->prepare($query, [
+            $this->getName(),
+            $this->getDescription(),
+            $this->getColor(),
+            (int)$this->getID()
+        ])) {
             throw new AppError('Update error on Suppliers (' . __LINE__ . ')');
         }
     }

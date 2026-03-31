@@ -3,10 +3,7 @@
 class Config {
     const ROOT_URL = "";
 
-    const DB_HOST_NAME = _DB_HOST;
-    const DB_USER_NAME = _DB_USER;
-    const DB_PASSWORD = _DB_PASS;
-    const DB_DATABASE_NAME = _DB_NAME;
+    const DB_PATH = _DB_PATH;
 
     // PARAMS
     const SHOW_PERIOD = -2; // days
