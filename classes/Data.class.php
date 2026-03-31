@@ -827,12 +827,12 @@ class Data extends DBObject {
         }
 
         if (isset($_SESSION['Filter']['TotalPrice']) && $_SESSION['Filter']['TotalPrice'] != '') {
-            $Vars['BookNote'] = 'D.TotalPrice=?';
+            $Vars['TotalPrice'] = 'D.TotalPrice=?';
             $filterParams[] = (float)$_SESSION['Filter']['TotalPrice'];
         }
 
         if (isset($_SESSION['Filter']['PriceNote']) && $_SESSION['Filter']['PriceNote'] != '') {
-            $Vars['BookNote'] = 'D.PriceNote LIKE ?';
+            $Vars['PriceNote'] = 'D.PriceNote LIKE ?';
             $filterParams[] = '%' . $_SESSION['Filter']['PriceNote'] . '%';
         }
 
