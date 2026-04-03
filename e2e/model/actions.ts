@@ -1,11 +1,11 @@
 import { Page, expect } from "@playwright/test";
 import { TestEnvironment } from "../utils/test-environment";
-import type { PublicState, AuthenticatedState, DataFiltersState } from "./machine";
+import type { PublicState, AuthenticatedState } from "./machine";
 
 type ActionFn = (page: Page, env: TestEnvironment) => Promise<void>;
 type VerifyFn = (page: Page) => Promise<void>;
 
-type AppState = PublicState | AuthenticatedState | DataFiltersState;
+type AppState = PublicState | AuthenticatedState;
 
 /**
  * Playwright implementation for every event in the state machine.
@@ -232,31 +232,13 @@ export const eventActions: Record<string, ActionFn> = {
     await expect(page.locator("#DataList tr.deleted").first()).toBeVisible();
   },
 
-  APPLY_SAVED_FILTER: async (page) => {
-    // Weekly flowers has Note='Meeting with client about arrangement'. Directly fill the Note field and apply
-    // the filter — this reaches the identical state to selecting the saved filter from the
-    // IDFilter dropdown (the state verifier only checks Note value and visible data rows).
-    // The IDFilter onchange + getFilterData AJAX path is flaky: the Filters/Get PHP worker
-    // holds the session file lock until it exits, which can block the subsequent
-    // Data/Filter request when PHP-FPM has limited concurrency.
-    await page.fill('#FilterForm [name="Note"]', "Meeting with client about arrangement");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
   SEARCH_WITH_DELETED: async (page) => {
-    // Check FindDeleted in SearchForm and search — includes soft-deleted rows (tr.deleted) in results
+    // Check FindDeleted in SearchForm and search — includes soft-deleted rows (tr.deleted) in results.
+    // "Cancelled arrangement" matches the seeded soft-deleted row (Status=-1).
     await page.check('form[name="SearchForm"] [name="FindDeleted"]');
-    await page.fill('form[name="SearchForm"] [name="Search"]', "Meeting with client about arrangement");
+    await page.fill('form[name="SearchForm"] [name="Search"]', "Cancelled arrangement");
     await page.click('form[name="SearchForm"] [type="submit"]');
     await page.waitForURL("**/Data/Search**");
-    // The deleted row should appear with the "deleted" CSS class
     await expect(page.locator("#DataList tr.deleted").first()).toBeVisible();
   },
 
@@ -324,303 +306,12 @@ export const eventActions: Record<string, ActionFn> = {
     ).toHaveText("Dok.datums");
   },
 
-  APPLY_DOC_FILTER: async (page) => {
-    // Fill the IDDoc field with "gala-client-meeting" — matches the test row's IDDoc value
-    await page.fill('#FilterForm [name="IDDoc"]', "gala-client-meeting");
-    // Select "All time" so DateFrom/DateTo don't exclude today's rows (SHOW_PERIOD=-2 makes defaults future-dated)
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    // Wait for the full navigation triggered by window.location.replace() in the
-    // FilterData() success callback, not just the XHR response. This avoids a race
-    // where #Loading is still visible when the screenshot is taken.
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: "load" }),
-      page.click('#FilterForm [type="submit"]'),
-    ]);
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_ORDER_FILTER: async (page) => {
-    // Fill OrderFilterSelect with "SPRING-GALA" — filterAutocomplete() sets hidden Order=1 on submit
-    await page.fill('#FilterForm [name="OrderFilterSelect"]', "SPRING-GALA");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_PERSON_FILTER: async (page) => {
-    // Fill PersonFilterSelect with "Alice" — filterAutocomplete() sets hidden Person=1 on submit
-    await page.fill('#FilterForm [name="PersonFilterSelect"]', "Alice");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_TYPE_FILTER: async (page) => {
-    // Fill TypeFilterSelect with "BOUQUET" — filterAutocomplete() sets hidden Type=1 on submit
-    await page.fill('#FilterForm [name="TypeFilterSelect"]', "BOUQUET");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_OPERATOR_FILTER: async (page) => {
-    // Fill OperatorFilterSelect with "Alice" — filterAutocomplete() sets hidden Operator=1 on submit
-    await page.fill('#FilterForm [name="OperatorFilterSelect"]', "Alice");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_NOTE_FILTER: async (page) => {
-    // Fill the Note filter field with "Meeting with client about arrangement" — matches the seeded data row
-    await page.fill('#FilterForm [name="Note"]', "Meeting with client about arrangement");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_ID_FILTER: async (page) => {
-    // Filter by exact row ID=1 (seeded reminder row) — PHP uses D.ID="1" (exact match)
-    await page.fill('#FilterForm [name="ID"]', "1");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_PLACE_TAKEN_FILTER: async (page) => {
-    // Filter by PlaceTaken="shop-counter" — seeded reminder row has PlaceTaken='shop-counter'
-    await page.fill('#FilterForm [name="PlaceTaken"]', "shop-counter");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_SUM_FILTER: async (page) => {
-    // Filter by Sum="42" — seeded reminder row has Sum=42.00 (LIKE match)
-    await page.fill('#FilterForm [name="Sum"]', "42");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_BOOKNOTE_FILTER: async (page) => {
-    // Filter by BookNote="booking-note" — seeded reminder row has BookNote='booking-note'
-    await page.fill('#FilterForm [name="BookNote"]', "booking-note");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_HOURS_FILTER: async (page) => {
-    // Filter by Hours="5" — seeded reminder row has Hours=5.00 (LIKE match)
-    await page.fill('#FilterForm [name="Hours"]', "5");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_TEXT_TYPE_FILTER: async (page) => {
-    // Filter by TextType="type-text" — seeded reminder row has TextType='type-text'
-    await page.fill('#FilterForm [name="TextType"]', "type-text");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_TEXT_ORDER_FILTER: async (page) => {
-    // Filter by TextOrder="order-text" — seeded reminder row has TextOrder='order-text'
-    await page.fill('#FilterForm [name="TextOrder"]', "order-text");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_PLACE_DONE_FILTER: async (page) => {
-    // Filter by PlaceDone="client-location" — seeded reminder row has PlaceDone='client-location'
-    await page.fill('#FilterForm [name="PlaceDone"]', "client-location");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_TOTAL_PRICE_FILTER: async (page) => {
-    // Filter by TotalPrice="100" — seeded reminder row has TotalPrice=100.00 (LIKE match)
-    await page.fill('#FilterForm [name="TotalPrice"]', "100");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_PRICE_NOTE_FILTER: async (page) => {
-    // Filter by PriceNote="price-note" — seeded reminder row has this value (LIKE match)
-    await page.fill('#FilterForm [name="PriceNote"]', "price-note");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
   APPLY_DATE_LAST_24H: async (page) => {
     // Select Today (value=1) in the date interval select — reveals seed rows with datetime('now') dates
     await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "1");
     const navigation = page.waitForNavigation({ waitUntil: "load" });
     await page.click('#FilterForm [type="submit"]');
     await navigation;
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_DATE_INTERVAL_TODAY: async (page) => {
-    // Select Today (value=1) in the date interval select — JS fills DateFrom/DateTo with today
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "1");
-    // The AJAX POST to /Data/Filter returns "1", then JS does window.location.replace(URL+"/Data")
-    // which triggers a full page navigation (same URL reload). We must wait for that navigation.
-    const navigation = page.waitForNavigation({ waitUntil: "load" });
-    await page.click('#FilterForm [type="submit"]');
-    await navigation;
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_DATE_INTERVAL_WEEK: async (page) => {
-    // Select Week (value=2) in the date interval select — JS fills DateFrom to Monday, DateTo to today
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "2");
-    const navigation = page.waitForNavigation({ waitUntil: "load" });
-    await page.click('#FilterForm [type="submit"]');
-    await navigation;
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_DATE_INTERVAL_MONTH: async (page) => {
-    // Select Month (value=3) in the date interval select — JS fills DateFrom to first of current month
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "3");
-    const navigation = page.waitForNavigation({ waitUntil: "load" });
-    await page.click('#FilterForm [type="submit"]');
-    await navigation;
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_DATE_INTERVAL_YEAR: async (page) => {
-    // Select Year (value=4) in the date interval select — JS fills DateFrom to Jan 1 of current year
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "4");
-    const navigation = page.waitForNavigation({ waitUntil: "load" });
-    await page.click('#FilterForm [type="submit"]');
-    await navigation;
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_DATE_INTERVAL_ALLTIME: async (page) => {
-    // Select AllTime (value=5) — JS fills DateFrom=2000-1-1 and DateTo=today+1
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const navigation = page.waitForNavigation({ waitUntil: "load" });
-    await page.click('#FilterForm [type="submit"]');
-    await navigation;
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_DATA_FILTER: async (page) => {
-    // Fill the free-text Note search field in the FilterForm header
-    await page.fill('#FilterForm [name="Note"]', "Meeting with client about arrangement");
-    await page.selectOption('#FilterForm select[onchange*="changeDateInterval"]', "5");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    // Verify the filtered DataList still shows the row we added
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  APPLY_EMPTY_FILTER_RESULT: async (page) => {
-    // Filter by IDDoc with a non-existent value — no rows match, DataList is empty
-    await page.fill('#FilterForm [name="IDDoc"]', "NONEXISTENT-XXXX");
-    const filterResponse = page.waitForResponse((r) =>
-      r.url().includes("/Data/Filter")
-    );
-    await page.click('#FilterForm [type="submit"]');
-    await filterResponse;
-    await page.waitForLoadState("load");
-    // No data rows should be visible
-    await expect(page.locator("#DataList tr.Data")).toHaveCount(0);
-  },
-
-  CLEAR_DATA_FILTER: async (page) => {
-    // The — button clears all filter fields and resubmits (resets the filter)
-    await page.click('#FilterForm input[type="submit"][value="—"]');
-    await page.waitForLoadState("load");
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
 
@@ -1271,27 +962,6 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
     await expect(page.locator("#DataList tr.deleted").first()).toBeVisible();
   },
 
-  data_saved_filter: async (page) => {
-    // After applying the saved filter, its Note criteria pre-fill the FilterForm on reload.
-    // (IDFilter is unset from session after submit, but the filter's field values persist.)
-    await expect(
-      page.locator('#FilterForm [name="Note"]')
-    ).toHaveValue("Meeting with client about arrangement");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  ready: async (page) => {
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filter_empty_result: async (page) => {
-    // IDDoc filter field shows "NONEXISTENT-XXXX" and DataList has no data rows
-    await expect(
-      page.locator('#FilterForm [name="IDDoc"]')
-    ).toHaveValue("NONEXISTENT-XXXX");
-    await expect(page.locator("#DataList tr.Data")).toHaveCount(0);
-  },
-
   data_search_results: async (page) => {
     await expect(page).toHaveURL(/\/Data\/Search/);
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
@@ -1381,10 +1051,6 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
     expect(parseInt(idVal)).toBeGreaterThan(0);
   },
 
-  data_last_24h: async (page) => {
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
   data_row_saved: async (page) => {
     await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
   },
@@ -1417,172 +1083,6 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
     ).toHaveText("Dok.datums");
     await expect(page.locator("#DataList")).toBeVisible();
   },
-
-  data_filtered: async (page) => {
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-    await expect(
-      page.locator('#FilterForm [name="Note"]')
-    ).not.toHaveValue("");
-  },
-
-  data_filtered_by_doc: async (page) => {
-    // IDDoc field shows the filter value that was applied
-    await expect(page.locator('#FilterForm [name="IDDoc"]')).toHaveValue(
-      "gala-client-meeting"
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_order: async (page) => {
-    // OrderFilterSelect field shows "SPRING-GALA, " — filterAutocomplete(1) appends ", " on reload
-    await expect(page.locator('#FilterForm [name="OrderFilterSelect"]')).toHaveValue(
-      "SPRING-GALA, "
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_person: async (page) => {
-    // PersonFilterSelect field shows "Alice, " — filterAutocomplete(1) appends ", " on reload
-    await expect(page.locator('#FilterForm [name="PersonFilterSelect"]')).toHaveValue(
-      "Alice, "
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_type: async (page) => {
-    // TypeFilterSelect field shows "BOUQUET, " — filterAutocomplete(1) appends ", " on reload
-    await expect(page.locator('#FilterForm [name="TypeFilterSelect"]')).toHaveValue(
-      "BOUQUET, "
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_operator: async (page) => {
-    // OperatorFilterSelect field shows "Alice, " — filterAutocomplete(1) appends ", " on reload
-    await expect(page.locator('#FilterForm [name="OperatorFilterSelect"]')).toHaveValue(
-      "Alice, "
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_note: async (page) => {
-    // Note filter field shows "Meeting with client about arrangement" — the note filter was applied
-    await expect(page.locator('#FilterForm [name="Note"]')).toHaveValue(
-      "Meeting with client about arrangement"
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_id: async (page) => {
-    // ID filter field shows "1" — exact match filter was applied for row ID=1
-    await expect(page.locator('#FilterForm [name="ID"]')).toHaveValue("1");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_place_taken: async (page) => {
-    // PlaceTaken filter field shows "shop-counter" — place taken filter was applied
-    await expect(page.locator('#FilterForm [name="PlaceTaken"]')).toHaveValue(
-      "shop-counter"
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_sum: async (page) => {
-    // Sum filter field shows "42" — sum filter was applied
-    await expect(page.locator('#FilterForm [name="Sum"]')).toHaveValue("42");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_booknote: async (page) => {
-    // BookNote filter field shows "booking-note" — book note filter was applied
-    await expect(page.locator('#FilterForm [name="BookNote"]')).toHaveValue(
-      "booking-note"
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_hours: async (page) => {
-    // Hours filter field shows "5" — hours filter was applied
-    await expect(page.locator('#FilterForm [name="Hours"]')).toHaveValue("5");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_text_type: async (page) => {
-    // TextType filter field shows "type-text" — text type filter was applied
-    await expect(page.locator('#FilterForm [name="TextType"]')).toHaveValue(
-      "type-text"
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_text_order: async (page) => {
-    // TextOrder filter field shows "order-text" — text order filter was applied
-    await expect(page.locator('#FilterForm [name="TextOrder"]')).toHaveValue(
-      "order-text"
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_place_done: async (page) => {
-    // PlaceDone filter field shows "client-location" — place done filter was applied
-    await expect(page.locator('#FilterForm [name="PlaceDone"]')).toHaveValue(
-      "client-location"
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_total_price: async (page) => {
-    // TotalPrice filter field shows "100" — total price filter was applied
-    await expect(page.locator('#FilterForm [name="TotalPrice"]')).toHaveValue(
-      "100"
-    );
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_by_price_note: async (page) => {
-    // PriceNote filter field shows "price-note" — price note filter was applied
-    await expect(
-      page.locator('#FilterForm [name="PriceNote"]')
-    ).toHaveValue("price-note");
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_today: async (page) => {
-    // DateFrom and DateTo should be filled with today's date range after the interval filter
-    const dateFrom = await page.locator('#FilterForm [name="DateFrom"]').inputValue();
-    expect(dateFrom).toBeTruthy();
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_week: async (page) => {
-    // DateFrom should be filled with the start of the current week
-    const dateFrom = await page.locator('#FilterForm [name="DateFrom"]').inputValue();
-    expect(dateFrom).toBeTruthy();
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_month: async (page) => {
-    // DateFrom should be filled with the first day of the current month
-    const dateFrom = await page.locator('#FilterForm [name="DateFrom"]').inputValue();
-    expect(dateFrom).toBeTruthy();
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_year: async (page) => {
-    // DateFrom should be filled with Jan 1 of the current year
-    const dateFrom = await page.locator('#FilterForm [name="DateFrom"]').inputValue();
-    expect(dateFrom).toBeTruthy();
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-  data_filtered_alltime: async (page) => {
-    // DateFrom should be filled with 2000-01-01 (all time from the start)
-    const dateFrom = await page.locator('#FilterForm [name="DateFrom"]').inputValue();
-    expect(dateFrom).toBeTruthy();
-    await expect(page.locator("#DataList tr.Data").first()).toBeVisible();
-  },
-
-
 
   data_multi_edit_with_rows: async (page) => {
     await expect(page.locator("#MultiEdit")).toBeVisible();
