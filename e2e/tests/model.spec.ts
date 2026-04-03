@@ -20,7 +20,7 @@ import { test, expect, Page } from "@playwright/test";
 import { AnyStateMachine } from "xstate";
 import { getShortestPaths } from "@xstate/graph";
 import { createTestEnv, TestEnvironment } from "../utils/test-environment";
-import { publicMachine, authenticatedMachine, dataFiltersMachine } from "../model/machine";
+import { publicMachine, authenticatedMachine } from "../model/machine";
 import { eventActions, stateVerifications } from "../model/actions";
 import { standardMasks, waitForAnimations } from "../utils/screenshot";
 
@@ -74,8 +74,3 @@ registerPaths(publicMachine);
 registerPaths(authenticatedMachine, (page, env) =>
   eventActions["SUBMIT_VALID_CREDENTIALS"](page, env)
 );
-registerPaths(dataFiltersMachine, async (page, env) => {
-  await eventActions["SUBMIT_VALID_CREDENTIALS"](page, env);
-  // SHOW_PERIOD=-2 makes default dates future-dated; select Today to show seeded rows
-  await eventActions["APPLY_DATE_INTERVAL_TODAY"](page, env);
-});

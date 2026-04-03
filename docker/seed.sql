@@ -65,7 +65,7 @@ VALUES
 
 -- ─── Filters (saved search templates) ───────────────────────────────────────────
 INSERT INTO `Filters` (`Name`, `Note`, `AddDate`, `Status`)
-VALUES ('Weekly flowers', 'Meeting with client about arrangement', datetime('now'), 1);
+VALUES ('Weekly flowers', 'Weekly office flower delivery', datetime('now'), 1);
 
 INSERT INTO `Filters` (`Name`, `IDOrder`, `IDType`, `Note`, `AddDate`, `Status`)
 VALUES
@@ -75,19 +75,47 @@ VALUES
   ('Unpaid invoices',        '0', '9', 'unpaid',                         '2024-03-01 08:00:00', 1);
 
 -- ─── Data (core work records) ───────────────────────────────────────────────────
--- Reminder row for NAVIGATE_REMINDER test (data_reminder_view state).
--- RemindTo=1 (Alice), past RemindDate triggers the red alert indicator.
--- Note='Delivery reminder for flower order'. Multiple fields set to enable all FilterForm field filter tests.
-INSERT INTO `Data` (`IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTaken`, `PlaceDone`,
-                    `Sum`, `Hours`, `TotalPrice`, `BookNote`, `TextOrder`, `TextType`, `PriceNote`, `Date`, `AddDate`,
-                    `RemindDate`, `RemindTo`, `Status`)
-VALUES (1, 1, 1, 1, 'Delivery reminder for flower order', 'shop-counter', 'client-location',
-        '42.00', '5.00', '100.00', 'booking-note', 'order-text', 'type-text', 'price-note',
+-- Today-dated rows: seeded with datetime('now') so they appear under Today/Week/Month/Year filters.
+-- Each row uses different Users/Orders/Types to allow select-filter discrimination.
+
+-- Row 1: Gala centerpiece — Alice, SPRING-GALA, BOUQUET. All fields populated for filter coverage.
+-- RemindTo=1 (Alice), past RemindDate triggers the red alert indicator (NAVIGATE_REMINDER test).
+INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTaken`, `PlaceDone`,
+                    `Sum`, `Hours`, `TotalPrice`, `BookNote`, `TextOrder`, `TextType`, `PriceNote`,
+                    `Date`, `AddDate`, `RemindDate`, `RemindTo`, `Status`)
+VALUES ('gala-centerpiece', 1, 1, 1, 1, 'Spring gala centerpiece arrangement', 'Walk-in cooler', 'Grand Ballroom, Riverside Hotel',
+        85.00, 3.0, 145.00, 'Priority order, client VIP', 'Centerpiece with peonies and roses', 'Hand-tied garden bouquet', 'Loyalty discount 10%',
         datetime('now'), datetime('now'), '2024-01-01 12:00:00', 1, 1);
 
--- IDDoc='gala-client-meeting', Person=Alice(1), Order=SPRING-GALA(1), Type=BOUQUET(1).
-INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `Date`, `AddDate`, `Status`)
-VALUES ('gala-client-meeting', 1, 1, 1, 1, 'Meeting with client about arrangement', datetime('now'), datetime('now'), 1);
+-- Row 2: Gala client meeting — Alice, SPRING-GALA, BOUQUET. Light fields for doc-filter testing.
+INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTaken`, `PlaceDone`,
+                    `Sum`, `Hours`, `TotalPrice`, `BookNote`, `TextOrder`, `TextType`, `PriceNote`,
+                    `Date`, `AddDate`, `Status`)
+VALUES ('gala-client-meeting', 1, 1, 1, 1, 'Meeting with client about arrangement', 'Consultation room', 'In-store',
+        0.00, 1.5, 120.00, 'Initial consultation booked', 'Gala flower selection', 'Consultation', 'Consultation fee waived',
+        datetime('now'), datetime('now'), 1);
+
+-- Row 3: Greenleaf Monday delivery — John, GREENLEAF-2024, DELIVERY.
+INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTaken`, `PlaceDone`,
+                    `Sum`, `Hours`, `TotalPrice`, `BookNote`, `TextOrder`, `TextType`, `PriceNote`,
+                    `Date`, `AddDate`, `Status`)
+VALUES ('greenleaf-monday', 2, 2, 3, 2, 'Weekly office flower delivery', 'Walk-in cooler', 'Greenleaf Corp, 100 Oak Ave',
+        250.00, 1.5, 290.00, 'Standing Monday delivery', 'Seasonal mixed bouquets', 'Delivery run', 'Net 14 days',
+        datetime('now'), datetime('now'), 1);
+
+-- Row 4: Parker bridal consultation — Sarah, WEDDING-PARKER, CONSULT.
+INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTaken`, `PlaceDone`,
+                    `Sum`, `Hours`, `TotalPrice`, `BookNote`, `TextOrder`, `TextType`, `PriceNote`,
+                    `Date`, `AddDate`, `Status`)
+VALUES ('parker-bridal-consult', 3, 5, 6, 3, 'Bridal bouquet consultation with Linda Parker', 'Consultation room', 'Parker residence, 22 River Rd',
+        0.00, 2.0, 160.00, 'Bridal package review', 'Wedding flower options', 'Wedding consultation', 'Fee waived with booking',
+        datetime('now'), datetime('now'), 1);
+
+-- Row 5: Cancelled arrangement — soft-deleted (Status=-1) so FIND_DELETED_ROWS and SEARCH_WITH_DELETED can assert on it.
+INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTaken`, `PlaceDone`,
+                    `Sum`, `Hours`, `TotalPrice`, `Date`, `AddDate`, `Status`)
+VALUES ('cancelled-arrangement', 1, 1, 2, 1, 'Cancelled arrangement for lobby display', 'Walk-in cooler', 'Grand Ballroom, Riverside Hotel',
+        0.00, 0.0, 0.00, datetime('now'), datetime('now'), -1);
 
 -- Floral arrangements
 INSERT INTO `Data` (`IDDoc`, `IDUser`, `IDOrder`, `IDType`, `IDPerson`, `Note`, `PlaceTaken`, `PlaceDone`,
