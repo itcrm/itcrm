@@ -2,6 +2,8 @@
 tcpdf
 
 # Third-party JS libraries
+faili/scripts/mootools-prod.js
+faili/scripts/slimbox.js
 js/tiny_mce
 js/jquery*
 js/fullcalendar.js
@@ -15,3 +17,6 @@ css/fullcalendar.css
 css/redmond
 css/task.css
 css/colorPicker.css
+
+# Test files
+e2e
