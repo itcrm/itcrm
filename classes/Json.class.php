@@ -26,10 +26,6 @@ class Json extends DBObject {
             case 'Warehouse':
                 $this->getWarehouse($_GET['term']);
                 die;
-            case 'EditRecipient':
-                $Data['Dati'] = urldecode(Invoice::editRecipientList());
-                print Template::Process('/Dialog/EditRecipient', $Data);
-                die;
             case 'GetVeikals':
                 $Data = Data::warehouseDialog($_POST['ID']);
                 print Template::Process('/Dialog/GetVeikals', $Data);
@@ -37,16 +33,6 @@ class Json extends DBObject {
             case 'ProductGroups':
                 $Data['ProductGroups'] = Data::ProductGroups($_POST['ID']);
                 print Template::Process('/Dialog/ProductGroups', $Data);
-                die;
-            case 'AddRecipient':
-                $Data = Invoice::loadRecipient($_POST['ID']);
-                print urldecode(Template::Process('/Invoice/ChangeRecipient', $Data));
-                die;
-            case 'NewRecipient':
-                print urldecode(Template::Process('/Invoice/NewRecipient', $Data));
-                die;
-            case 'NrExist':
-                echo $this->NrExist($_GET['value']);
                 die;
             case 'AddFiles':
                 $Data = Data::getRow($_POST['ID']);
@@ -182,20 +168,6 @@ class Json extends DBObject {
 
         $Orders = json_encode($warehouse);
         echo $Orders;
-    }
-
-    function NrExist($value) {
-        $query = 'SELECT * FROM `Data` WHERE IDType=72 AND IDDoc = ?';
-
-        if (!$result = self::$DB->prepare($query, [$value])) {
-            throw new AppError('Read error on Json (' . __LINE__ . ')');
-        }
-
-        if ($result->num_rows > 0) {
-            return 0;
-        } else {
-            return 1;
-        }
     }
 
     /**

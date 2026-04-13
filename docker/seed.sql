@@ -34,7 +34,6 @@ VALUES
   ('CONSULT',   'Consultation',             '2023-01-10 09:00:00', 1),
   ('INSPECT',   'Quality inspection',       '2023-02-15 10:00:00', 1),
   ('WARRANTY',  'Replacement / warranty',   '2023-02-15 10:00:00', 1),
-  ('INVOICE',   'Invoice',                  '2023-03-01 11:00:00', 1),
   ('INACTIVE',  'Inactive type',            '2022-01-01 00:00:00', 0);
 
 -- ─── Orders (projects / work orders) ────────────────────────────────────────────
@@ -71,8 +70,7 @@ INSERT INTO `Filters` (`Name`, `IDOrder`, `IDType`, `Note`, `AddDate`, `Status`)
 VALUES
   ('Greenleaf maintenance',  '2', '5', '',                               '2024-01-15 09:00:00', 1),
   ('Deliveries today',       '0', '3', '',                               '2024-01-20 10:00:00', 1),
-  ('Cooler warranty',        '6', '8', '',                               '2024-02-01 11:00:00', 1),
-  ('Unpaid invoices',        '0', '9', 'unpaid',                         '2024-03-01 08:00:00', 1);
+  ('Cooler warranty',        '6', '8', '',                               '2024-02-01 11:00:00', 1);
 
 -- ─── Data (core work records) ───────────────────────────────────────────────────
 -- Today-dated rows: seeded with datetime('now') so they appear under Today/Week/Month/Year filters.
@@ -203,42 +201,6 @@ VALUES
   (5, 1, 4, 'Peonies received from Valley Blooms – 5 bunches',     '#1565C0', '2024-03-19 14:00:00'),
   (6, 3, 2, 'Tall glass vases backordered – Vase & Vessel Co',    '#2E7D32', '2024-04-09 08:00:00'),
   (8, 4, 3, 'Extra satin ribbon needed for hotel display',         '#EF6C00', '2024-04-29 16:00:00');
-
--- ─── Recipients (invoice customers) ─────────────────────────────────────────────
-INSERT INTO `recipients` (`Nosaukums`, `Kods`, `Adrese`, `Banka`, `Konts`, `Telefons`, `Epasts`, `Status`, `Changes`)
-VALUES
-  ('Greenleaf Corp',          'C-000001', '100 Oak Ave, Springfield, 62701',      'First Bank',   'US00XXXX0000000001', 5550201, 'office@greenleaf.example.com',   1, ''),
-  ('Linda Parker',            'C-000002', '22 River Rd, Springfield, 62702',       'First Bank',   'US00XXXX0000000002', 5550202, 'linda@example.com',              1, ''),
-  ('Hotel Marlin LLC',        'C-000003', '5 Harbor Blvd, Springfield, 62703',     'Metro Bank',   'US00XXXX0000000003', 5550203, 'events@marlin.example.com',      1, ''),
-  ('Tom Henderson',           'C-000004', '88 Elm St, Springfield, 62704',         'Metro Bank',   'US00XXXX0000000004', 5550204, 'tom@example.com',                1, ''),
-  ('Old Client Inc',          'C-000005', '10 Pine St, Springfield, 62705',        'First Bank',   'US00XXXX0000000005', 0,       '',                                0, '');
-
--- ─── Invoices ───────────────────────────────────────────────────────────────────
-INSERT INTO `invoices` (`DocID`, `Samaksa`, `recipient`, `Atlaide`, `Izsniedza`, `Kopa`, `atlaidessumma`, `PirmsNodokliem`, `PVN`, `Samaksai`, `recipientID`)
-VALUES
-  (5, 'Wire transfer, net 14 days', 'Greenleaf Corp, Reg. C-000001', 0,
-   'John Smith', 250.00, 0.00, 250.00, 25.00, 275.00, 1),
-
-  (6, 'Wire transfer, net 30 days', 'Linda Parker, Reg. C-000002', 5,
-   'John Smith', 1200.00, 60.00, 1140.00, 114.00, 1254.00, 2),
-
-  (8, 'Cash', 'Hotel Marlin LLC, Reg. C-000003', 0,
-   'Sarah Jones', 350.00, 0.00, 350.00, 35.00, 385.00, 3);
-
--- ─── Invoice items ──────────────────────────────────────────────────────────────
-INSERT INTO `invoice_items` (`DocID`, `Nosaukums`, `Artikuls`, `Daudzums`, `Mervieniba`, `Cena`, `Summa`)
-VALUES
-  -- Invoice for Data row #5 (bouquet delivery)
-  (5, 'Premium mixed bouquet',            'BQ-MIX-01',   5, 'pcs', 50.00, 250.00),
-
-  -- Invoice for Data row #6 (wedding delivery)
-  (6, 'Bridal bouquet – white roses',     'BQ-BRIDAL',   1, 'pcs', 350.00, 350.00),
-  (6, 'Bridesmaid bouquet – blush',       'BQ-MAID',     8, 'pcs', 85.00,  680.00),
-  (6, 'Boutonniere – white rose',         'BT-ROSE',     6, 'pcs', 28.33,  170.00),
-
-  -- Invoice for Data row #8 (hotel setup)
-  (8, 'Large lobby vase arrangement',     'ARR-LOBBY',   1, 'pcs', 280.00, 280.00),
-  (8, 'Side table arrangement',           'ARR-TABLE',   1, 'pcs', 70.00,  70.00);
 
 -- ─── Warehouse (parts inventory) ───────────────────────────────────────────────
 INSERT INTO `warehouse` (`rindasID`, `partID`, `daudzums`, `type`, `Shop`, `ShopCategoryID`, `ShopDescription`, `ShopModelID`, `ShopTitle`, `OriginalCode`, `addition`, `offer`, `state`, `used`)

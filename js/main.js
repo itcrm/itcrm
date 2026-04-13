@@ -771,58 +771,6 @@ function getSupplier(el) {
   $.post(URL + "/Info/Get", data, success);
 }
 
-function getInvoice(el) {
-  ID = el.id.replace(/Data/, "");
-  var data = "IDData=" + ID;
-
-  success = function (answ) {
-    Loading(0, 0);
-    try {
-      answ = JSON.parse(answ);
-    } catch (ex) {
-      answ = new Array(answ);
-    }
-
-    if (answ[0] == 1) {
-      $("#PDati").html(answ[1]);
-      container = $("#scrollDiv");
-      $("#invoice").css(
-        "top",
-        $(el).offset().top -
-          container.offset().top +
-          $(el).height() +
-          container[0].scrollTop
-      );
-
-      $("#invoice").show();
-    } else alert(answ[0]);
-  };
-  Loading(0, 1);
-  $.post(URL + "/Invoice/Get", data, success);
-}
-
-function deleteRecipient(ID) {
-  var data = "ID=" + ID;
-  success = function (answ) {
-    Loading(0, 0);
-    if (answ == 1) {
-      var Data = "0";
-      success = function (answ) {
-        Loading(0, 0);
-        answ = decodeURIComponent(answ);
-        $("div#EditRecipientList table.AutoTable tbody").html(answ);
-      };
-      Loading(0, 1);
-      $.post(URL + "/Invoice/EditRecipientList", Data, success);
-    } else {
-      alert(answ);
-    }
-  };
-
-  Loading(0, 1);
-  $.post(URL + "/Invoice/DeleteRecipient", data, success);
-}
-
 function saveInfo(IDS, IDD) {
   var info = $("#Info" + IDS).val();
   //var color = $('#Color'+IDS).val();
@@ -975,100 +923,6 @@ function getFilterData(id) {
   $.post(URL + "/Filters/Get", "ID=" + id, success);
 }
 
-function savetable() {
-  var rinda = $("#Products tr:last.bordersolidadd").attr("id");
-  var i = 1;
-  for (i = 1; i <= rinda; i++) {
-    var entry = $("#Products tr:last.bordersolidadd").attr("name");
-
-    var data =
-      "summa=" +
-      $("td:last.Summa").text() +
-      "&entryid=" +
-      entry +
-      "&id=" +
-      $("input#invoiceID").val() +
-      "&nosaukums=" +
-      $("tr:last.bordersolidadd>td>input.Product_name").val() +
-      "&artikuls=" +
-      $("tr:last.bordersolidadd>td>input.Artikuls").val() +
-      "&daudzums=" +
-      $("tr:last.bordersolidadd>td>input.Daudz").val() +
-      "&mervieniba=" +
-      $("tr:last.bordersolidadd>td>input.Merv").val() +
-      "&cena=" +
-      $("tr:last.bordersolidadd>td>input.Cena").val();
-    success = function (answ) {
-      Loading(0, 0);
-    };
-
-    Loading(0, 1);
-    $.post(URL + "/Invoice/LineSave", data, success);
-    $("#Products tr:last.bordersolidadd").remove();
-    if (i == rinda) {
-      return 1;
-    }
-  }
-}
-
-function bildsave(print) {
-  a = savetable();
-  if (a == 1) {
-    if (!$("input.atlaidenr").val()) {
-      a = 0;
-    } else {
-      a = $("input.atlaidenr").val();
-    }
-    var data =
-      "ID=" +
-      $("input#Saveid").val() +
-      "&samaksaskartiba=" +
-      $("input.SamKart").val() +
-      "&Recipient=" +
-      encodeURIComponent($("input#Recipient").val()) +
-      "&invoiceID=" +
-      $("input#invoiceID").val() +
-      "&Atlaide=" +
-      a +
-      "&izsniedza=" +
-      $("input.izsniedz").val() +
-      "&Kopa=" +
-      $("td#Kop").text() +
-      "&atlaidessumma=" +
-      $("td#atlaide").text() +
-      "&PirmsNodokliem=" +
-      $("td#sumaatlaide").text() +
-      "&PVN=" +
-      $("td#PVN").text() +
-      "&Samaksai=" +
-      $("td#PavisamSamaksai").text() +
-      "&recipientID=" +
-      $("input#recipientID").val();
-    success = function (answ) {
-      Loading(0, 0);
-      if (answ == 1) {
-        history.go(0);
-        return 1;
-      }
-    };
-
-    Loading(0, 1);
-    $.post(URL + "/Invoice/ImageSave", data, success);
-  }
-
-  if (print == 1) {
-    return 1;
-  }
-}
-
-function print() {
-  // a = bildsave(1);
-  //if (a == 1) {
-  var ID = $("input#invoiceID").val();
-  window.open(URL + "/PrintInvoice&ID=" + ID);
-  //}
-}
-
 function NextPage(rindask) {
   var data = "lapa=" + rindask;
   success = function (answ) {
@@ -1089,52 +943,6 @@ function InPage(sk) {
 
   Loading(0, 1);
   $.post(URL + "/Data/Pagesk", data, success);
-}
-
-function summ(a) {
-  var celuzDaudz = "#Products tbody>tr#" + a + ".bordersolidadd>td>input.Daudz";
-  var celuzCena = "#Products tbody>tr#" + a + ".bordersolidadd>td>input.Cena";
-  var celuzSumma = "#Products tbody>tr#" + a + ".bordersolidadd>td.Summa";
-  var Daudz = $(celuzDaudz).val();
-  var Cena = $(celuzCena).val();
-  var summa = r4(Cena * Daudz);
-  var atlaide1 = $("#Products tbody>tr>td>input.atlaidenr").val();
-  var atlaide = "0." + atlaide1 + "";
-  $(celuzSumma).html(summa);
-  $("#Products tbody>tr.bordersolid>td#Kop").html(
-    r4(sumOfColumns("Products", 6, true))
-  );
-
-  $("#Products tbody>tr>td#atlaide.bordersolid").html(
-    r2(sumOfColumns("Products", 6, true) * atlaide)
-  );
-
-  $("#Products tbody>tr>td#sumaatlaide.bordersolid").html(
-    r2(
-      sumOfColumns("Products", 6, true) -
-        sumOfColumns("Products", 6, true) * atlaide
-    )
-  );
-  $("#Products tbody>tr>td#PVN.bordersolid").html(
-    r2(sumOfColumns("Products", 6, true) * 0.0)
-  );
-  $("#Products tbody>tr>td#PavisamSamaksai.bordersolid").html(
-    r2(
-      sumOfColumns("Products", 6, true) -
-        sumOfColumns("Products", 6, true) * atlaide +
-        sumOfColumns("Products", 6, true) * 0.0
-    )
-  );
-}
-
-function sumOfColumns(tableID, columnIndex, hasHeader) {
-  var tot = parseFloat(0.0);
-  $("#" + tableID + " tr" + (hasHeader ? ":gt(0)" : ""))
-    .children("td:nth-child(" + columnIndex + ")")
-    .each(function () {
-      tot += parseFloat($(this).html());
-    });
-  return tot;
 }
 
 function editbox(status, el) {
@@ -1528,46 +1336,6 @@ function AddWarehouseForm(ID) {
 
     addWarehouseAutoComp();
   }
-  if (ID == 72) {
-    $("#pprForm").remove();
-    $("#AddDataForm").append('<div class="warehouse" id="pprForm"> </div>');
-    $("#pprForm").append("<span> Pavadzimes Nr:</span>");
-    $("#pprForm").append(
-      '<input id="pprNr" type="text" name="Nr" onblur="CechNrExist(this)"/>'
-    );
-    $("#pprForm").append("<hr>");
-    $("#AddDataForm #pprNr").focus();
-  }
-}
-
-function CechNrExist(Object) {
-  var value = Object.value;
-  if (value == "") {
-    alert("Līguma numurs nav ievadīts!");
-    $("#AddDataForm #pprNr").val("");
-    $("#AddDataForm #pprNr").css("background-color", "red");
-    $("#AddDataForm #pprNr").focus();
-    return false;
-  }
-  $.ajax({
-    url: "/lv/Json/NrExist",
-    data: {
-      value: value,
-    },
-    success: function (data) {
-      if (data == 1) {
-        $("#AddDataForm #pprNr").css("background-color", "white");
-
-        $("#AddDataForm [name=IDDoc]").val($("#AddDataForm #pprNr").val());
-        $("#AddDataForm #LigumaNr").val($("#AddDataForm #pprNr").val());
-      } else {
-        alert("Šāds Numurs jau eksistē");
-        $("#AddDataForm #pprNr").val("");
-        $("#AddDataForm #pprNr").css("background-color", "red");
-        $("#AddDataForm #pprNr").focus();
-      }
-    },
-  });
 }
 
 function clearParts() {
@@ -1818,7 +1586,6 @@ function OpenForm(Name, Blok, ParentBlok, nosaukums, Platums, ID, Save) {
 
   if (Save > 0) {
     myButtons["Save"] = function () {
-      DialogSave(Name, ID);
       $(this).dialog("close");
       $("#" + Blok + "").html(data);
     };
@@ -1842,43 +1609,6 @@ function OpenForm(Name, Blok, ParentBlok, nosaukums, Platums, ID, Save) {
     },
   });
   Loading(0, 0);
-}
-
-function DialogSave(Name, ID) {
-  if (Name == "AddRecipient") {
-    editRecipientDialog();
-  }
-  if (Name == "NewRecipient") {
-    addRecipientDialog();
-  }
-}
-
-function editRecipientDialog() {
-  var data = $("Form#ChangeRecipient").serialize();
-  success = function (answ) {
-    Loading(0, 0);
-    $("DIV#AddDialog").remove();
-    $.ajax({
-      type: "POST",
-      cache: false,
-      url: "/lv/Json/EditRecipient",
-      success: function (data) {
-        $("#DialogForm").html(data);
-      },
-    });
-  };
-
-  Loading(0, 1);
-  $.post(URL + "/Invoice/EditRecipient", data, success);
-}
-
-function addRecipientDialog() {
-  var data = $("Form#ChangeRecipient").serialize();
-  success = function (answ) {
-    Loading(0, 0);
-  };
-  Loading(0, 1);
-  $.post(URL + "/Invoice/SaveRecipient", data, success);
 }
 
 function HTMLFilter(selector, query) {

@@ -519,12 +519,6 @@ a.reminder {
     background: #fff;
 }
 
-#invoice {
-    width: 100%;
-    position: absolute;
-    display: none;
-    left: 0px;
-}
 #info .main {
     width: 98%;
     border: 5px solid #ddd;
@@ -537,12 +531,6 @@ a.reminder {
     display: none;
     left: 0px;
 }
-#invoice .main {
-    width: 98%;
-    border: 5px solid #ddd;
-    background: #fff;
-}
-
 #info .supplier {
     border: 1px solid #aaa;
     margin: 3px;
@@ -620,18 +608,6 @@ a.reminder {
 }
 #info .supplier .supOver textarea {
     display: block;
-}
-
-#Invoice {
-    width: 100%;
-    position: absolute;
-    display: none;
-    left: 0px;
-}
-#Invoice .main {
-    width: 98%;
-    border: 5px solid #ddd;
-    background: #fff;
 }
 
 .addbutton {

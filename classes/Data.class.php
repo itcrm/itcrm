@@ -30,9 +30,6 @@ class Data extends DBObject {
 
     function Load() {
         switch (isset(self::$url[2]) ? self::$url[2] : '') {
-            case 'AutocompleteJson':
-                echo $this->AutocompleteJson($_GET['term']);
-                die;
             case 'Page':
                 $_SESSION['page'] = $_POST['lapa'];
                 return "1";
@@ -355,8 +352,6 @@ class Data extends DBObject {
         while ($row = $result->fetch_assoc()) {
             if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
 
-            if ($row['IDType'] == 72) $row['dblClick'] = 'getInvoice(this);';
-
             if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
             if ($row['IDType'] == Config::AddToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,1); addWarehouseAutoComp();';
@@ -513,7 +508,6 @@ class Data extends DBObject {
                 $i++;
 
                 if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
-                if ($row['IDType'] == 72) $row['dblClick'] = 'getInvoice(this);';
 
                 if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
@@ -603,7 +597,6 @@ class Data extends DBObject {
             $i++;
 
             if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
-            if ($row['IDType'] == 72) $row['dblClick'] = 'getInvoice(this);';
 
             if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
@@ -1224,7 +1217,6 @@ class Data extends DBObject {
         $now = strtotime(date('Y-m-d H:i:00'));
 
         if ($row['IDType'] == 61) $row['dblClick'] = 'getSupplier(this);';
-        if ($row['IDType'] == 72) $row['dblClick'] = 'getInvoice(this);';
         if ($row['IDType'] == Config::WarehouseTypeID) $row['dblClick'] = "OpenForm('GetVeikals','DialogForm','scrollDiv','Prece','1500'," . $row['ID'] . ");";
 
         if ($row['IDType'] == Config::AddToWarehouseTypeID) $row['dblClick'] = 'getWarehouse(this,1); addWarehouseAutoComp();';
@@ -1404,24 +1396,6 @@ class Data extends DBObject {
         }
 
         return Template::Process('Form', $Dati);
-    }
-
-    function AutocompleteJson($text) {
-        $vowels = array("ē", "ū", "ī", "ā", "š", "ģ", "ķ", "ļ", "ž", "č", "ņ", "Ē", "Ū", "Ī", "Ā", "Š", "Ģ", "Ķ", "Ļ", "Ž", "Č", "Ņ");
-        $text = str_replace($vowels, "%", $text);
-        $query = "select ID, Nosaukums as label from recipients WHERE Nosaukums LIKE '%" . $text . "%' AND Status = 0 ";
-        if (!$result = self::$DB->query($query))
-            throw new AppError('Read error on Data (' . __LINE__ . ')');
-
-        $results = array();
-        while ($row = $result->fetch_assoc()) {
-            $results[] = $row;
-        }
-
-        $rez = json_encode($results);
-        $rez = str_replace('%22', "%27%27", $rez);
-        $rez = rawurldecode($rez);
-        echo $rez;
     }
 
     function CheckRow($ID) {
