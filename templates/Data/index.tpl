@@ -256,20 +256,6 @@
     </div>
    </div>
 
-      <div id="invoice" align="center" style="display: none;">
-    <div class="main">
-     <a class="right button" onclick="event.returnValue = false;  $('#invoice').hide(); return false;"> <span class= "ui-icon ui-icon-circle-close"> </span>[[:Close:]]</a>
-     <a class="right button" href="javascript:bildsave()"><span class="ui-icon ui-icon-disk"> </span>[[:Save:]]</a>
-     <a class="right button" href="javascript:print()"><span class="ui-icon ui-icon-print"> </span>[[:Print:]]</a>
-
-      <div class="clear"><!--  --></div>
-      <div id="PDati">
-        [:Suppliers:]
-      </div>
-      <div class="clear"><!--  --></div>
-    </div>
-   </div>
-
     <div id="warehouse" align="center" style="display: none;">
         <div class="main">
 

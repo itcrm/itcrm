@@ -285,34 +285,6 @@ CREATE TABLE `parameters` (
 CREATE UNIQUE INDEX `parameters_idx_param_name` ON `parameters`(`param_name`);
 
 -- CreateTable
-CREATE TABLE `invoices` (
-    `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `DocID` INTEGER NOT NULL,
-    `Samaksa` TEXT NOT NULL,
-    `recipient` TEXT NOT NULL,
-    `Atlaide` INTEGER NOT NULL,
-    `Izsniedza` TEXT NOT NULL,
-    `Kopa` FLOAT NOT NULL,
-    `atlaidessumma` FLOAT NOT NULL,
-    `PirmsNodokliem` FLOAT NOT NULL,
-    `PVN` FLOAT NOT NULL,
-    `Samaksai` FLOAT NOT NULL,
-    `recipientID` INTEGER NOT NULL
-);
-
--- CreateTable
-CREATE TABLE `invoice_items` (
-    `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `DocID` INTEGER NOT NULL,
-    `Nosaukums` TEXT NOT NULL,
-    `Artikuls` TEXT NOT NULL,
-    `Daudzums` FLOAT NOT NULL,
-    `Mervieniba` TEXT NOT NULL,
-    `Cena` FLOAT NOT NULL,
-    `Summa` FLOAT NOT NULL
-);
-
--- CreateTable
 CREATE TABLE `photo_tagger` (
     `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `photoid` INTEGER NOT NULL,
@@ -322,21 +294,6 @@ CREATE TABLE `photo_tagger` (
     `message` TEXT NOT NULL,
     `x` VARCHAR(20) NOT NULL
 );
-
--- CreateTable
-CREATE TABLE `recipients` (
-    `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `Nosaukums` VARCHAR(250) NOT NULL DEFAULT '',
-    `Kods` VARCHAR(250) NOT NULL DEFAULT '',
-    `Adrese` VARCHAR(250) NOT NULL DEFAULT '',
-    `Banka` VARCHAR(250) NOT NULL DEFAULT '',
-    `Konts` VARCHAR(250) NOT NULL DEFAULT '',
-    `Telefons` INTEGER NOT NULL,
-    `Epasts` VARCHAR(250) NOT NULL,
-    `Status` INTEGER NOT NULL DEFAULT 0,
-    `Changes` TEXT NOT NULL
-);
-CREATE UNIQUE INDEX `recipients_Kods` ON `recipients`(`Kods`);
 
 -- CreateTable
 CREATE TABLE `session_storage` (
