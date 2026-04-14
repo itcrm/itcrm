@@ -202,7 +202,7 @@ class Orders extends DBObject {
             return json_encode(
                 array(
                     1,
-                    Template::Process('Changes', array('Changes' => $tmp, 'ID' => $ID))
+                    Template::Process('Data/Changes', array('Changes' => $tmp, 'ID' => $ID))
                 )
             );
         } else return Language::$Data['NoChanges'];

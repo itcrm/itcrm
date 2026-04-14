@@ -83,7 +83,6 @@ class Language {
         'SetCode' => 'Noradiet kodu',
         'OrderNotFound' => 'Pasūtījuma kods nav atrasts',
         'DuplicateEntry' => 'Tāds kods jau eksistē!',
-        'Close' => 'Aizvert'
     );
 
     public static $Data = array(
