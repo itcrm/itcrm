@@ -25,7 +25,17 @@ class Template extends DBObject {
 
         if (empty(self::$_cache[$Tpl])) {
             if (file_exists($file)) {
-                self::$_cache[$Tpl] = self::ParseTemplate(file_get_contents($file), $Path);
+                $content = file_get_contents($file);
+                $content = preg_replace_callback(
+                    '/\[:include ([A-Za-z0-9\/]+\.[A-Za-z0-9]+):\]/',
+                    function($m) {
+                        $path = 'templates/' . $m[1];
+                        if (!file_exists($path)) throw new Exception('Included template not found: ' . $path);
+                        return file_get_contents($path);
+                    },
+                    $content
+                );
+                self::$_cache[$Tpl] = self::ParseTemplate($content, $Path);
             } else die('Template ' . $file . ' not found!');
         }
         return self::$_cache[$Tpl];
