@@ -79,8 +79,6 @@ class System extends DBObject {
             $Vars['Header'] = Template::Process('/Header', $Header);
         }
 
-        if (!isset($Vars['Footer'])) $Vars['Footer'] = Template::Process('/Footer');
-
         if (!isset($Vars['Content'])) {
             if (empty($_SESSION['User'])) {
                 $tpl = '/LoginForm';
