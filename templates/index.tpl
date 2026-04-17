@@ -54,7 +54,5 @@
 
         [:Content:]
 
-        [:Footer:]
-
     </body>
 </html>
