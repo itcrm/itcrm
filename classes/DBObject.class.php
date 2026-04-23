@@ -21,10 +21,6 @@ class SQLiteResultWrapper {
         }
         return null;
     }
-
-    function fetch_array() {
-        return $this->fetch_assoc();
-    }
 }
 
 class SQLiteDBWrapper {
@@ -230,29 +226,5 @@ abstract class DBObject {
 <select onchange="InPage(this.value)"  value="' . $psk . '">
 ' . $pgsv . '
 </select>  <span  style="float: right;"> Kopā: ' . $sk . ' ieraksti</span> </div> </div>';
-    }
-
-    function good_query($string) {
-        $result = self::$DB->query($string);
-
-        if ($result == false) {
-            error_log("SQL error: " . self::$DB->error . "\n\nOriginal query: $string\n");
-        }
-        return $result;
-    }
-
-    function good_query_table($sql) {
-        $result = $this->good_query($sql);
-
-        $table = array();
-
-        if ($result->num_rows > 0) {
-            $i = 0;
-            while ($table[$i] = $result->fetch_assoc())
-                $i++;
-            unset($table[$i]);
-        }
-
-        return $table;
     }
 }
