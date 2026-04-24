@@ -8,7 +8,9 @@
     "show-coverage": "bun run e2e/coverage-report.ts && open coverage/index.html",
     "scc": "scc",
     "sonar": ".sonar/run_sonar_scanner.sh",
-    "sonar:clean": "docker rm -f sonarqube-server"
+    "sonar:clean": "docker rm -f sonarqube-server",
+    "noco": "docker compose -f docker-compose.yml -f docker-compose.noco.yml up nocodb nocodb-init",
+    "noco:down": "docker compose -f docker-compose.yml -f docker-compose.noco.yml down --remove-orphans"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
