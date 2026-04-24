@@ -2,6 +2,7 @@
   "name": "itcrm",
   "private": true,
   "scripts": {
+    "start": "docker compose up",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "coverage": "rm -rf coverage-raw coverage && COVERAGE=1 node node_modules/.bin/playwright test && bun run e2e/coverage-report.ts",
