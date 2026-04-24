@@ -19,7 +19,7 @@ services:
       - ./images:/var/www/html/images:cached
       - ./tcpdf:/var/www/html/tcpdf:cached
       - ./faili:/var/www/html/faili:cached
-      - sqlite_data:/var/www/html/data
+      - ./data:/var/www/html/data
     networks:
       - itcrm-network
     healthcheck:
@@ -28,10 +28,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 5s
-
-volumes:
-  sqlite_data:
-    driver: local
 
 networks:
   itcrm-network:

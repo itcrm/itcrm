@@ -1,0 +1,68 @@
+# Dev-only override: spins up NocoDB so you can browse/edit the app's SQLite
+# database via a web UI at http://localhost:8080. NocoDB reads ./data/database.sqlite
+# directly from the host bind mount, so it runs independently of the php service.
+# (Run `docker compose up -d` at least once first to have the php container seed
+# the DB file — nocodb-init only registers the path, it does not create the file.)
+#
+# Usage:
+#   bun run noco        # start nocodb only (Ctrl+C to stop)
+#   bun run noco:down   # tear down all services in this project (nocodb + php if running)
+#
+# First boot is automated:
+#   - nocodb auto-creates a super-admin from NOCO_ADMIN_EMAIL / NOCO_ADMIN_PASSWORD
+#     (see .env.example; both must be set, password ≥8 chars with upper/digit/special).
+#   - nocodb-init sidecar signs in with those creds and registers the app's
+#     SQLite DB as an external data source, then exits. Re-runs are idempotent.
+#
+# After `bun run noco` finishes booting, open http://localhost:8080, sign in
+# with the env creds, and the `itcrm` base with the app's tables is already there.
+#
+# The itcrm app's own users (e.g. Alice / Alice123) are seeded separately
+# by docker/seed.sql — unrelated to the NocoDB admin above.
+#
+# Caveat: SQLite allows one writer at a time. If php is writing heavily,
+# NocoDB may hit SQLITE_BUSY. For bulk edits, `docker compose stop php` first.
+
+services:
+  nocodb:
+    # Pinned pre-workspace-overhaul release. NocoDB 0.301+ migrated to a
+    # workspace model and 2026.04+ makes the auto-created NC_ADMIN user an
+    # Org Viewer, which gets 403 on /api/v1/db/meta/projects — breaks the
+    # init sidecar. Bump only after the sidecar is updated to match.
+    image: nocodb/nocodb:0.265.1
+    container_name: itcrm-nocodb
+    restart: "no"
+    ports:
+      - "${NOCO_PORT:-8080}:8080"
+    environment:
+      - NC_DISABLE_TELE=true
+      - NC_ADMIN_EMAIL=${NOCO_ADMIN_EMAIL:-admin@itcrm.local}
+      - NC_ADMIN_PASSWORD=${NOCO_ADMIN_PASSWORD:-Admin123!}
+    volumes:
+      - nocodb_data:/usr/app/data
+      - ./data:/usr/app/data/itcrm
+    networks:
+      - itcrm-network
+
+  nocodb-init:
+    image: alpine:3
+    container_name: itcrm-nocodb-init
+    restart: "no"
+    environment:
+      - NOCO_URL=http://nocodb:8080
+      - NOCO_ADMIN_EMAIL=${NOCO_ADMIN_EMAIL:-admin@itcrm.local}
+      - NOCO_ADMIN_PASSWORD=${NOCO_ADMIN_PASSWORD:-Admin123!}
+    volumes:
+      - ./docker/nocodb-init.sh:/init/nocodb-init.sh:ro
+    entrypoint: ["/bin/sh", "/init/nocodb-init.sh"]
+    networks:
+      - itcrm-network
+    depends_on:
+      - nocodb
+
+volumes:
+  nocodb_data:
+    driver: local
+
+networks:
+  itcrm-network:
