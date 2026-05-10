@@ -81,8 +81,8 @@ class System extends DBObject {
 
         if (!isset($Vars['Content'])) {
             if (empty($_SESSION['User'])) {
-                $tpl = '/LoginForm';
-                $Vars['Content'] = Template::Process($tpl);
+                $cards = (new Users())->getLoginCards();
+                $Vars['Content'] = Template::Process('/LoginForm', ['Cards' => $cards]);
             }
         }
         $Vars['NOW'] = date('y.m.d H:i');

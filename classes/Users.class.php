@@ -5,7 +5,6 @@ class Users extends DBObject {
     protected static $tableName = 'Users';
     protected $ID;
     protected $Login;
-    protected $Password;
     protected $Color;
     protected $Name;
     protected $Phone;
@@ -27,36 +26,23 @@ class Users extends DBObject {
     }
 
     function checkUser() {
-        if (isset($_POST['Login']) && isset($_POST['Password'])) {
-            try {
-                $this->setLogin($_POST['Login']);
-                $this->setPassword($_POST['Password']);
-            } catch (AppError $ex) {
-                return Language::$Users['WrongLoginPassword'];
-            }
-            $query = 'SELECT * FROM Users WHERE Login=? AND Password=?';
+        if (!isset($_POST['Login'])) return;
 
-            if (!$result = self::$DB->prepare($query, [
-                $this->getLogin(),
-                md5($this->getPassword())
-            ])) {
-                throw new AppError('Read error on Users (' . __LINE__ . ')');
-            }
-            if ($result->num_rows == 0) {
-                return Language::$Users['WrongLoginPassword'];
-            }
-
-            $this->fetchObject($result);
-
-            if ($this->getStatus() == -1)
-                return Language::$Users['UserDisabled'];
-            else {
-                $_SESSION['User'] = $this;
-            }
-
-            return 1;
+        $query = 'SELECT * FROM `Users` WHERE `Login`=?';
+        if (!$result = self::$DB->prepare($query, [$_POST['Login']])) {
+            throw new AppError('Read error on Users (' . __LINE__ . ')');
         }
-        return;
+        if ($result->num_rows == 0) {
+            return Language::$Users['UserNotFound'];
+        }
+
+        $User = (new self)->fetchObject($result);
+        if ($User->getStatus() <= 0) {
+            return Language::$Users['UserDisabled'];
+        }
+
+        $_SESSION['User'] = $User;
+        return 1;
     }
 
     function Load() {
@@ -101,6 +87,24 @@ class Users extends DBObject {
         } else return '';
     }
 
+    function getLoginCards() {
+        $query = 'SELECT * FROM `Users` WHERE `Status` > 0 ORDER BY `Name`, `Login`';
+
+        if (!$result = self::$DB->query($query)) {
+            throw new AppError('Read error on Users (' . __LINE__ . ')');
+        }
+        $Users = array();
+        while ($row = $result->fetch_assoc()) {
+            $row['AvatarColor'] = ltrim($row['Color'] ?? '', '#') ?: '000000';
+            $Users[] = $row;
+        }
+
+        if (!empty($Users)) {
+            $Users['__template'] = 'LoginForm/Card';
+            return $Users;
+        } else return '';
+    }
+
     function fetchRow($row) {
         $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
         $row['RowClass'] = $row['Status'] == -1 ? 'deleted' : '';
@@ -130,9 +134,6 @@ class Users extends DBObject {
         $this->fetchObject($_POST);
         $Err = AppError::getErrors(get_class($this));
 
-        if ($this->getID() > 0 && $this->getPassword() == '')
-            unset($Err['Password']);
-
         if (empty($Err)) {
             $Check = $this->checkDuplicates();
             if ($Check != 1) return $Check;
@@ -148,12 +149,11 @@ class Users extends DBObject {
     }
 
     function Add() {
-        $query = 'INSERT INTO `Users` (`Login`, `Password`, `Color`, `Name`, `Phone`, `AddDate`, `Status`)
-                  VALUES (?, ?, ?, ?, ?, datetime(\'now\'), 99)';
+        $query = 'INSERT INTO `Users` (`Login`, `Color`, `Name`, `Phone`, `AddDate`, `Status`)
+                  VALUES (?, ?, ?, ?, datetime(\'now\'), 99)';
 
         if (!self::$DB->prepare($query, [
             $this->getLogin(),
-            md5($this->getPassword()),
             $this->getColor(),
             $this->getName(),
             $this->getPhone()
@@ -167,22 +167,17 @@ class Users extends DBObject {
     }
 
     function Update() {
-        $params = [$this->getLogin()];
-        $passwordClause = '';
-        if ($this->getPassword() != '') {
-            $passwordClause = '`Password`=?,';
-            $params[] = md5($this->getPassword());
-        }
-        $params[] = $this->getColor();
-        $params[] = $this->getName();
-        $params[] = $this->getPhone();
-        $params[] = (int)$this->getID();
-
         $query = 'UPDATE `Users`
-                     SET `Login`=?, ' . $passwordClause . ' `Color`=?, `Name`=?, `Phone`=?
+                     SET `Login`=?, `Color`=?, `Name`=?, `Phone`=?
                    WHERE `ID`=?';
 
-        if (!self::$DB->prepare($query, $params)) {
+        if (!self::$DB->prepare($query, [
+            $this->getLogin(),
+            $this->getColor(),
+            $this->getName(),
+            $this->getPhone(),
+            (int)$this->getID()
+        ])) {
             throw new AppError('Update error on Users (' . __LINE__ . ')');
         }
     }
@@ -191,12 +186,6 @@ class Users extends DBObject {
         $value = trim($value);
         if ($value == '') throw new AppError(Language::$Users['SetLogin']);
         else $this->Login = $value;
-    }
-
-    function setPassword($value) {
-        $value = trim($value);
-        if ($value == '') throw new AppError(Language::$Users['SetPassword']);
-        else $this->Password = $value;
     }
 
 }

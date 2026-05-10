@@ -9,7 +9,7 @@
  *   - every state gets a screenshot snapshot (update with --update-snapshots / -u)
  *   - adding a new state + event to the machine automatically adds a test
  *
- * publicMachine  — unauthenticated routes (login, login_failed).
+ * publicMachine  — unauthenticated routes (login).
  *                  Tests start from page.goto(env.url).
  *
  * authenticatedMachine — all authenticated routes.

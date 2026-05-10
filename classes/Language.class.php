@@ -4,8 +4,6 @@ class Language {
     public static $Main = array(
         'Title' => 'Ievade',
         'Login' => 'Logins',
-        'Password' => 'Parole',
-        'Logon' => 'Ielogoties',
         'Loading' => 'Ielāde...',
         'Data' => 'Ieraksti',
         'Users' => 'Lietotāji',
@@ -56,10 +54,8 @@ class Language {
         'Acrions' => 'Darbības',
 
         'DuplicateLogin' => 'Tāds lietotājvārds jau eksistē!',
-        'WrongLoginPassword' => 'Nepareizs logins vai parole',
         'UserDisabled' => 'Lietotājs ir atslēgts',
         'SetLogin' => 'Noradiet lietotājvārdu',
-        'SetPassword' => 'Noradiet paroli',
         'UserNotFound' => 'Lietotājs nav atrasts',
     );
 

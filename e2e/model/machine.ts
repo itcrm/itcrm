@@ -4,18 +4,7 @@ import { createMachine } from "xstate";
 
 const publicStates = {
   // ── Auth ──────────────────────────────────────────────────────────
-  login: {
-    on: {
-      SUBMIT_INVALID_CREDENTIALS: "login_failed",
-    },
-  },
-
-  /** Login form visible after a failed attempt */
-  login_failed: {
-    on: {
-      SUBMIT_INVALID_CREDENTIALS: "login_failed",
-    },
-  },
+  login: {},
 };
 
 export type PublicState = keyof typeof publicStates;

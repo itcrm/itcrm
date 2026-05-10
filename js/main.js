@@ -54,12 +54,9 @@ function readForm(form) {
   return data;
 }
 
-function Login() {
-  f = $("#LoginForm");
-  var data = readForm(f);
-
+function LoginAs(login) {
   success = function (answ) {
-    Loading(f, 0);
+    Loading(0, 0);
 
     if (answ == 1) {
       window.location.replace(URL);
@@ -67,8 +64,8 @@ function Login() {
       alert(answ);
     }
   };
-  Loading(f, 1);
-  $.post(URL + "/Users/Logon", data, success);
+  Loading(0, 1);
+  $.post(URL + "/Users/Logon", { Login: login }, success);
 }
 
 function Save(Class) {

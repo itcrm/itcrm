@@ -6,19 +6,17 @@
 
 -- ─── Users ──────────────────────────────────────────────────────────────────────
 -- Admin user for automated tests (dev only)
--- Password: Alice123
-INSERT INTO `Users` (`Login`, `Password`, `Color`, `Name`, `Phone`, `AddDate`, `Status`)
-VALUES ('Alice', '8714bd74bdd83c760184dd89c829f3a2', '#000000', 'Alice Morgan', '+1 555-0100', datetime('now'), 99);
+INSERT INTO `Users` (`Login`, `Color`, `Name`, `Phone`, `AddDate`, `Status`)
+VALUES ('Alice', '#000000', 'Alice Morgan', '+1 555-0100', datetime('now'), 99);
 
 -- Additional staff users
--- Passwords: John123, Sarah123, Mark123, Emma123, disabled123 (all MD5-hashed)
-INSERT INTO `Users` (`Login`, `Password`, `Color`, `Name`, `Phone`, `AddDate`, `Status`)
+INSERT INTO `Users` (`Login`, `Color`, `Name`, `Phone`, `AddDate`, `Status`)
 VALUES
-  ('John',     'a5391e96f8d48a62e8c85381df108e98', '#1E88E5', 'John Smith',     '+1 555-0101', '2023-06-15 09:00:00', 1),
-  ('Sarah',    '4eb641b60073572fcd1afe9017ac52db', '#E53935', 'Sarah Jones',    '+1 555-0102', '2023-07-01 10:30:00', 1),
-  ('Mark',     'b38ac18016d255ee4e9a364fb6490ebf', '#43A047', 'Mark Davis',     '+1 555-0103', '2023-09-10 08:00:00', 1),
-  ('Emma',     'dda71ccb468d687e9d9b39e55bb20733', '#FB8C00', 'Emma Wilson',    '+1 555-0104', '2024-01-20 14:00:00', 1),
-  ('disabled', '024dda788e21e6bae8d736f807919fdd', '#9E9E9E', 'Old Account',    '',            '2022-01-01 00:00:00', 0);
+  ('John',     '#1E88E5', 'John Smith',  '+1 555-0101', '2023-06-15 09:00:00', 1),
+  ('Sarah',    '#E53935', 'Sarah Jones', '+1 555-0102', '2023-07-01 10:30:00', 1),
+  ('Mark',     '#43A047', 'Mark Davis',  '+1 555-0103', '2023-09-10 08:00:00', 1),
+  ('Emma',     '#FB8C00', 'Emma Wilson', '+1 555-0104', '2024-01-20 14:00:00', 1),
+  ('disabled', '#9E9E9E', 'Old Account', '',            '2022-01-01 00:00:00', 0);
 
 -- ─── Types (service/work categories) ────────────────────────────────────────────
 -- Seed fixtures required by the Data-row tests (IDType=1, IDOrder=1, IDPerson=1)

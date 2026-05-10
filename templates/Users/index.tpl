@@ -4,8 +4,7 @@
 <table class="add" cellpadding="0" cellspacing="0" border="1" align="center">
 <tr height="30">
     <td width="50"><input type="button" value="&mdash;" onclick="$(':input','#AddUsersForm').not(':button, :submit, :reset, :hidden').val('').removeAttr('checked').removeAttr('selected');" /></td>
-    <td width="150"><input type="text" name="Login" maxlength="32"/><br/>
-                    <input type="text" name="Password" maxlength="32"/></td>
+    <td width="150"><input type="text" name="Login" maxlength="32"/></td>
     <td width="30"><div style="padding:0 5px"><input type="text" name="Color"  /></div></td>
     <td width="150"><input type="text" name="Name" maxlength="100"/></td>
     <td width="150"><input type="text" name="Phone"  maxlength="100"/></td>

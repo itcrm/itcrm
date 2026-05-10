@@ -13,21 +13,10 @@ type AppState = PublicState | AuthenticatedState;
  */
 export const eventActions: Record<string, ActionFn> = {
   SUBMIT_VALID_CREDENTIALS: async (page, env) => {
-    await page.fill('[name="Login"]', env.users.admin.login);
-    await page.fill('[name="Password"]', env.users.admin.password);
-    await page.click('[type="submit"]');
-    await expect(page.locator("#LoginForm")).not.toBeVisible();
-  },
-
-  SUBMIT_INVALID_CREDENTIALS: async (page) => {
-    await page.fill('[name="Login"]', "wrong");
-    await page.fill('[name="Password"]', "wrong");
-    const response = page.waitForResponse((r) =>
-      r.url().includes("/Users/Logon")
-    );
-    await page.click('[type="submit"]');
-    await response;
-    await expect(page.locator("#LoginForm")).toBeVisible();
+    await page
+      .locator("#LoginCards > div", { hasText: env.users.admin.login })
+      .click();
+    await expect(page.locator("#LoginCards")).not.toBeVisible();
   },
 
   NAVIGATE_DATA: async (page) => {
@@ -68,7 +57,7 @@ export const eventActions: Record<string, ActionFn> = {
 
   LOGOUT: async (page) => {
     await page.click("a.Logout");
-    await expect(page.locator("#LoginForm")).toBeVisible();
+    await expect(page.locator("#LoginCards")).toBeVisible();
   },
 
   // ── Data screen actions ────────────────────────────────────────────
@@ -562,7 +551,6 @@ export const eventActions: Record<string, ActionFn> = {
   SUBMIT_VALID_USER: async (page) => {
     const login = "temp-florist";
     await page.fill('#AddUsersForm [name="Login"]', login);
-    await page.fill('#AddUsersForm [name="Password"]', "test1234");
     const saveResponse = page.waitForResponse((r) =>
       r.url().includes("/Users/Save")
     );
@@ -821,15 +809,11 @@ export const eventActions: Record<string, ActionFn> = {
  */
 export const stateVerifications: Record<AppState, VerifyFn> = {
   logged_out: async (page) => {
-    await expect(page.locator("#LoginForm")).toBeVisible();
+    await expect(page.locator("#LoginCards")).toBeVisible();
   },
 
   login: async (page) => {
-    await expect(page.locator("#LoginForm")).toBeVisible();
-  },
-
-  login_failed: async (page) => {
-    await expect(page.locator("#LoginForm")).toBeVisible();
+    await expect(page.locator("#LoginCards")).toBeVisible();
   },
 
   data: async (page) => {

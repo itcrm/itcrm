@@ -9,6 +9,7 @@
  */
 import { test, expect, Page, Browser } from "@playwright/test";
 import { createTestEnv, TestEnvironment } from "../utils/test-environment";
+import { login } from "../utils/actions";
 
 let env: TestEnvironment;
 let page: Page;
@@ -73,13 +74,7 @@ test.describe.serial("Data filters", () => {
   test.beforeAll(async ({ browser }: { browser: Browser }) => {
     env = await createTestEnv();
     page = await browser.newPage();
-    await page.goto(env.url);
-
-    // Login
-    await page.fill('[name="Login"]', env.users.admin.login);
-    await page.fill('[name="Password"]', env.users.admin.password);
-    await page.click('[type="submit"]');
-    await expect(page.locator("#LoginForm")).not.toBeVisible();
+    await login(page, env);
 
     // Apply Today filter so seeded rows (datetime('now')) are visible
     await applyDateInterval("1");
