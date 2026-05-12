@@ -35,13 +35,6 @@ table {
     padding-left: 3px;
 }
 
-#LoginForm {
-    padding-top: 150px;
-    display: block;
-    width: 320px;
-    line-height: 25px;
-}
-
 .formback {
     background: #fcfbc4;
 }
