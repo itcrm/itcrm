@@ -285,9 +285,11 @@ export const eventActions: Record<string, ActionFn> = {
   },
 
   CHANGE_DATA_SORT: async (page) => {
-    // Click the sort toggle link — POSTs to /Data/Sort then reloads via window.location.replace
+    // Click the sort toggle link — POSTs to /Data/Sort then reloads via window.location.replace.
+    // Register the waiter before the click so we don't miss the response on fast localhost.
+    const sortResponse = page.waitForResponse((r) => r.url().includes("/Data/Sort"));
     await page.click('a[href="javascript:changeSort()"]');
-    await page.waitForResponse((r) => r.url().includes("/Data/Sort"));
+    await sortResponse;
     await page.waitForLoadState("load");
     // After toggling from sort-by-ID (default) to sort-by-Date, link text becomes "Dok.datums"
     await expect(
