@@ -1,6 +1,3 @@
-# Third-party PHP libraries
-tcpdf
-
 # Third-party JS libraries
 faili/scripts/mootools-prod.js
 faili/scripts/slimbox.js

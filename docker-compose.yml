@@ -17,7 +17,6 @@ services:
       - ./css:/var/www/html/css:cached
       - ./js:/var/www/html/js:cached
       - ./images:/var/www/html/images:cached
-      - ./tcpdf:/var/www/html/tcpdf:cached
       - ./faili:/var/www/html/faili:cached
       - ./data:/var/www/html/data
     networks:

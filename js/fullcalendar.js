@@ -76,8 +76,7 @@ var defaults = {
 		today: 'Šodiena',
 		month: 'Mēnesis',
 		week: 'Nedēļa',
-		day: 'Diena',
-		print: 'Drukāt'
+		day: 'Diena'
 	},
 	
 	// jquery-ui theming
@@ -202,7 +201,6 @@ function Calendar(element, options, eventSources) {
 	t.next = next;
 	t.prevYear = prevYear;
 	t.nextYear = nextYear;
-	t.print = print;
 	t.today = today;
 	t.gotoDate = gotoDate;
 	t.incrementDate = incrementDate;
@@ -274,8 +272,6 @@ function Calendar(element, options, eventSources) {
 		
 	
 			div.prependTo(element);
-			$('td.fc-header-left').append('<span class="fc-header-space"></span>');
-			$('td.fc-header-left').append('<input type="checkbox" style="margin-top: 8px;" /> ');
 	}
 	
 	$(".fc-reminder").click(function () {
@@ -626,14 +622,6 @@ function Calendar(element, options, eventSources) {
 		addYears(date, 1);
 		renderView();
 	}
-	
-	
-	function print() {		
-				var Tasks = $('td.fc-header-left input').is(':checked'); 
-				
-				var day = $.fullCalendar.formatDate( currentView.start, 'yyyy-MM-dd' ); 
-				window.open(URL+'/Prints&user='+ options.user + '&day=' + day + '&task=' + Tasks)
-			}
 	
 	
 	function today() {

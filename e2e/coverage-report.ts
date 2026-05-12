@@ -33,7 +33,7 @@ function mergeCoverage(): CoverageData {
       // Only include project source files
       if (!filePath.startsWith(SRC_ROOT)) continue;
       // Skip vendor/library files
-      if (filePath.includes("/tcpdf/") || filePath.includes("/docker/")) continue;
+      if (filePath.includes("/docker/")) continue;
 
       if (!merged[filePath]) {
         merged[filePath] = {};
