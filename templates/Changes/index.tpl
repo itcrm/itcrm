@@ -79,31 +79,6 @@ $("form.SelectChange input:checkbox").change(function(){
 }
 );
 
- $('#SupplierForm input[name=Color]').colorPicker();
-      $('#SupplierForm input[name=Name]').bind('focus',function() {
-            if(this.value=='[[:Name:]]') {
-                this.value='';
-                $(this).removeClass('light');
-            }
-       }).bind('blur',function() {
-            if(this.value=='') {
-                this.value='[[:Name:]]';
-                $(this).addClass('light');
-            }
-       });
-
-      $('#SupplierForm input[name=Description]').bind('focus',function() {
-            if(this.value=='[[:MoreData:]]') {
-                this.value='';
-                $(this).removeClass('light');
-            }
-       }).bind('blur',function() {
-            if(this.value=='') {
-                this.value='[[:MoreData:]]';
-                $(this).addClass('light');
-            }
-       });
-
 // Add Autocomplete
 $(".add [name=PersonSelect]").autocomplete({
     source: "/lv/Json/Persons",
@@ -112,9 +87,6 @@ $(".add [name=PersonSelect]").autocomplete({
 
 $(".add [name=TypeSelect]").autocomplete({
     source: "/lv/Json/Types",
-    select: function( event, ui){
-        AddWarehouseForm(ui.item.ID);
-    },
     minLength: 1,
 });
 

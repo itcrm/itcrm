@@ -23,8 +23,8 @@
     <div class="exp_hide" id="slider[:ID:]">
         <span class=""> <a class="extra r_bilde" title="Rindas bilde"  onClick=" $('.r_bilde_link').attr('src', '[:link:]'); $('.r_bilde_link').attr('id', '[:ID:]');  $( '#rindas_bilde' ).dialog({resizable: false, width: 831}); $('.ui-dialog').css({'position': 'absolute', 'top':'15%', 'left':'15%'}); $( '#rindas_bilde' ).dialog({   beforeClose: function(event, ui) {$( 'div.r_bilde' ).photoTagger('destroy');}}); $( 'div.r_bilde' ).photoTagger({loadURL: './Data/photoTagger',saveURL: './Data/SavephotoTagger',deleteURL: './Data/DeletephotoTagger'});" href='#'></a> </span>
 
-        <span class=""> <a class="extra file_upload" title="Pievienot failus" onClick= "OpenForm( 'AddFiles', 'DialogForm', 'scrollDiv', 'Pievienot failus', '300', [:ID:] );"> </a> </span>
-        <span class=""> <a class="extra r_bile_upload" title="Pievienot rindas bildi" href="#" onClick="OpenForm( 'AddPicture', 'DialogForm', 'scrollDiv', 'Pievienot rindas bildi', '300', [:ID:] )"> </a> </span>
+        <span class=""> <a class="extra file_upload" title="Pievienot failus" onClick="OpenForm('AddFiles', 'Pievienot failus', [:ID:]);"> </a> </span>
+        <span class=""> <a class="extra r_bile_upload" title="Pievienot rindas bildi" href="#" onClick="OpenForm('AddPicture', 'Pievienot rindas bildi', [:ID:])"> </a> </span>
         <span class=""> <a class="extra image"  title="Failu pārlūks"href="/faili/[:Order:]" target="_blank"> </a> </span>
 
     </div><div class="changes" id="Changes[:ID:]"></div></td>

@@ -75,17 +75,6 @@ CREATE TABLE `Filters` (
 );
 
 -- CreateTable
-CREATE TABLE `Info` (
-    `IDData` INTEGER NOT NULL DEFAULT 0,
-    `IDSupplier` INTEGER NOT NULL DEFAULT 0,
-    `IDUser` INTEGER NOT NULL DEFAULT 0,
-    `Info` VARCHAR(250) NOT NULL DEFAULT '',
-    `Color` VARCHAR(7) NOT NULL DEFAULT '',
-    `AddDate` TEXT NOT NULL DEFAULT '0000-00-00 00:00:00',
-    PRIMARY KEY (`IDData`, `IDSupplier`)
-);
-
--- CreateTable
 CREATE TABLE `Orders` (
     `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `IDUser` INTEGER NOT NULL DEFAULT 0,
@@ -97,17 +86,6 @@ CREATE TABLE `Orders` (
     `Changes` TEXT NOT NULL DEFAULT ''
 );
 CREATE UNIQUE INDEX `Orders_Code` ON `Orders`(`Code`);
-
--- CreateTable
-CREATE TABLE `Suppliers` (
-    `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `IDUser` INTEGER NOT NULL DEFAULT 0,
-    `Name` VARCHAR(30) NOT NULL DEFAULT '',
-    `Description` VARCHAR(200) NOT NULL DEFAULT '',
-    `Color` VARCHAR(7) NOT NULL DEFAULT '',
-    `AddDate` TEXT NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `Status` INTEGER NOT NULL DEFAULT 0
-);
 
 -- CreateTable
 CREATE TABLE `Types` (
@@ -150,15 +128,6 @@ CREATE TABLE `audit` (
 CREATE INDEX `audit_idx_classname` ON `audit`(`audit_classname`);
 CREATE INDEX `audit_idx_item` ON `audit`(`audit_item`);
 CREATE UNIQUE INDEX `audit_idx_time_id` ON `audit`(`audit_time`, `audit_id`);
-
--- CreateTable
-CREATE TABLE `categories_linear` (
-    `id` INTEGER NOT NULL PRIMARY KEY,
-    `level` INTEGER NULL,
-    `parent` INTEGER NULL,
-    `iorder` INTEGER NULL,
-    `title` VARCHAR(255) NULL
-);
 
 -- CreateTable
 CREATE TABLE `data_auditing` (
@@ -213,35 +182,6 @@ CREATE TABLE `fileindex` (
     `updateDate` INTEGER NULL
 );
 CREATE INDEX `fileindex_idx_full` ON `fileindex`(`filename`, `path`);
-
--- CreateTable
-CREATE TABLE `groups_linear` (
-    `id` INTEGER NOT NULL PRIMARY KEY,
-    `level` INTEGER NULL,
-    `parent` INTEGER NULL,
-    `iorder` INTEGER NULL,
-    `title` VARCHAR(255) NULL
-);
-
--- CreateTable
-CREATE TABLE `warehouse` (
-    `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `rindasID` INTEGER NOT NULL,
-    `partID` INTEGER NOT NULL,
-    `daudzums` FLOAT NOT NULL DEFAULT 0.00,
-    `type` INTEGER NOT NULL DEFAULT 0,
-    `Shop` INTEGER NOT NULL DEFAULT 0,
-    `ShopCategoryID` VARCHAR(255) NOT NULL,
-    `ShopDescription` VARCHAR(255) NOT NULL,
-    `ShopModelID` VARCHAR(255) NOT NULL,
-    `ShopTitle` VARCHAR(255) NOT NULL,
-    `OriginalCode` VARCHAR(255) NOT NULL,
-    `addition` INTEGER NOT NULL DEFAULT 100,
-    `offer` INTEGER NOT NULL DEFAULT 0,
-    `state` INTEGER NOT NULL DEFAULT 0,
-    `used` INTEGER NOT NULL DEFAULT 0
-);
-CREATE UNIQUE INDEX `warehouse_rindasID` ON `warehouse`(`rindasID`);
 
 -- CreateTable
 CREATE TABLE `noma` (

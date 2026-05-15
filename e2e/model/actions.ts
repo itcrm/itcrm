@@ -50,11 +50,6 @@ export const eventActions: Record<string, ActionFn> = {
     await expect(page.locator("#calendar")).toBeVisible();
   },
 
-  NAVIGATE_WAREHOUSE: async (page) => {
-    await page.click('a.menu[href*="/Warehouse"]');
-    await page.waitForURL("**/Warehouse**");
-  },
-
   LOGOUT: async (page) => {
     await page.click("a.Logout");
     await expect(page.locator("#LoginCards")).toBeVisible();
@@ -660,17 +655,6 @@ export const eventActions: Record<string, ActionFn> = {
     await expect(page.locator("#Changes1")).not.toBeEmpty();
   },
 
-  TOGGLE_WAREHOUSE_SLIDER: async (page) => {
-    // The slider is open by default; click the X button inside it to close (hide) it
-    const sliderResponse = page.waitForResponse((r) =>
-      r.url().includes("/Warehouse/slider")
-    );
-    // The close button is the right-hand div inside .slider that has the onclick handler
-    await page.locator(".slider [onclick*='slider']").last().click();
-    await sliderResponse;
-    await expect(page.locator(".slider")).not.toBeVisible();
-  },
-
   SWITCH_TASK_WEEK_VIEW: async (page) => {
     // Click the agendaWeek (Nedēļa) button — fullCalendar v1.5.3 uses fc-button-agendaWeek
     await page.click(".fc-button-agendaWeek");
@@ -688,22 +672,6 @@ export const eventActions: Record<string, ActionFn> = {
     // Click the month button — fullCalendar v1.5.3 uses fc-button-month
     await page.click(".fc-button-month");
     await expect(page.locator(".fc-view-month")).toBeVisible();
-  },
-
-  OPEN_WAREHOUSE_SLIDER: async (page) => {
-    // Click the SLO div (visible when slider is closed) to re-open the slider
-    const sliderResponse = page.waitForResponse((r) =>
-      r.url().includes("/Warehouse/slider")
-    );
-    await page.locator(".SLO").click();
-    await sliderResponse;
-    await expect(page.locator(".slider")).toBeVisible();
-  },
-
-  EXPORT_WAREHOUSE: async (page, env) => {
-    // Navigate to the Export URL — shows error message when no warehouse data is available
-    await page.goto(env.url + "/lv/Warehouse/Export");
-    await expect(page.locator("body")).toContainText("Nav datu");
   },
 
   NAVIGATE_FILTERS: async (page, env) => {
@@ -884,20 +852,6 @@ export const stateVerifications: Record<AppState, VerifyFn> = {
   task_day_view: async (page) => {
     // fullCalendar v1.5.3 view container div has class fc-view-agendaDay
     await expect(page.locator(".fc-view-agendaDay")).toBeVisible();
-  },
-
-  warehouse: async (page) => {
-    await expect(page.locator("#DataList")).toBeVisible();
-  },
-
-  warehouse_slider_closed: async (page) => {
-    // The .slider selection toolbar is hidden after closing it
-    await expect(page.locator(".slider")).not.toBeVisible();
-  },
-
-  warehouse_export_empty: async (page) => {
-    // Export page shows "Nav datu eksportēšanai!" when no warehouse items exist
-    await expect(page.locator("body")).toContainText("Nav datu");
   },
 
   filters: async (page) => {
