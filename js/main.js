@@ -54,20 +54,6 @@ function readForm(form) {
   return data;
 }
 
-function LoginAs(login) {
-  success = function (answ) {
-    Loading(0, 0);
-
-    if (answ == 1) {
-      window.location.replace(URL);
-    } else {
-      alert(answ);
-    }
-  };
-  Loading(0, 1);
-  $.post(URL + "/Users/Logon", { Login: login }, success);
-}
-
 function Save(Class) {
   if (Class == "Data") {
     editbox(0, this);
