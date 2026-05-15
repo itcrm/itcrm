@@ -50,7 +50,6 @@ const authenticatedStates = {
       NAVIGATE_USERS: "users",
       NAVIGATE_ORDERS: "orders",
       NAVIGATE_TASK: "task",
-      NAVIGATE_WAREHOUSE: "warehouse",
       NAVIGATE_FILTERS: "filters",
     },
   },
@@ -469,25 +468,6 @@ const authenticatedStates = {
     },
   },
 
-  warehouse: {
-    on: {
-      /** Click the X inside the slider to hide the selection toolbar (slider open by default) */
-      TOGGLE_WAREHOUSE_SLIDER: "warehouse_slider_closed",
-      /** Click the Export button — navigates to /Warehouse/Export which shows an error when no data matches */
-      EXPORT_WAREHOUSE: "warehouse_export_empty",
-    },
-  },
-
-  /** Warehouse screen with the selection slider toolbar hidden (closed) */
-  warehouse_slider_closed: {
-    on: {
-      /** Click the SLO button to re-open the selection slider toolbar */
-      OPEN_WAREHOUSE_SLIDER: "warehouse",
-    },
-  },
-
-  /** Warehouse export page — shows "Nav datu eksportēšanai!" when no warehouse data matches the filter */
-  warehouse_export_empty: {},
 };
 
 export type AuthenticatedState = keyof typeof authenticatedStates;
@@ -513,7 +493,6 @@ export const authenticatedMachine = createMachine({
     NAVIGATE_USERS: ".users",
     NAVIGATE_ORDERS: ".orders",
     NAVIGATE_TASK: ".task",
-    NAVIGATE_WAREHOUSE: ".warehouse",
     NAVIGATE_FILTERS: ".filters",
   },
   states: authenticatedStates,

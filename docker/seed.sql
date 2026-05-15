@@ -50,16 +50,6 @@ VALUES
   (2, 'HOTEL-MARLIN',    'Hotel Marlin lobby arrangements',           '#00897B', '2023-11-01 08:30:00', 1, ''),
   (5, 'ARCHIVE-2022',    'Archive 2022 – old project',                '#9E9E9E', '2022-03-01 00:00:00', 0, '');
 
--- ─── Suppliers (vendors / partners) ─────────────────────────────────────────────
-INSERT INTO `Suppliers` (`IDUser`, `Name`, `Description`, `Color`, `AddDate`, `Status`)
-VALUES
-  (2, 'Valley Blooms Wholesale',  'Fresh flower wholesaler',              '#1565C0', '2023-02-01 09:00:00', 1),
-  (2, 'GreenThumb Supplies',      'Floral foam, tape, and tools',         '#C62828', '2023-03-15 10:00:00', 1),
-  (3, 'Vase & Vessel Co',         'Vases, pots, and containers',          '#2E7D32', '2023-04-20 11:00:00', 1),
-  (4, 'RibbonCraft',              'Ribbons, wrapping, and packaging',     '#EF6C00', '2023-06-01 14:00:00', 1),
-  (2, 'CoolTech Refrigeration',   'Walk-in cooler parts and service',     '#6A1B9A', '2023-01-10 08:00:00', 1),
-  (3, 'Old Supplier Co',          'No longer in use',                     '#757575', '2021-06-01 08:00:00', 0);
-
 -- ─── Filters (saved search templates) ───────────────────────────────────────────
 INSERT INTO `Filters` (`Name`, `Note`, `AddDate`, `Status`)
 VALUES ('Weekly flowers', 'Weekly office flower delivery', datetime('now'), 1);
@@ -189,31 +179,6 @@ VALUES
   ('archive-hidden-error', 2, 8, 2, 2, 'Incorrectly entered record – hidden', '', '',
    0.00, 0.0, 0.00, '2023-10-01 00:00:00', '2023-10-01 00:00:00', 0, 1);
 
--- ─── Info (supplier notes on work items) ────────────────────────────────────────
--- IDData references Data.ID; IDSupplier references Suppliers.ID
-INSERT INTO `Info` (`IDData`, `IDSupplier`, `IDUser`, `Info`, `Color`, `AddDate`)
-VALUES
-  (2, 1, 2, 'Roses ordered from Valley Blooms, ETA 2 days',       '#1565C0', '2024-03-14 08:30:00'),
-  (2, 5, 2, 'CoolTech confirmed warranty claim',                   '#6A1B9A', '2024-03-14 09:00:00'),
-  (3, 2, 3, 'Floral foam running low – reorder from GreenThumb',  '#C62828', '2024-03-17 10:00:00'),
-  (5, 1, 4, 'Peonies received from Valley Blooms – 5 bunches',     '#1565C0', '2024-03-19 14:00:00'),
-  (6, 3, 2, 'Tall glass vases backordered – Vase & Vessel Co',    '#2E7D32', '2024-04-09 08:00:00'),
-  (8, 4, 3, 'Extra satin ribbon needed for hotel display',         '#EF6C00', '2024-04-29 16:00:00');
-
--- ─── Warehouse (parts inventory) ───────────────────────────────────────────────
-INSERT INTO `warehouse` (`rindasID`, `partID`, `daudzums`, `type`, `Shop`, `ShopCategoryID`, `ShopDescription`, `ShopModelID`, `ShopTitle`, `OriginalCode`, `addition`, `offer`, `state`, `used`)
-VALUES
-  (1001, 1, 50, 1, 0, 'ROSE',    'Red roses, long stem 60cm',          'ROSE-RED-60',   'Red Rose 60cm',             'ROSE-RED-60',    3,  0, 1, 0),
-  (1002, 2, 30, 1, 0, 'TULIP',   'Dutch tulips, mixed colors',         'TULIP-MIX',     'Mixed Tulips',              'TULIP-MIX',      2,  0, 1, 0),
-  (1003, 3, 80, 1, 0, 'FOAM',    'Floral foam brick, standard',        'FOAM-STD',      'Floral Foam Brick',         'FOAM-STD',       1,  0, 1, 0),
-  (1004, 4, 20, 1, 0, 'VASE',    'Glass cylinder vase 30cm',           'VASE-CYL-30',   'Cylinder Vase 30cm',        'VASE-CYL-30',    8,  0, 1, 0),
-  (1005, 5, 15, 1, 0, 'VASE',    'Ceramic pot white 20cm',             'POT-WHT-20',    'White Ceramic Pot 20cm',    'POT-WHT-20',     6,  0, 1, 0),
-  (1006, 6,  0, 1, 0, 'RIBBON',  'Satin ribbon ivory 25mm',            'RIB-IVR-25',    'Ivory Satin Ribbon 25mm',   'RIB-IVR-25',     2,  0, 0, 0),
-  (1007, 7, 40, 1, 0, 'WRAP',    'Brown kraft wrapping paper roll',     'WRAP-KRAFT',    'Kraft Wrapping Paper',      'WRAP-KRAFT',      1, 1, 1, 0),
-  (1008, 8, 10, 1, 0, 'LILY',    'White oriental lily, 3-stem bunch',  'LILY-WHT-3',    'White Oriental Lily',       'LILY-WHT-3',     5,  0, 1, 0),
-  (1009, 9,  5, 1, 0, 'PEONY',   'Peony, blush pink',                  'PEONY-BLUSH',   'Blush Peony',               'PEONY-BLUSH',    7,  0, 1, 0),
-  (1010, 10, 0, 1, 0, 'SUPPLY',  'Floral tape green 12mm',             'TAPE-GRN-12',   'Green Floral Tape 12mm',    'TAPE-GRN-12',    1,  0, 0, 1);
-
 -- ─── Rental vehicles (nomasauto) ────────────────────────────────────────────────
 INSERT INTO `nomasauto` (`Nosaukums`, `Reg_nr`, `Sasija`, `Reg_ap`, `Vertiba`, `OrderID`, `Status`)
 VALUES
@@ -236,32 +201,6 @@ VALUES
   (8, 3, 1, 45, '2024-05-02 08:00:00', '2024-05-02 18:00:00', 45, 200, 245,
    'Shop, 12 Maple St', 'Hotel Marlin, 5 Harbor Blvd', 'RENT-2024-003',
    'Van rental for hotel lobby arrangement delivery.', '', '');
-
--- ─── Categories and groups (hierarchical classification) ────────────────────────
-INSERT INTO `categories_linear` (`id`, `level`, `parent`, `iorder`, `title`)
-VALUES
-  (1, 0, 0, 1, 'Fresh flowers'),
-  (2, 1, 1, 1, 'Roses'),
-  (3, 1, 1, 2, 'Tulips'),
-  (4, 1, 1, 3, 'Lilies'),
-  (5, 0, 0, 2, 'Arrangements'),
-  (6, 1, 5, 1, 'Bouquets'),
-  (7, 1, 5, 2, 'Centerpieces'),
-  (8, 1, 5, 3, 'Wreaths'),
-  (9, 0, 0, 3, 'Supplies'),
-  (10, 1, 9, 1, 'Vases'),
-  (11, 1, 9, 2, 'Foam and tape'),
-  (12, 1, 9, 3, 'Wrapping');
-
-INSERT INTO `groups_linear` (`id`, `level`, `parent`, `iorder`, `title`)
-VALUES
-  (1, 0, 0, 1, 'Corporate clients'),
-  (2, 1, 1, 1, 'Offices'),
-  (3, 1, 1, 2, 'Hotels and venues'),
-  (4, 0, 0, 2, 'Event clients'),
-  (5, 1, 4, 1, 'Weddings'),
-  (6, 1, 4, 2, 'Parties'),
-  (7, 0, 0, 3, 'Individual customers');
 
 -- ─── Parameters (application configuration) ────────────────────────────────────
 INSERT INTO `parameters` (`param_name`, `param_value`)

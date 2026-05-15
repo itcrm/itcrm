@@ -59,8 +59,6 @@ class Filters extends DBObject {
 
                 $Filter[0] = 1;
                 return json_encode($Filter);
-            case 'editRow':
-                return $this->editFilter($_POST['ID']);
             case 'Save':
                 if (!$_SESSION['User']) return '';
                 $ID = $this->Save();
@@ -430,48 +428,5 @@ class Filters extends DBObject {
             $res .= $row["$colum"] . ", ";
         }
         return $res;
-    }
-
-    function editFilter($ID) {
-        $query = 'SELECT * FROM `Filters` WHERE ID=' . (int)$ID . ' ORDER BY ID DESC';
-
-        if (!$result = self::$DB->query($query)) {
-            throw new AppError($query . 'Read error on Filter (' . __LINE__ . ')');
-        }
-
-        $Dates = array(
-            99 => Language::$Filters['AllPeriod'],
-            5 => Language::$Filters['Today'],
-            6 => Language::$Filters['Yesterday'],
-            7 => Language::$Filters['Week'],
-            1 => Language::$Filters['LastMonth'],
-            8 => Language::$Filters['Last'],
-            9 => Language::$Filters['Tomorrow'],
-            10 => Language::$Filters['FutureWeek'],
-            11 => Language::$Filters['FutureMonth'],
-            12 => Language::$Filters['Future']
-        );
-        $DateTypes = array(
-            0 => '',
-            1 => Language::$Filters['AddDate'],
-            2 => Language::$Filters['Date']
-        );
-        $row = $result->fetch_assoc();
-
-        $row['PersonSelect'] =  Filters::MultiPersons($row['IDPerson'], 'Users', 'Login');
-        $row['OperatorSelect'] =  Filters::MultiPersons($row['IDOperator'], 'Users', 'Login');
-        $row['OrderSelect'] =  Filters::MultiPersons($row['IDOrder'], 'Orders', 'Code');
-        $row['TypeSelect'] =  Filters::MultiPersons($row['IDType'], 'Types', 'Code');
-        $row['Deleted'] = $row['Status'] != -1 ? 'hide' : '';
-        $row['Status'] = $row['Status'] == -1 ? 'deleted' : '';
-        $row['DateShow'] = $Dates[$row['Date']];
-        $row['DateTypeShow'] = $DateTypes[$row['DateType']];
-        $row['Sum'] = $row['Sum'] == 0 ? '' : $row['Sum'];
-        $row['Hours'] = $row['Hours'] == 0 ? '' : $row['Hours'];
-        $row['IDPerson'] = $row['IDPerson'] . ", ";
-        $row['IDOperator'] = $row['IDOperator'] . ", ";
-        $row['IDOrder'] = $row['IDOrder'] . ", ";
-        $row['IDType'] = $row['IDType'] . ", ";
-        echo json_encode($row);
     }
 }

@@ -14,7 +14,6 @@ class Language {
         'msgConfirmDel' => 'Tiešām izdzēst?',
         'Search' => 'Meklēt',
         'Tasks' => 'Uzdevumi',
-        'Warehouse' => 'Noliktava',
 
         'Today' => 'Šodien',
         'Yesterday' => 'Vakar',
@@ -36,12 +35,6 @@ class Language {
         'SortByDate' => 'Pēc dat.',
         'SortByID' => 'Pēc ID',
 
-    );
-
-    public static $Suppliers = array(
-        'DuplicateName' => 'Tāds piegadātājs jau eksistē!',
-        'SetName' => 'Noradiet nosaukumu',
-        'NotFound' => 'Piegādātājs nav atrasts',
     );
 
     public static $Users = array(
@@ -133,8 +126,6 @@ class Language {
         'SetIDPerson' => 'Norādiet ievādītāju',
         'SetIDOrder' => 'Norādiet pasūtījumu',
         'SetIDType' => 'Norādiet tipu',
-        'SetPartID' => 'Norādiet detaļu',
-        'SetAmount' => 'Norādiet daudzumu',
         'NoChanges' => 'Izmaiņu nav!',
         'NoDataToExport' => '<div align="center">Nav datu eksportēšanai!</div>',
 

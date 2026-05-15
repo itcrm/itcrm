@@ -83,11 +83,6 @@ a.right {
     margin-top: 2px;
 }
 
-/*.DropMenu{display: inline-block;}
-.DropMenu li {display: inline-block;}
-.DropMenu li a{text-decoration:none;}
-.DropMenu .subnav {display: none}*/
-
 div.label {
     float: left;
     width: 118px;
@@ -289,19 +284,6 @@ a.icon-expand {
 .hide {
     display: none;
 }
-#ievadeWarehouse {
-    margin-bottom: 5px;
-    background-color: silver;
-    height: 54px;
-    left: 0;
-    margin-left: 17px;
-    padding-right: 0;
-    padding-top: 5px;
-    position: static;
-    text-align: center;
-    width: 95%;
-}
-
 div.changes {
     position: fixed;
     right: 0px;
@@ -478,131 +460,6 @@ a.reminder {
     background: #efefef;
 }
 
-#SupplierForm {
-    float: left;
-    margin-left: 3px;
-}
-#SupplierForm input,
-#SupplierForm div {
-    float: left;
-    margin: 2px;
-}
-
-#warehouse {
-    width: 100%;
-    position: absolute;
-    display: none;
-    left: 0px;
-}
-#warehouse .main {
-    width: 98%;
-    border: 5px solid #ddd;
-    background: #fff;
-}
-
-#matreals {
-    width: 100%;
-    position: absolute;
-    display: none;
-    left: 0px;
-}
-#matreals .main {
-    width: 98%;
-    border: 5px solid #ddd;
-    background: #fff;
-}
-
-#info .main {
-    width: 98%;
-    border: 5px solid #ddd;
-    background: #fff;
-}
-
-#info {
-    width: 100%;
-    position: absolute;
-    display: none;
-    left: 0px;
-}
-#info .supplier {
-    border: 1px solid #aaa;
-    margin: 3px;
-    position: relative;
-    top: 0px;
-    left: 0px;
-    float: left;
-    width: 32%;
-    text-align: left;
-    height: 19px;
-}
-#info .supplier a {
-    float: right;
-}
-#info .supplier .label {
-    padding-top: 3px;
-    margin-right: 3px;
-    font-weight: 700;
-    background: #fff;
-    height: 16px;
-    float: left;
-    width: 110px;
-    cursor: default;
-    overflow: hidden;
-    white-space: nowrap;
-}
-#info .supplier .label textarea {
-    position: absolute;
-    bottom: 5px;
-    width: 95%;
-    font-size: 13px;
-}
-#info .supplier .label span,
-#info .supplier .label textarea {
-    display: none;
-}
-#info .supplier .info {
-    padding-top: 3px;
-    cursor: default;
-    overflow: hidden;
-    white-space: nowrap;
-}
-#info .supplier .color_picker {
-    float: right;
-    display: none;
-}
-#info .supplier .over {
-    padding: 0;
-    background: #fff;
-    height: 120px;
-    padding: 7px;
-    border: 2px solid #777;
-    position: absolute;
-    width: 95%;
-    left: 0px;
-    z-index: 900;
-    white-space: normal;
-}
-#info .supplier .supOver {
-    padding: 0;
-    background: #fff;
-    height: 120px;
-    padding: 7px;
-    border: 2px solid #777;
-    position: absolute;
-    left: 0px;
-    width: 95%;
-    z-index: 900;
-    white-space: normal;
-}
-#info .supplier .supOver span {
-    display: block;
-    font-size: 10px;
-    font-weight: 400;
-}
-#info .supplier .supOver textarea {
-    display: block;
-}
-
 .addbutton {
     background: url("/images/extra.gif") no-repeat scroll center -50px transparent;
     float: right;
@@ -622,16 +479,8 @@ a.reminder {
 #bordertbl th {border: 1px solid;}
 #foottbl {border: 1px solid;}
 #foottbl td{border: 1px solid;}
-#Products td
-{
-border:1px solid black;
-}
 
 */
-
-#Products th {
-    border: 1px solid black;
-}
 
 .bordersolid {
     border: 1px solid black;
@@ -719,17 +568,3 @@ form.hideFilter table tr td {
     background-color: yellow;
 }
 
-a.warehouse-add {
-    background-attachment: scroll;
-    background-clip: border-box;
-    background-color: #dfeffc;
-    background-image: none;
-    background-origin: padding-box;
-    background-position: 0 0;
-    background-repeat: repeat;
-    background-size: auto auto;
-    cursor: pointer;
-    height: 16px;
-    position: absolute;
-    width: 16px;
-}

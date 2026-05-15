@@ -95,11 +95,6 @@ class System extends DBObject {
                         var LANG="' . self::$url[0] . '";
                         var Months = [\'' . implode('\',\'', explode(',', Language::$Main['Months'])) . '\'];
                         var Week = [\'' . implode('\',\'', explode(',', Language::$Main['CalendarWeek'])) . '\'];
-                        var warehouseTypeID="' . Config::WarehouseTypeID . '";
-                        var addToWarehouseTypeID="' . Config::AddToWarehouseTypeID . '";
-                        var removeFromWarehouseTypeID="' . Config::RemoveFromWarehouseTypeID . '";
-                        var reserveFromWarehouseTypeID="' . Config::ReserveFromWarehouseTypeID . '";
-                        var returnToWarehouseTypeID="' . Config::ReturnToWarehouseTypeID . '";
                         ';
 
         $Vars = array_merge($Vars, array_diff_key($Global, $Vars));
